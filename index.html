@@ -512,6 +512,7 @@
       .bg-orb, .bg-star, .bg-particle { animation: none !important; }
     }
     body.pre-login .bg-star, body.pre-login .bg-grid { display: none; }
+    /* ملاحظة: الإخفاء الفعلي لحين الدخول يتم عبر inline style في العنصر نفسه (أضمن من الاعتماد على كلاس الـ body وحده) */
   </style>
 </head>
 <body class="pre-login">
@@ -520,9 +521,9 @@
     <div class="bg-orb bg-orb-1"></div>
     <div class="bg-orb bg-orb-2"></div>
     <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-star star-a"><span class="star-sq"></span><span class="star-sq star-sq-2"></span></div>
-    <div class="bg-star star-b"><span class="star-sq"></span><span class="star-sq star-sq-2"></span></div>
-    <div class="bg-grid"></div>
+    <div class="bg-star star-a" style="display:none;"><span class="star-sq"></span><span class="star-sq star-sq-2"></span></div>
+    <div class="bg-star star-b" style="display:none;"><span class="star-sq"></span><span class="star-sq star-sq-2"></span></div>
+    <div class="bg-grid" style="display:none;"></div>
     <div class="bg-particle p1"></div>
     <div class="bg-particle p2"></div>
     <div class="bg-particle p3"></div>
@@ -1370,6 +1371,7 @@ function playLoginTransition(afterCoverCallback){
 function enterApp(){
   $('role-modal').style.display = 'none';
   document.body.classList.remove('pre-login');
+  document.querySelectorAll('.bg-star, .bg-grid').forEach(el => { el.style.display = ''; });
   document.body.style.overflow = 'auto';
   $('user-display-name').textContent = session.name;
   $('user-role-text').textContent = roleLabel(session.role);
