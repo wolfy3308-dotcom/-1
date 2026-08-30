@@ -550,6 +550,7 @@
     <button class="nav-btn" onclick="switchTab('quizzes', this)"><span class="nav-icon">📝</span> الاختبارات الإلكترونية</button>
     <button class="nav-btn" onclick="switchTab('examtable', this)"><span class="nav-icon">🗓️</span> جدول الاختبارات</button>
     <button class="nav-btn" onclick="switchTab('curriculum', this)"><span class="nav-icon">📖</span> المنهج</button>
+    <button class="nav-btn role-teacher-only" id="nav-news-btn" onclick="switchTab('news', this)"><span class="nav-icon">📰</span> الأخبار</button>
     <button class="nav-btn role-supervisor-only" id="nav-teachers-btn" onclick="switchTab('teachers', this)" style="display:none;"><span class="nav-icon">👩‍🏫</span> إدارة المعلمين</button>
     <button class="nav-btn" onclick="switchTab('settings', this)"><span class="nav-icon">⚙️</span> الإعدادات</button>
     <button class="nav-btn" onclick="logout()" style="color:#f87171;"><span class="nav-icon">🔄</span> الخروج</button>
@@ -767,6 +768,21 @@
         <div class="card">
           <div class="card-header">📚 الكتب والملفات المتاحة</div>
           <div id="books-container"></div>
+        </div>
+      </div>
+
+      <!-- 7.5 الأخبار -->
+      <div id="tab-news" class="tab-content">
+        <div class="card role-teacher-only">
+          <div class="card-header">📰 نشر خبر جديد لطلابك</div>
+          <p style="color:var(--text-muted); font-size:13px; margin:0 0 10px;">أي شي جديد صار (محاضرة ملغية، تغيير مكان، تنبيه عاجل...) بيوصل الطلاب فوراً في جرس الإشعارات.</p>
+          <div class="form-group"><label>عنوان الخبر:</label><input type="text" id="newsTitle" placeholder="مثال: محاضرة اليوم ملغية"></div>
+          <div class="form-group"><label>تفاصيل إضافية (اختياري):</label><textarea id="newsBody" rows="3" placeholder="أي تفاصيل زيادة تحب توضحها..."></textarea></div>
+          <button class="btn" style="width:100%;" onclick="sendNews()" id="sendNewsBtn">📤 إرسال الخبر للطلاب</button>
+        </div>
+        <div class="card">
+          <div class="card-header">🗂️ الأخبار المرسلة</div>
+          <div id="news-container"></div>
         </div>
       </div>
 
@@ -1344,6 +1360,7 @@ function refreshCurrentTab(){
   if (t === 'quizzes') renderQuizzes();
   if (t === 'examtable') renderExamTable();
   if (t === 'curriculum') renderBooks();
+  if (t === 'news') renderNews();
   if (t === 'teachers') renderTeachersList();
   if (t === 'settings') renderSettings();
 }
@@ -2173,6 +2190,48 @@ async function deleteBook(id){
     if (res.file_path) await sbClient.storage.from('books').remove([res.file_path]);
     toast('success','تم الحذف','تم حذف الكتاب');
     renderBooks();
+  } catch(e){}
+}
+
+/* ================= الأخبار (المعلم فقط) ================= */
+async function sendNews(){
+  const title = $('newsTitle').value.trim();
+  const body = $('newsBody').value.trim();
+  if (!title){ toast('warning','تنبيه','اكتب عنوان الخبر'); return; }
+
+  const btn = $('sendNewsBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="loading-spin"></span> جارِ الإرسال...';
+  try {
+    await rpc('rpc_send_news', { p_caller_id: session.universityId, p_caller_password: session.password, p_title: title, p_body: body || null });
+    toast('success','تم الإرسال','وصل الخبر لطلابك في الإشعارات');
+    $('newsTitle').value=''; $('newsBody').value='';
+    renderNews();
+  } catch(e){ toast('error','خطأ','فشل إرسال الخبر: ' + (e.message||'')); }
+  btn.disabled = false; btn.innerHTML = '📤 إرسال الخبر للطلاب';
+}
+
+async function renderNews(){
+  let data;
+  try {
+    data = await rpc('rpc_list_news', { p_caller_id: session.universityId, p_caller_password: session.password });
+  } catch(e){ return; }
+  $('news-container').innerHTML = data.map(n => `
+    <div class="book-card">
+      <div class="card-header">
+        <span>📰 ${esc(n.title)}</span>
+        <div><span class="notif-time" style="display:inline-block; margin-left:8px;">${fmtDueDate(n.created_at)}</span> <button class="btn-danger" onclick="deleteNews(${n.id})">🗑️ حذف</button></div>
+      </div>
+      ${n.body ? `<div style="font-size:13px; color:var(--text-muted); margin-top:6px;">${esc(n.body)}</div>` : ''}
+    </div>`
+  ).join('') || '<p style="color:var(--text-muted);">لا توجد أخبار مرسلة بعد</p>';
+}
+
+async function deleteNews(id){
+  if (!confirm('حذف هذا الخبر نهائياً؟')) return;
+  try {
+    await rpc('rpc_delete_news', { p_caller_id: session.universityId, p_caller_password: session.password, p_news_id: id });
+    toast('success','تم الحذف','تم حذف الخبر');
+    renderNews();
   } catch(e){}
 }
 
