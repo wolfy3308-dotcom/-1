@@ -144,7 +144,7 @@
       content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .6;
       background-image:
         radial-gradient(circle at 15% 8%, rgba(201,162,39,.10), transparent 30%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cpath fill='none' stroke='rgba(201,162,39,0.28)' stroke-width='1' d='M17 9.35 L18.23 14.02 L22.41 11.59 L19.98 15.77 L24.65 17 L19.98 18.23 L22.41 22.41 L18.23 19.98 L17 24.65 L15.77 19.98 L11.59 22.41 L14.02 18.23 L9.35 17 L14.02 15.77 L11.59 11.59 L15.77 14.02 Z'/%3E%3C/svg%3E");
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cpath fill='none' stroke='rgba(201,162,39,0.28)' stroke-width='1' d='M17 5 L27.39 23 L6.61 23 Z M17 29 L6.61 11 L27.39 11 Z'/%3E%3C/svg%3E");
       background-repeat: no-repeat, repeat;
     }
     .sidebar-brand {
@@ -163,10 +163,10 @@
     .nav-icon { font-size: 18px; width: 22px; text-align: center; transition: transform .25s var(--ease-spring); }
     .nav-btn:hover .nav-icon { transform: scale(1.15) rotate(-4deg); }
 
-    /* زخرفة نجمة إسلامية ذهبية (ثمانية أضلاع) تظهر عند تمرير الماوس على أحد أقسام القائمة */
+    /* زخرفة نجمة سداسية إسلامية ذهبية تظهر عند تمرير الماوس على أحد أقسام القائمة */
     .nav-btn::before {
       content: ''; position: absolute; left: 12px; top: 50%; width: 16px; height: 16px; margin-top: -8px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23c9a227' d='M12 2 L13.61 8.12 L19.07 4.93 L15.88 10.39 L22 12 L15.88 13.61 L19.07 19.07 L13.61 15.88 L12 22 L10.39 15.88 L4.93 19.07 L8.12 13.61 L2 12 L8.12 10.39 L4.93 4.93 L10.39 8.12 Z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23c9a227' d='M12 3 L19.79 16.5 L4.21 16.5 Z M12 21 L4.21 7.5 L19.79 7.5 Z'/%3E%3C/svg%3E");
       background-size: contain; background-repeat: no-repeat;
       transform: scale(.25); opacity: 0; transition: opacity .35s var(--ease-smooth), transform .4s var(--ease-spring);
       pointer-events: none; filter: drop-shadow(0 0 5px rgba(201,162,39,.65));
@@ -199,7 +199,7 @@
     }
     .content-area {
       padding: 22px; max-width: 1200px; margin: 0 auto; width: 100%;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath fill='none' stroke='rgba(13,92,62,0.08)' stroke-width='1' d='M20 11 L21.45 16.49 L26.36 13.64 L23.51 18.55 L29 20 L23.51 21.45 L26.36 26.36 L21.45 23.51 L20 29 L18.55 23.51 L13.64 26.36 L16.49 21.45 L11 20 L16.49 18.55 L13.64 13.64 L18.55 16.49 Z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath fill='none' stroke='rgba(13,92,62,0.08)' stroke-width='1' d='M20 6 L32.12 27 L7.88 27 Z M20 34 L7.88 13 L32.12 13 Z'/%3E%3C/svg%3E");
       background-repeat: repeat;
     }
 
@@ -450,10 +450,12 @@
     @keyframes orbFloat2 { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(50px,-45px,0) scale(1.16); } }
     @keyframes orbFloat3 { 0%,100% { transform: translate3d(0,0,0) rotate(0deg); } 50% { transform: translate3d(-35px,-30px,0) rotate(25deg); } }
 
-    /* زخرفة معينات متداخلة (مستوحاة من الزخرفة الهندسية الإسلامية) تدور بمنظور ثلاثي الأبعاد */
-    .bg-star { position: absolute; transform-style: preserve-3d; }
-    .bg-star .star-sq { position: absolute; inset: 0; border: 3px solid currentColor; border-radius: 8px; transform: rotate(45deg); }
-    .bg-star .star-sq-2 { transform: rotate(45deg) scale(.55); border-radius: 6px; }
+    /* زخرفة نجمة سداسية إسلامية (نجمة سليمان) كبيرة تدور بمنظور ثلاثي الأبعاد */
+    .bg-star {
+      position: absolute; transform-style: preserve-3d;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath fill='none' stroke='currentColor' stroke-width='4' d='M100 10 L177.94 145 L22.06 145 Z M100 190 L22.06 55 L177.94 55 Z'/%3E%3C/svg%3E");
+      background-size: 100% 100%; background-repeat: no-repeat;
+    }
     .star-a {
       width: 320px; height: 320px; top: 6%; inset-inline-start: -80px; color: var(--secondary); opacity: .22;
       animation: starSpin 110s linear infinite;
@@ -522,8 +524,8 @@
     <div class="bg-orb bg-orb-1"></div>
     <div class="bg-orb bg-orb-2"></div>
     <div class="bg-orb bg-orb-3"></div>
-    <div class="bg-star star-a" style="display:none;"><span class="star-sq"></span><span class="star-sq star-sq-2"></span></div>
-    <div class="bg-star star-b" style="display:none;"><span class="star-sq"></span><span class="star-sq star-sq-2"></span></div>
+    <div class="bg-star star-a" style="display:none;"></div>
+    <div class="bg-star star-b" style="display:none;"></div>
     <div class="bg-grid" style="display:none;"></div>
     <div class="bg-particle p1"></div>
     <div class="bg-particle p2"></div>
