@@ -177,7 +177,9 @@
       padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-sm);
       transition: box-shadow .3s var(--ease-smooth), transform .3s var(--ease-smooth), border-color .3s;
     }
-    .card:hover { box-shadow: var(--shadow); border-color: rgba(13,92,62,.18); transform: translateY(-2px); }
+    @media (hover: hover) and (pointer: fine) {
+      .card:hover { box-shadow: var(--shadow); border-color: rgba(13,92,62,.18); transform: translateY(-2px); }
+    }
     .card-header {
       font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; justify-content: space-between;
       align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid var(--bg); padding-bottom: 10px;
@@ -199,7 +201,7 @@
     .stat-number { font-size: 23px; font-weight: 800; margin-top: 4px; }
 
     .tab-content { display: none; }
-    .tab-content.active { display: block; animation: pageEnter .6s var(--ease-smooth); transform-style: preserve-3d; }
+    .tab-content.active { display: block; animation: pageEnter .6s var(--ease-smooth); }
     @keyframes fadeIn { from { opacity:0; transform: translateY(10px);} to { opacity:1; transform: translateY(0);} }
     @keyframes pageEnter {
       0%   { opacity: 0; transform: perspective(1000px) translateY(26px) scale(.965) rotateX(4deg); filter: blur(3px); }
@@ -320,6 +322,9 @@
       .top-header { padding: 12px 15px; }
       .content-area { padding: 15px 10px; }
       .card { padding: 15px; margin-bottom: 15px; }
+      .schedule-grid-wrap { overflow-x: scroll; }
+      .sg-day-header { font-size: 15px; padding: 8px 8px; line-height: 1.3; }
+      .sg-hour-header { font-size: 12px; }
       .inline-form { flex-direction: column; align-items: stretch; gap: 10px; }
       .inline-form > div { width: 100%; }
       .inline-form button { width: 100%; margin-top: 4px; }
@@ -1008,13 +1013,6 @@ document.addEventListener('click', (e) => {
 /* ================= أدوات مساعدة عامة ================= */
 function $(id){ return document.getElementById(id); }
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-// jsAttr: يُستخدم بدل esc() عند حقن نص داخل باراميترات onclick/oninput inline JS.
-// السبب: المتصفح يفكّ ترميز HTML entities (مثل &#39;) قبل تفسير الخاصية كـ JavaScript،
-// فلو استخدمنا esc() فقط داخل علامات اقتباس مفردة، تنكشف الحماية ويقدر أي نص (مثل رقم
-// جامعي يحتوي على ' ) يخرج من السلسلة النصية وينفّذ كود JS تعسفي (XSS مخزّن).
-// الحل: نبني السلسلة كـ JSON.stringify (يهرب علامات الاقتباس والباك سلاش بشكل صحيح لسياق JS)
-// ثم نطبّق esc() على الناتج لحمايته كخاصية HTML، فيبقى نصاً حرفياً آمناً بعد فك ترميز HTML.
-function jsAttr(s){ return esc(JSON.stringify(String(s ?? ''))); }
 
 function toast(type, title, message){
   const box = document.createElement('div');
@@ -1456,7 +1454,7 @@ async function renderStudentsList(){
   const list = sortByArabicName(await rpc('rpc_list_students', { p_caller_id: session.universityId, p_caller_password: session.password, p_teacher_university_id: teacherIdForList }));
   $('students-list-tbody').innerHTML = list.map(s => `
     <tr><td>${esc(s.university_id)}</td><td>${esc(s.name)}</td>
-    <td><button class="btn-danger" onclick="deleteStudent(${jsAttr(s.university_id)})">🗑️ حذف</button></td></tr>
+    <td><button class="btn-danger" onclick="deleteStudent('${esc(s.university_id)}')">🗑️ حذف</button></td></tr>
   `).join('') || '<tr><td colspan="3">لا يوجد طلاب بعد</td></tr>';
 }
 
@@ -1493,23 +1491,23 @@ async function renderAttendance(){
     if (status === 'late'){
       extra = `<div class="attendance-extra" id="extra-${sid}">
         <input type="text" id="late-min-${sid}" placeholder="مدة التأخير (مثال: 10 دقائق)" value="${esc(rec && rec.late_minutes != null ? rec.late_minutes : '')}">
-        <button class="btn-sm btn-view" onclick="saveAttendanceDetails(${jsAttr(s.university_id)},'late')">💾 حفظ</button>
+        <button class="btn-sm btn-view" onclick="saveAttendanceDetails('${esc(s.university_id)}','late')">💾 حفظ</button>
       </div>`;
     } else if (status === 'absent'){
       extra = `<div class="attendance-extra" id="extra-${sid}">
         <textarea id="abs-reason-${sid}" rows="1" placeholder="سبب / عذر الغياب">${esc(rec && rec.absence_reason ? rec.absence_reason : '')}</textarea>
         <input type="file" id="abs-file-${sid}" accept="application/pdf">
-        <button class="btn-sm btn-view" onclick="saveAttendanceDetails(${jsAttr(s.university_id)},'absent')">💾 حفظ</button>
-        ${rec && rec.excuse_file_path ? `<a class="btn-sm btn-view" target="_blank" rel="noopener noreferrer" href="${SUPABASE_URL}/storage/v1/object/public/excuses/${encodeURIComponent(rec.excuse_file_path)}">📄 عرض الملف المرفوع</a>` : ''}
+        <button class="btn-sm btn-view" onclick="saveAttendanceDetails('${esc(s.university_id)}','absent')">💾 حفظ</button>
+        ${rec && rec.excuse_file_path ? `<a class="btn-sm btn-view" target="_blank" href="${SUPABASE_URL}/storage/v1/object/public/excuses/${rec.excuse_file_path}">📄 عرض الملف المرفوع</a>` : ''}
       </div>`;
     }
 
     return `<tr>
       <td>${esc(s.university_id)}</td><td>${esc(s.name)}</td>
       <td>
-        <button class="btn-status ${status==='present'?'active-present':''}" onclick="markAttendance(${jsAttr(s.university_id)},'present')">حاضر</button>
-        <button class="btn-status ${status==='late'?'active-late':''}" onclick="markAttendance(${jsAttr(s.university_id)},'late')">متأخر</button>
-        <button class="btn-status ${status==='absent'?'active-absent':''}" onclick="markAttendance(${jsAttr(s.university_id)},'absent')">غائب</button>
+        <button class="btn-status ${status==='present'?'active-present':''}" onclick="markAttendance('${esc(s.university_id)}','present')">حاضر</button>
+        <button class="btn-status ${status==='late'?'active-late':''}" onclick="markAttendance('${esc(s.university_id)}','late')">متأخر</button>
+        <button class="btn-status ${status==='absent'?'active-absent':''}" onclick="markAttendance('${esc(s.university_id)}','absent')">غائب</button>
         ${extra}
       </td>
     </tr>`;
@@ -1580,7 +1578,7 @@ async function renderMyAttendance(){
         excuseCell = `<div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">`;
         if (a.absence_reason) excuseCell += `<span>${esc(a.absence_reason)}</span>`;
         if (a.excuse_file_path){
-          excuseCell += `<a class="btn-sm btn-view" target="_blank" rel="noopener noreferrer" href="${SUPABASE_URL}/storage/v1/object/public/excuses/${encodeURIComponent(a.excuse_file_path)}">📄 عرض الملف المرفوع</a>`;
+          excuseCell += `<a class="btn-sm btn-view" target="_blank" rel="noopener" href="${SUPABASE_URL}/storage/v1/object/public/excuses/${a.excuse_file_path}">📄 عرض الملف المرفوع</a>`;
         } else {
           excuseCell += `<input type="file" id="my-excuse-file-${a.id}" accept="application/pdf" style="max-width:200px;">
             <button class="btn-sm btn-view" onclick="uploadMyExcuse(${a.id})">📎 إرفاق عذر الغياب (PDF)</button>`;
@@ -1681,7 +1679,8 @@ async function renderSchedule(){
   const UNIT = 15; // كل خانة = 15 دقيقة (يقبل القسمة على 30/45/60/90 دقيقة تماماً)
   const slotCount = (maxEnd - minStart) / UNIT;
 
-  const DAY_COL = 96, HOUR_ROW = 46, DAY_ROW = 72, MIN_SLOT = 30;
+  const isMobile = window.innerWidth <= 768;
+  const DAY_COL = isMobile ? 108 : 96, HOUR_ROW = 46, DAY_ROW = isMobile ? 78 : 72, MIN_SLOT = isMobile ? 34 : 30;
   const gridMinWidth = DAY_COL + slotCount * MIN_SLOT;
   let html = `<div class="schedule-grid" style="grid-template-columns: ${DAY_COL}px repeat(${slotCount}, minmax(${MIN_SLOT}px, 1fr)); grid-template-rows: ${HOUR_ROW}px repeat(${SCHEDULE_DAYS.length}, ${DAY_ROW}px); min-width: ${gridMinWidth}px; width: 100%;">`;
   html += `<div class="sg-corner" style="grid-row:1; grid-column:1;"></div>`;
@@ -2185,12 +2184,12 @@ async function renderBooks(){
   } catch(e){ return; }
   $('books-container').innerHTML = data.map(b => {
     const canDelete = session.role === 'supervisor' || (session.role === 'teacher' && b.teacher_id === session.profileId);
-    const url = `${SUPABASE_URL}/storage/v1/object/public/books/${encodeURIComponent(b.file_path)}`;
+    const url = `${SUPABASE_URL}/storage/v1/object/public/books/${b.file_path}`;
     const sizeMb = b.file_size ? (b.file_size/1024/1024).toFixed(1) + ' MB' : '';
     return `<div class="book-card">
       <div class="card-header">
         <span><span class="subject-badge">${esc(b.subject)}</span> ${esc(b.title)}</span>
-        <div><a class="btn-sm btn-view" href="${url}" target="_blank" rel="noopener noreferrer" download>⬇️ تحميل</a> ${canDelete ? `<button class="btn-danger" onclick="deleteBook(${b.id})">🗑️ حذف</button>` : ''}</div>
+        <div><a class="btn-sm btn-view" href="${url}" target="_blank" download>⬇️ تحميل</a> ${canDelete ? `<button class="btn-danger" onclick="deleteBook(${b.id})">🗑️ حذف</button>` : ''}</div>
       </div>
       <div style="font-size:12px; color:var(--text-muted);">${sizeMb}</div>
     </div>`;
@@ -2268,8 +2267,8 @@ async function renderTeachersList(){
   const list = await rpc('rpc_list_teachers', { p_caller_id: session.universityId, p_caller_password: session.password });
   $('super-teachers-list-container').innerHTML = `<div class="table-responsive"><table><thead><tr><th>الرقم</th><th>الاسم</th><th>المواد</th><th></th></tr></thead><tbody>` +
     list.map(t => `<tr><td>${esc(t.university_id)}</td><td>${esc(t.name)}</td><td>${(t.subjects||[]).map(esc).join('، ')}</td>
-      <td><button class="btn-sm btn-view" onclick="resetPersonPassword(${jsAttr(t.university_id)})">🔑 إعادة ضبط كلمة المرور</button>
-      <button class="btn-danger" onclick="deleteTeacher(${jsAttr(t.university_id)})">🗑️ حذف</button></td></tr>`).join('') +
+      <td><button class="btn-sm btn-view" onclick="resetPersonPassword('${esc(t.university_id)}')">🔑 إعادة ضبط كلمة المرور</button>
+      <button class="btn-danger" onclick="deleteTeacher('${esc(t.university_id)}')">🗑️ حذف</button></td></tr>`).join('') +
     `</tbody></table></div>`;
 }
 
