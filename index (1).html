@@ -1,0 +1,2444 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>طويلبات الحرم النبوي</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230a3323'/%3E%3Cpath d='M32 8c-4 5-7 9-7 14 0 4 3 6 7 6s7-2 7-6c0-5-3-9-7-14Z' fill='%23c9a227'/%3E%3Crect x='30' y='28' width='4' height='6' fill='%23c9a227'/%3E%3Cpath d='M20 56v-8c0-7 5-13 12-13s12 6 12 13v8Z' fill='%23c9a227'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --primary: #0d5c3e; --primary-hover: #094631; --primary-light: #e7f2ec;
+      --secondary: #c9a227; --secondary-light: #f5e9c2; --secondary-dark: #a3821c;
+      --bg: #f7f5ec; --card-bg: #ffffff;
+      --sidebar-bg: #0a3323; --sidebar-bg-2: #0d4530; --sidebar-hover: #124a34;
+      --text-main: #1c2a1a; --text-muted: #67766b; --border: #e7e2d0;
+      --green: #10b981; --green-light: #d1fae5;
+      --red: #ef4444; --red-light: #fee2e2;
+      --yellow: #f59e0b; --yellow-light: #fef3c7;
+      --purple: #c9a227; --purple-light: #faf1d8;
+      --deco-font: 'Aref Ruqaa', 'Cairo', serif;
+      --shadow-sm: 0 1px 3px 0 rgb(20 40 30 / 0.06), 0 1px 2px -1px rgb(20 40 30 / 0.06);
+      --shadow: 0 6px 16px -4px rgb(20 40 30 / 0.12), 0 3px 6px -3px rgb(20 40 30 / 0.08);
+      --shadow-lg: 0 20px 40px -8px rgb(10 40 25 / 0.18), 0 8px 16px -8px rgb(10 40 25 / 0.10);
+      --shadow-glow: 0 0 0 4px rgba(13,92,62,.10);
+      --radius: 14px;
+      --radius-lg: 20px;
+      --ease-spring: cubic-bezier(.34,1.56,.64,1);
+      --ease-smooth: cubic-bezier(.4,0,.2,1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+    html { scroll-behavior: smooth; }
+    html, body {
+      width: 100%; height: 100%; color: var(--text-main); overflow-x: hidden;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 0% 0%, rgba(13,92,62,.05), transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(201,162,39,.06), transparent 45%);
+      background-attachment: fixed;
+    }
+    body { display: flex; flex-direction: row; animation: pageIn .5s var(--ease-smooth); }
+    @keyframes pageIn { from { opacity: 0; } to { opacity: 1; } }
+
+    ::selection { background: var(--secondary); color: #fff; }
+    ::-webkit-scrollbar { width: 9px; height: 9px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(13,92,62,.28); border-radius: 20px; border: 2px solid transparent; background-clip: padding-box; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(13,92,62,.5); background-clip: padding-box; }
+
+    a, button, input, select, textarea { transition: all .2s var(--ease-smooth); }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
+      outline: 2px solid var(--secondary); outline-offset: 2px;
+    }
+
+    .minaret-icon { display: inline-block; vertical-align: middle; color: var(--secondary); flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(201,162,39,.35)); }
+
+    #toast-container { position: fixed; top: 20px; left: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; max-width: 350px; width: 100%; pointer-events: none; }
+    .custom-toast { background: #fff; color: var(--text-main); padding: 14px 18px; border-radius: var(--radius); box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 12px; pointer-events: auto; animation: toastSlideIn .4s var(--ease-spring) forwards; border: 1px solid var(--border); position: relative; overflow: hidden; backdrop-filter: blur(6px); }
+    .custom-toast.success { border-right: 5px solid var(--green); }
+    .custom-toast.error { border-right: 5px solid var(--red); }
+    .custom-toast.warning { border-right: 5px solid var(--yellow); }
+    .custom-toast.info { border-right: 5px solid var(--secondary); }
+    .toast-icon { font-size: 20px; flex-shrink: 0; }
+    .toast-content { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .toast-title { font-weight: 800; font-size: 13px; }
+    .toast-message { font-size: 12px; color: var(--text-muted); }
+    @keyframes toastSlideIn { from { opacity:0; transform: translateX(-60px) scale(.9);} to { opacity:1; transform: translateX(0) scale(1);} }
+    @keyframes toastFadeOut { to { opacity:0; transform: translateX(-30px) scale(.92);} }
+
+    #role-modal, #force-pass-modal {
+      position: fixed; inset: 0; z-index: 9999; padding: 15px;
+      display: flex; align-items: center; justify-content: center;
+      background:
+        linear-gradient(135deg, rgba(6,36,26,.6), rgba(10,51,35,.52) 60%, rgba(20,60,42,.44)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='54' height='54'%3E%3Cpath d='M0 27 L27 0 L54 27 L27 54 Z' fill='none' stroke='rgba(201,162,39,0.28)' stroke-width='1.1'/%3E%3Ccircle cx='27' cy='27' r='2.6' fill='rgba(201,162,39,0.28)'/%3E%3C/svg%3E");
+      backdrop-filter: blur(14px);
+      animation: overlayIn .35s var(--ease-smooth);
+    }
+    @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+    #force-pass-modal { display: none; z-index: 10001; }
+    .modal-box {
+      position: relative; background: rgba(255,255,255,.98); padding: 40px 22px 32px; border-radius: var(--radius-lg);
+      text-align: center; box-shadow: var(--shadow-lg); width: 100%; max-width: 420px;
+      border: 1px solid rgba(255,255,255,.4); border-top: 4px solid var(--secondary);
+      animation: modalFadeIn .45s var(--ease-spring);
+      background-image: linear-gradient(180deg, rgba(201,162,39,.06), transparent 120px);
+    }
+    .modal-box::before {
+      content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+      width: 64px; height: 32px; background: var(--sidebar-bg); border: 3px solid var(--secondary);
+      border-bottom: none; border-radius: 32px 32px 0 0;
+      box-shadow: 0 -4px 14px rgba(201,162,39,.25);
+    }
+    @keyframes modalFadeIn { from { opacity:0; transform: perspective(1000px) translateY(-28px) rotateX(-8deg) scale(.93);} to { opacity:1; transform: perspective(1000px) translateY(0) rotateX(0) scale(1);} }
+    .modal-box h2 {
+      font-family: var(--deco-font); background: linear-gradient(90deg, var(--primary), var(--secondary-dark), var(--secondary));
+      background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 6px; font-size: 28px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;
+      animation: shimmerText 4s linear infinite;
+    }
+    @keyframes shimmerText { to { background-position: -200% center; } }
+    .modal-box p { color: var(--text-muted); margin-bottom: 22px; font-size: 13px; }
+    .role-btn {
+      width: 100%; padding: 13px; margin-bottom: 10px; border: 2px solid transparent; background: #f1f5f0;
+      color: var(--text-main); font-size: 14px; font-weight: 700; border-radius: var(--radius); cursor: pointer;
+      transition: all .25s var(--ease-smooth); display: flex; align-items: center; justify-content: center; gap: 8px;
+      position: relative; overflow: hidden;
+    }
+    .role-btn::after {
+      content: ''; position: absolute; inset: 0; border-radius: inherit;
+      background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M0 13 L13 0 L26 13 L13 26 Z' fill='none' stroke='rgba(201,162,39,0.55)' stroke-width='1'/%3E%3C/svg%3E"),
+        linear-gradient(135deg, var(--primary), var(--primary-hover));
+      opacity: 0; transition: opacity .3s var(--ease-smooth);
+      z-index: 0;
+    }
+    .role-btn-purple { color: var(--purple); }
+    .role-btn:hover { color: #fff; transform: translateY(-2px); box-shadow: var(--shadow); }
+    .role-btn:hover::after { opacity: 1; }
+    .role-btn:active { transform: translateY(0) scale(.98); }
+    .role-btn.selected { color: #fff; box-shadow: var(--shadow); border-color: var(--secondary); }
+    .role-btn.selected::after { opacity: 1; }
+    .role-btn.selected > * { animation: textPulseGold 2.6s ease-in-out infinite; }
+    @keyframes textPulseGold { 0%, 100% { color: #fff; } 50% { color: var(--secondary); } }
+    .role-btn > * { position: relative; z-index: 1; }
+    .login-form-sec { display: none; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px; text-align: right; animation: fadeIn .35s var(--ease-smooth); }
+    .password-container { position: relative; width: 100%; }
+    .password-container input { width: 100%; padding-left: 45px; }
+    .toggle-pass-btn { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px; padding: 4px; transition: transform .2s; }
+    .toggle-pass-btn:hover { transform: translateY(-50%) scale(1.15); }
+
+    .sidebar {
+      width: 244px; height: 100vh; background: linear-gradient(180deg, var(--sidebar-bg), var(--sidebar-bg-2) 60%, var(--sidebar-bg));
+      display: flex; flex-direction: column; padding: 22px 14px; gap: 6px; flex-shrink: 0;
+      transition: all .3s var(--ease-smooth); z-index: 100; position: relative;
+      box-shadow: 4px 0 24px -8px rgba(0,0,0,.25);
+      overflow-y: auto; overflow-x: hidden;
+    }
+    .sidebar::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .6;
+      background-image:
+        radial-gradient(circle at 15% 8%, rgba(201,162,39,.10), transparent 30%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='rgba(201,162,39,0.5)'%3E%3Cpath stroke-width='1.3' d='M163.64,163.64 L36.36,163.64 L36.36,36.36 L163.64,36.36 Z'/%3E%3Cpath stroke-width='1.3' d='M190,100 L100,190 L10,100 L100,10 Z'/%3E%3Cpath stroke-width='1' d='M117.6,142.5 L57.5,117.6 L82.4,57.5 L142.5,82.4 Z'/%3E%3Cpath stroke-width='1' d='M142.5,117.6 L82.4,142.5 L57.5,82.4 L117.6,57.5 Z'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: no-repeat, repeat;
+    }
+    .sidebar-brand {
+      color: #fff; font-family: var(--deco-font); font-size: 17px; line-height: 1.3; font-weight: 700;
+      text-align: center; padding-bottom: 18px; border-bottom: 1px solid rgba(201,162,39,.35); margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 8px; white-space: normal;
+    }
+    .nav-btn {
+      background: none; border: none; color: #a9b8ac; font-size: 14px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border-radius: var(--radius);
+      transition: color .25s var(--ease-smooth), transform .25s var(--ease-smooth); text-align: right; white-space: nowrap;
+      position: relative; z-index: 1;
+    }
+    .nav-btn:hover { color: #fff; background: var(--sidebar-hover); transform: translateX(-3px); }
+    .nav-btn.active { color: #fff; transform: translateX(-2px); }
+    .nav-icon { font-size: 18px; width: 22px; text-align: center; transition: transform .25s var(--ease-spring); }
+    .nav-btn:hover .nav-icon { transform: scale(1.15) rotate(-4deg); }
+
+    /* زخرفة نجمة إسلامية ثمانية مجوفة تظهر عند تمرير الماوس على أحد أقسام القائمة */
+    .nav-btn::before {
+      content: ''; position: absolute; left: 12px; top: 50%; width: 16px; height: 16px; margin-top: -8px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%2310b981'%3E%3Cpath stroke-width='1.3' d='M163.64,163.64 L36.36,163.64 L36.36,36.36 L163.64,36.36 Z'/%3E%3Cpath stroke-width='1.3' d='M190,100 L100,190 L10,100 L100,10 Z'/%3E%3Cpath stroke-width='1' d='M117.6,142.5 L57.5,117.6 L82.4,57.5 L142.5,82.4 Z'/%3E%3Cpath stroke-width='1' d='M142.5,117.6 L82.4,142.5 L57.5,82.4 L117.6,57.5 Z'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: contain; background-repeat: no-repeat;
+      transform: scale(.25); opacity: 0; transition: opacity .35s var(--ease-smooth), transform .4s var(--ease-spring);
+      pointer-events: none; filter: drop-shadow(0 0 5px rgba(16,185,129,.65));
+    }
+    .nav-btn::after {
+      content: ''; position: absolute; left: 17px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px;
+      border-radius: 50%; background: var(--secondary); opacity: 0; transform: scale(.2);
+      transition: opacity .35s var(--ease-smooth) .05s, transform .4s var(--ease-spring) .05s;
+      pointer-events: none; filter: drop-shadow(0 0 4px rgba(201,162,39,.7));
+    }
+    .nav-btn:hover::before, .nav-btn.active::before { opacity: .9; transform: scale(1); }
+    .nav-btn:hover::after, .nav-btn.active::after { opacity: 1; transform: scale(1); }
+    @media (max-width: 768px) { .nav-btn::before, .nav-btn::after { display: none; } }
+
+    /* شريط مؤشر متحرك ينزلق بسلاسة بين عناصر القائمة عند التنقل */
+    .nav-indicator {
+      position: absolute; top: 0; left: 0; z-index: 0; border-radius: var(--radius);
+      background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+      box-shadow: 0 6px 16px rgba(13,92,62,.45); border-right: 3px solid var(--secondary);
+      opacity: 0; pointer-events: none; width: 0; height: 0;
+      transition: transform .45s var(--ease-spring), width .35s var(--ease-smooth), height .35s var(--ease-smooth), opacity .3s var(--ease-smooth);
+    }
+    @media (max-width: 768px) { .nav-indicator { border-right: none; border-bottom: 3px solid var(--secondary); } }
+
+    .main-container { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; background: transparent; position: relative; z-index: 1; }
+    .top-header {
+      background: rgba(255,255,255,.85); backdrop-filter: blur(10px); padding: 14px 20px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm);
+      position: sticky; top: 0; z-index: 10; flex-wrap: wrap; gap: 10px;
+    }
+    .content-area {
+      padding: 22px; max-width: 1200px; margin: 0 auto; width: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='rgba(16,185,129,0.32)'%3E%3Cpath stroke-width='1.3' d='M163.64,163.64 L36.36,163.64 L36.36,36.36 L163.64,36.36 Z'/%3E%3Cpath stroke-width='1.3' d='M190,100 L100,190 L10,100 L100,10 Z'/%3E%3Cpath stroke-width='0.9' d='M117.6,142.5 L57.5,117.6 L82.4,57.5 L142.5,82.4 Z'/%3E%3Cpath stroke-width='0.9' d='M142.5,117.6 L82.4,142.5 L57.5,82.4 L117.6,57.5 Z'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat;
+    }
+
+    .card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-sm);
+      transition: box-shadow .3s var(--ease-smooth), transform .3s var(--ease-smooth), border-color .3s;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .card:hover { box-shadow: var(--shadow); border-color: rgba(13,92,62,.18); transform: translateY(-2px); }
+    }
+    .card-header {
+      font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid var(--bg); padding-bottom: 10px;
+    }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .stat-card {
+      padding: 16px 14px; border-radius: var(--radius); text-align: center; border: 1px solid var(--border);
+      background: #fff; box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+      transition: transform .25s var(--ease-spring), box-shadow .25s var(--ease-smooth);
+    }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transform: scaleX(0); transform-origin: right; transition: transform .35s var(--ease-smooth);
+    }
+    .stat-card:hover { transform: perspective(700px) translateY(-6px) rotateX(3deg) rotateY(-2deg); box-shadow: var(--shadow); }
+    .stat-card:hover::before { transform: scaleX(1); }
+    .stat-number { font-size: 23px; font-weight: 800; margin-top: 4px; }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: pageEnter .6s var(--ease-smooth); }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(10px);} to { opacity:1; transform: translateY(0);} }
+    @keyframes pageEnter {
+      0%   { opacity: 0; transform: perspective(1000px) translateY(26px) scale(.965) rotateX(4deg); filter: blur(3px); }
+      60%  { opacity: 1; filter: blur(0); }
+      100% { opacity: 1; transform: perspective(1000px) translateY(0) scale(1) rotateX(0); filter: blur(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tab-content.active { animation: none; }
+    }
+
+    .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; border-radius: 10px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    th, td { padding: 12px; text-align: right; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+    th { background: #f8faf7; color: var(--text-muted); font-weight: 700; white-space: nowrap; position: sticky; top: 0; }
+    tbody tr { transition: background .18s var(--ease-smooth); }
+    tbody tr:hover { background: var(--primary-light); }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .schedule-grid-wrap {
+      width: 100%; overflow-x: auto; margin-top: 10px; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y;
+      position: relative; border-radius: 10px; cursor: grab;
+      scrollbar-width: thin; scrollbar-color: var(--secondary) #f1efe6;
+      /* الحاوية نفسها LTR عشان قيمة scrollLeft تكون قياسية وموحّدة بين كل المتصفحات (بعض متصفحات الجوال
+         تكسر التمرير باللمس داخل حاويات RTL بسبب اختلاف تفسيرها لقيمة scrollLeft). المحتوى الداخلي يضل RTL. */
+      direction: ltr;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='rgba(201,162,39,0.5)'%3E%3Cpath stroke-width='1.1' d='M163.64,163.64 L36.36,163.64 L36.36,36.36 L163.64,36.36 Z'/%3E%3Cpath stroke-width='1.1' d='M190,100 L100,190 L10,100 L100,10 Z'/%3E%3Cpath stroke-width='0.8' d='M117.6,142.5 L57.5,117.6 L82.4,57.5 L142.5,82.4 Z'/%3E%3Cpath stroke-width='0.8' d='M142.5,117.6 L82.4,142.5 L57.5,82.4 L117.6,57.5 Z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .schedule-grid-wrap.dragging { cursor: grabbing; scroll-behavior: auto; user-select: none; }
+    .schedule-grid-wrap::-webkit-scrollbar { height: 7px; }
+    .schedule-grid-wrap::-webkit-scrollbar-track { background: #f1efe6; border-radius: 10px; }
+    .schedule-grid-wrap::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
+    .schedule-grid { display: grid; direction: rtl; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: rgba(255,255,255,.93); }
+    .sg-corner { background: var(--sidebar-bg); position: sticky; right: 0; z-index: 3; }
+    .sg-day-header {
+      background: var(--sidebar-bg); color: #fff; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center;
+      padding: 10px 6px; text-align: center; position: sticky; right: 0; z-index: 2;
+      border-top: 1px solid rgba(201,162,39,.55); box-shadow: -3px 0 6px -2px rgba(0,0,0,.15);
+    }
+    .sg-hour-header { font-size: 11.5px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-right: 1px solid var(--border); white-space: nowrap; }
+    .sg-slot { border-right: 1px solid #f1efe6; border-top: 1px solid rgba(201,162,39,.28); }
+    .sg-slot.sg-hour { border-right: 1px solid var(--border); }
+    .sg-class {
+      margin: 2px 3px; border-radius: 10px; border: 1.5px solid; padding: 6px 10px; display: flex;
+      flex-direction: column; justify-content: center; gap: 3px; font-size: 12.5px; font-weight: 700;
+      overflow: hidden; position: relative; z-index: 2; transition: transform .2s var(--ease-smooth), box-shadow .2s;
+    }
+    .sg-class:hover { transform: scale(1.025); box-shadow: var(--shadow-sm); z-index: 3; }
+    .sg-class-time { font-size: 10.5px; font-weight: 600; opacity: .8; white-space: nowrap; }
+    .sg-del { position: absolute; top: 4px; left: 4px; background: rgba(255,255,255,.8); border: none; border-radius: 50%; width: 17px; height: 17px; font-size: 12px; line-height: 1; cursor: pointer; color: inherit; transition: transform .15s; }
+    .sg-del:hover { transform: scale(1.2); }
+    .modal-box h2 .minaret-icon { transition: transform .4s var(--ease-spring); transform-origin: bottom center; }
+    .modal-box h2 .minaret-icon.grow { transform: scale(3.2) translateY(-6px); }
+    #login-wipe {
+      position: fixed; inset: 0; z-index: 10000; display: none; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--sidebar-bg), #0d5c3e 55%, var(--secondary-dark, #a9821f));
+      transform: translateX(100%); transition: transform .45s var(--ease-smooth); pointer-events: none;
+    }
+    #login-wipe.enter { transform: translateX(0); }
+    #login-wipe.exit { transform: translateX(-100%); }
+    #login-wipe svg { color: var(--secondary); filter: drop-shadow(0 0 24px rgba(201,162,39,.55)); }
+    #login-wipe.enter svg { animation: wipeIconIn .7s var(--ease-spring) .1s both; }
+    @keyframes wipeIconIn { from { opacity:0; transform: perspective(600px) rotateY(90deg) scale(.7);} to { opacity:1; transform: perspective(600px) rotateY(0) scale(1);} }
+    .tsm-btn {
+      border: 2px solid var(--border); background: #fff; border-radius: 10px; padding: 8px 16px;
+      font-weight: 700; font-size: 13px; cursor: pointer; transition: all .2s var(--ease-smooth);
+    }
+    .tsm-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    .tsm-btn.tsm-done.active { background: var(--green-light); border-color: var(--green); color: var(--green); }
+    .tsm-btn.tsm-notdone.active { background: var(--red-light); border-color: var(--red); color: var(--red); }
+
+    .btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; border: none;
+      padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px;
+      transition: all .22s var(--ease-smooth); display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px; white-space: nowrap; position: relative; overflow: hidden;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px -6px rgba(13,92,62,.55); }
+    .btn:active { transform: translateY(0) scale(.97); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-sm { padding: 8px 12px; font-size: 12px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; border: none; font-weight: 700; transition: all .2s var(--ease-smooth); }
+    .btn-sm:hover { transform: translateY(-1px); }
+    .btn-view { background: linear-gradient(135deg, #0e7c66, #0b5c4c); color: #fff; }
+    .btn-purple { background: linear-gradient(135deg, var(--purple), #a3821e); color: #fff; }
+    .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: none; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 700; transition: all .2s var(--ease-smooth); }
+    .btn-danger:hover { transform: translateY(-1px); box-shadow: 0 6px 14px -6px rgba(239,68,68,.6); }
+    .btn-status { border: 1px solid var(--border); background: #fff; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 11px; margin-left: 2px; font-weight: 600; white-space: nowrap; color: var(--text-muted); transition: all .18s var(--ease-smooth); }
+    .btn-status:hover { transform: translateY(-1px); }
+    .btn-status.active-present { background: var(--green-light); color: var(--green); border-color: var(--green); font-weight: 700; }
+    .btn-status.active-late { background: var(--yellow-light); color: var(--yellow); border-color: var(--yellow); font-weight: 700; }
+    .btn-status.active-absent { background: var(--red-light); color: var(--red); border-color: var(--red); font-weight: 700; }
+    .attendance-extra { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .attendance-extra input[type="text"], .attendance-extra textarea { min-width: 180px; font-size: 12px; padding: 6px 8px; }
+    .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; box-shadow: var(--shadow-sm); }
+    .badge-present { background: var(--green-light); color: var(--green); }
+    .badge-late { background: var(--yellow-light); color: var(--yellow); }
+    .badge-absent { background: var(--red-light); color: var(--red); }
+    .grade-badge-green { background: var(--green-light) !important; color: var(--green) !important; border: 1px solid var(--green); }
+    .grade-badge-yellow { background: var(--yellow-light) !important; color: var(--yellow) !important; border: 1px solid var(--yellow); }
+    .grade-badge-red { background: var(--red-light) !important; color: var(--red) !important; border: 1px solid var(--red); }
+
+    .form-group { margin-bottom: 14px; text-align: right; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 700; font-size: 13px; }
+    input[type="text"], input[type="password"], input[type="date"], input[type="time"], input[type="number"], input[type="file"], select, textarea {
+      width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13px; outline: none; background: #fff;
+    }
+    input:hover, select:hover, textarea:hover { border-color: #d3cdb4; }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: var(--shadow-glow); }
+    .inline-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+    .inline-form > div { flex: 1; min-width: 140px; }
+
+    .hw-card, .quiz-card, .book-card {
+      border: 1px solid var(--border); padding: 16px; border-radius: var(--radius); margin-bottom: 16px;
+      background: #fff; transition: box-shadow .25s var(--ease-smooth), border-color .25s;
+    }
+    .hw-card:hover, .quiz-card:hover, .book-card:hover { box-shadow: var(--shadow); border-color: rgba(13,92,62,.16); }
+    .hw-submissions, .quiz-submissions { margin-top: 14px; background: #f8faf6; padding: 14px; border-radius: var(--radius); border: 2px dashed #cfd9c8; }
+    .sub-item { display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid #e2e8df; background: #fff; border-radius: 12px; margin-bottom: 12px; transition: box-shadow .2s; }
+    .sub-item:hover { box-shadow: var(--shadow-sm); }
+    .large-text { font-size: 15px !important; line-height: 1.7; font-weight: 600; }
+    .submission-details { font-size: 15px !important; background: #f1f5f1; padding: 14px; border-radius: 10px; border-right: 5px solid var(--primary); }
+    .question-block { background: #f8faf6; padding: 14px; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border); border-right: 4px solid var(--primary); }
+    .subject-badge { background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+    .hidden { display: none !important; }
+    .loading-spin { display: inline-block; width: 16px; height: 16px; border: 3px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; padding: 12px; flex-direction: row; overflow-x: auto; overflow-y: hidden; white-space: nowrap; align-items: center; gap: 6px; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1); }
+      .sidebar-brand { border-bottom: none; padding-bottom: 0; margin-bottom: 0; margin-left: 10px; font-size: 15px; }
+      .nav-btn { padding: 8px 12px; font-size: 12px; width: auto; border-radius: 8px; }
+      .nav-btn:hover, .nav-btn.active { transform: none; }
+      .main-container { height: auto; min-height: calc(100vh - 60px); }
+      .top-header { padding: 12px 15px; }
+      .content-area { padding: 15px 10px; }
+      .card { padding: 15px; margin-bottom: 15px; }
+      .schedule-grid-wrap { overflow-x: scroll; }
+      .sg-day-header { font-size: 15px; padding: 8px 8px; line-height: 1.3; }
+      .sg-hour-header { font-size: 12px; }
+      .inline-form { flex-direction: column; align-items: stretch; gap: 10px; }
+      .inline-form > div { width: 100%; }
+      .inline-form button { width: 100%; margin-top: 4px; }
+      .large-text { font-size: 14px !important; }
+      .submission-details { font-size: 14px !important; padding: 10px; }
+    }
+    @media (max-width: 480px) {
+      .top-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .btn { width: 100%; text-align: center; }
+      .card-header { font-size: 15px; }
+    }
+
+    /* ===== شارات موعد التسليم ===== */
+    .deadline-badge { padding: 5px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+    .deadline-green { background: var(--green-light); color: #047857; }
+    .deadline-yellow { background: var(--yellow-light); color: #b45309; }
+    .deadline-red { background: var(--red-light); color: #b91c1c; animation: pulseRed 1.6s infinite; }
+    .deadline-closed { background: #e5e7eb; color: #4b5563; }
+    @keyframes pulseRed { 0%,100% { opacity:1; } 50% { opacity:.55; } }
+    .locked-msg { background: #f3f4f6; color: #6b7280; padding: 10px 14px; border-radius: 10px; font-weight: 700; font-size: 13px; text-align: center; }
+
+    /* ===== مراجعة إجابات الطالب ===== */
+    .review-box { margin-top: 12px; background: #f8faf6; padding: 14px; border-radius: var(--radius); border: 2px dashed #cfd9c8; animation: fadeIn .3s var(--ease-smooth); }
+    .review-q { background: #fff; padding: 12px 14px; border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border); border-right: 4px solid var(--text-muted); }
+    .review-q.correct { border-right-color: var(--green); }
+    .review-q.wrong { border-right-color: var(--red); }
+    .review-q-title { font-weight: 700; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .review-verdict { font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
+    .review-verdict.correct { background: var(--green-light); color: #047857; }
+    .review-verdict.wrong { background: var(--red-light); color: #b91c1c; }
+    .review-opt { display: flex; align-items: center; gap: 6px; padding: 6px 10px; margin: 4px 0; border-radius: 8px; font-size: 13.5px; background: #f4f4f4; }
+    .review-opt.opt-correct { background: var(--green-light); color: #047857; font-weight: 700; }
+    .review-opt.opt-chosen-wrong { background: var(--red-light); color: #b91c1c; font-weight: 700; text-decoration: line-through; }
+    .review-answer-text { font-size: 13.5px; background: #f4f4f4; padding: 8px 10px; border-radius: 8px; margin-top: 4px; }
+    .review-grade-footer { margin-top: 6px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 13.5px; font-weight: 700; }
+
+    /* ===== جرس الإشعارات ===== */
+    .notif-bell-wrap { position: relative; display: inline-block; }
+    .notif-bell-btn {
+      background: var(--primary-light); border: none; width: 38px; height: 38px; border-radius: 50%;
+      font-size: 17px; cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center;
+      transition: transform .2s var(--ease-spring), background .2s;
+    }
+    .notif-bell-btn:hover { transform: scale(1.1) rotate(-8deg); background: var(--secondary-light); }
+    .notif-badge {
+      position: absolute; top: -3px; left: -3px; background: var(--red); color: #fff; font-size: 10px; font-weight: 800;
+      min-width: 17px; height: 17px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      padding: 0 3px; animation: badgePop .3s var(--ease-spring);
+    }
+    @keyframes badgePop { from { transform: scale(0); } to { transform: scale(1); } }
+    .notif-panel {
+      position: absolute; top: 46px; left: 0; width: 320px; max-height: 420px; overflow-y: auto; background: #fff;
+      border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg); z-index: 500;
+      display: none; transform-origin: top left;
+    }
+    .notif-panel.open { display: block; animation: notifOpen .25s var(--ease-spring); }
+    @keyframes notifOpen { from { opacity: 0; transform: scale(.92) translateY(-8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .notif-panel-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 13px; }
+    .notif-item { padding: 10px 14px; border-bottom: 1px solid var(--bg); font-size: 12.5px; cursor: pointer; transition: background .18s; }
+    .notif-item:hover { background: var(--primary-light); }
+    .notif-item.unread { background: #fef9ec; font-weight: 700; }
+    .notif-item .notif-time { display: block; color: var(--text-muted); font-size: 10.5px; font-weight: 500; margin-top: 3px; }
+    @media (max-width: 600px) { .notif-panel { width: 280px; left: auto; right: 0; } }
+
+    /* ===================================================================
+       خلفية متحركة ثلاثية الأبعاد (Aurora orbs + نجوم هندسية إسلامية دوّارة)
+    =================================================================== */
+    .bg-decor {
+      position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+      perspective: 1200px;
+    }
+    .bg-orb {
+      position: absolute; border-radius: 50%; filter: blur(50px); opacity: .6; will-change: transform;
+    }
+    .bg-orb-1 {
+      width: 460px; height: 460px; top: -140px; inset-inline-end: -120px;
+      background: radial-gradient(circle, rgba(201,162,39,.75), transparent 70%);
+      animation: orbFloat1 26s ease-in-out infinite;
+    }
+    .bg-orb-2 {
+      width: 380px; height: 380px; bottom: -150px; inset-inline-start: -110px;
+      background: radial-gradient(circle, rgba(230,193,90,.65), transparent 70%);
+      animation: orbFloat2 32s ease-in-out infinite;
+    }
+    .bg-orb-3 {
+      width: 300px; height: 300px; top: 42%; inset-inline-start: 42%;
+      background: radial-gradient(circle, rgba(168,128,24,.45), transparent 70%);
+      animation: orbFloat3 22s ease-in-out infinite;
+    }
+    @keyframes orbFloat1 { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(-40px,55px,0) scale(1.12); } }
+    @keyframes orbFloat2 { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(50px,-45px,0) scale(1.16); } }
+    @keyframes orbFloat3 { 0%,100% { transform: translate3d(0,0,0) rotate(0deg); } 50% { transform: translate3d(-35px,-30px,0) rotate(25deg); } }
+
+    /* زخرفة نجمة إسلامية ثمانية مجوفة كبيرة تدور بمنظور ثلاثي الأبعاد */
+    .bg-star {
+      position: absolute; transform-style: preserve-3d;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='currentColor'%3E%3Cpath stroke-width='2.5' d='M163.64,163.64 L36.36,163.64 L36.36,36.36 L163.64,36.36 Z'/%3E%3Cpath stroke-width='2.5' d='M190,100 L100,190 L10,100 L100,10 Z'/%3E%3Cpath stroke-width='1.8' d='M117.6,142.5 L57.5,117.6 L82.4,57.5 L142.5,82.4 Z'/%3E%3Cpath stroke-width='1.8' d='M142.5,117.6 L82.4,142.5 L57.5,82.4 L117.6,57.5 Z'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 100% 100%; background-repeat: no-repeat;
+    }
+    .star-a {
+      width: 320px; height: 320px; top: 6%; inset-inline-start: -80px; color: var(--green); opacity: .22;
+      animation: starSpin 110s linear infinite;
+    }
+    .star-b {
+      width: 230px; height: 230px; bottom: 5%; inset-inline-end: -60px; color: var(--green); opacity: .18;
+      animation: starSpin 85s linear infinite reverse;
+    }
+    @keyframes starSpin {
+      from { transform: perspective(1000px) rotateX(58deg) rotateZ(0deg); }
+      to   { transform: perspective(1000px) rotateX(58deg) rotateZ(360deg); }
+    }
+    .bg-grid {
+      position: absolute; inset: -10% -10% -10% -10%; opacity: .35;
+      background-image: linear-gradient(rgba(13,92,62,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(13,92,62,.05) 1px, transparent 1px);
+      background-size: 42px 42px;
+      transform: perspective(700px) rotateX(62deg) translateY(-10%);
+      mask-image: linear-gradient(to top, rgba(0,0,0,.5), transparent 65%);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,.5), transparent 65%);
+    }
+
+    /* كرات صغيرة شفافة تسبح في الشاشة وتتغير ألوانها بين الذهبي والأخضر */
+    .bg-particle {
+      position: absolute; border-radius: 50%; opacity: .55; filter: blur(1px);
+      box-shadow: 0 0 10px currentColor;
+    }
+    @keyframes particleColor {
+      0%   { background: rgba(201,162,39,.85); box-shadow: 0 0 10px rgba(201,162,39,.6); }
+      50%  { background: rgba(13,92,62,.85);   box-shadow: 0 0 10px rgba(13,92,62,.55); }
+      100% { background: rgba(201,162,39,.85); box-shadow: 0 0 10px rgba(201,162,39,.6); }
+    }
+    .p1 { width: 10px; height: 10px; top: 18%; left: 12%; animation: swim1 24s ease-in-out infinite, particleColor 7s ease-in-out infinite; }
+    .p2 { width: 14px; height: 14px; top: 62%; left: 8%;  animation: swim2 30s ease-in-out infinite, particleColor 9s ease-in-out infinite .5s; }
+    .p3 { width: 8px;  height: 8px;  top: 30%; left: 78%; animation: swim3 20s ease-in-out infinite, particleColor 6s ease-in-out infinite 1s; }
+    .p4 { width: 12px; height: 12px; top: 75%; left: 70%; animation: swim4 27s ease-in-out infinite, particleColor 8s ease-in-out infinite 1.5s; }
+    .p5 { width: 9px;  height: 9px;  top: 48%; left: 45%; animation: swim5 22s ease-in-out infinite, particleColor 7.5s ease-in-out infinite 2s; }
+    .p6 { width: 13px; height: 13px; top: 10%; left: 55%; animation: swim6 26s ease-in-out infinite, particleColor 6.5s ease-in-out infinite .8s; }
+    .p7 { width: 7px;  height: 7px;  top: 85%; left: 35%; animation: swim1 19s ease-in-out infinite reverse, particleColor 8.5s ease-in-out infinite 1.2s; }
+    .p8 { width: 11px; height: 11px; top: 5%;  left: 30%; animation: swim3 25s ease-in-out infinite reverse, particleColor 7s ease-in-out infinite 2.5s; }
+    @keyframes swim1 { 0%,100% { transform: translate(0,0); } 25% { transform: translate(60px,-40px); } 50% { transform: translate(20px,50px); } 75% { transform: translate(-50px,10px); } }
+    @keyframes swim2 { 0%,100% { transform: translate(0,0); } 30% { transform: translate(-40px,-60px); } 60% { transform: translate(70px,-10px); } 85% { transform: translate(30px,60px); } }
+    @keyframes swim3 { 0%,100% { transform: translate(0,0); } 20% { transform: translate(-60px,30px); } 55% { transform: translate(-20px,-55px); } 80% { transform: translate(45px,20px); } }
+    @keyframes swim4 { 0%,100% { transform: translate(0,0); } 35% { transform: translate(55px,40px); } 65% { transform: translate(-35px,55px); } 90% { transform: translate(-55px,-25px); } }
+    @keyframes swim5 { 0%,100% { transform: translate(0,0); } 40% { transform: translate(-45px,-35px); } 70% { transform: translate(50px,-45px); } 95% { transform: translate(25px,45px); } }
+    @keyframes swim6 { 0%,100% { transform: translate(0,0); } 22% { transform: translate(40px,-50px); } 58% { transform: translate(-55px,-15px); } 82% { transform: translate(-15px,55px); } }
+    @media (max-width: 768px) {
+      .bg-particle { width: 7px !important; height: 7px !important; opacity: .45; }
+    }
+    @media (max-width: 768px) {
+      .bg-orb { filter: blur(36px); }
+      .bg-star { transform: scale(.7); }
+      .star-a { top: -20px; inset-inline-start: -110px; }
+      .star-b { bottom: -30px; inset-inline-end: -90px; }
+      .bg-grid { opacity: .22; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bg-orb, .bg-star, .bg-particle { animation: none !important; }
+    }
+    body.pre-login .bg-star, body.pre-login .bg-grid { display: none; }
+    /* ملاحظة: الإخفاء الفعلي لحين الدخول يتم عبر inline style في العنصر نفسه (أضمن من الاعتماد على كلاس الـ body وحده) */
+  </style>
+</head>
+<body class="pre-login">
+
+  <div class="bg-decor" aria-hidden="true">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-star star-a" style="display:none;"></div>
+    <div class="bg-star star-b" style="display:none;"></div>
+    <div class="bg-grid" style="display:none;"></div>
+    <div class="bg-particle p1"></div>
+    <div class="bg-particle p2"></div>
+    <div class="bg-particle p3"></div>
+    <div class="bg-particle p4"></div>
+    <div class="bg-particle p5"></div>
+    <div class="bg-particle p6"></div>
+    <div class="bg-particle p7"></div>
+    <div class="bg-particle p8"></div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <!-- نافذة تسجيل الدخول -->
+  <div id="role-modal">
+    <div class="modal-box">
+      <h2><svg class="minaret-icon" width="30" height="56" viewBox="0 0 60 120" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M30 2 24 12h12L30 2Z"/><rect x="28" y="12" width="4" height="8"/><path d="M22 20c0-6 4-10 8-10s8 4 8 10c0 4-3 6-8 6s-8-2-8-6Z"/><rect x="24" y="26" width="12" height="8" rx="1"/><rect x="20" y="34" width="20" height="5" rx="1"/><rect x="25" y="39" width="10" height="34"/><rect x="19" y="73" width="22" height="6" rx="1"/><rect x="22" y="79" width="16" height="26"/><rect x="14" y="105" width="32" height="10" rx="1"/><rect x="10" y="115" width="40" height="6" rx="1"/></svg> طويلبات الحرم النبوي</h2>
+      <p>منصة طلاب وطالبات الحرم النبوي الشريف — اختر نوع دخولك واستكمل التوثيق:</p>
+
+      <button type="button" class="role-btn" onclick="showForm('teacher', this)"><span>👩‍🏫/👨‍🏫 تسجيل دخول المعلم/ة</span></button>
+      <button type="button" class="role-btn" onclick="showForm('student', this)"><span>🎓 تسجيل دخول الطالب/ة</span></button>
+      <button type="button" class="role-btn role-btn-purple" onclick="showForm('supervisor', this)"><span>👨‍💼/👩‍💼 تسجيل دخول المشرف/ة</span></button>
+
+      <div id="teacher-form" class="login-form-sec">
+        <div class="form-group">
+          <label>الرقم الأكاديمي:</label>
+          <input type="text" id="teacherIdInput" autocomplete="off" placeholder="مثال: 1001">
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور:</label>
+          <div class="password-container">
+            <input type="password" id="teacherPassInput" autocomplete="new-password" placeholder="••••">
+            <button type="button" class="toggle-pass-btn" onclick="togglePassword('teacherPassInput', this)">🙈</button>
+          </div>
+        </div>
+        <button type="button" class="btn" style="width:100%; margin-top:5px;" onclick="doLogin('teacher')">تأكيد الدخول</button>
+      </div>
+
+      <div id="student-form" class="login-form-sec">
+        <div class="form-group">
+          <label>الرقم الجامعي:</label>
+          <input type="text" id="studentIdInput" autocomplete="off" placeholder="مثال: 441001">
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور:</label>
+          <div class="password-container">
+            <input type="password" id="studentPassInput" autocomplete="new-password" placeholder="••••">
+            <button type="button" class="toggle-pass-btn" onclick="togglePassword('studentPassInput', this)">🙈</button>
+          </div>
+        </div>
+        <button type="button" class="btn" style="width:100%; margin-top:5px;" onclick="doLogin('student')">تأكيد الدخول</button>
+      </div>
+
+      <div id="supervisor-form" class="login-form-sec">
+        <div class="form-group">
+          <label>رقم المشرف/ة:</label>
+          <input type="text" id="superIdInput" autocomplete="off" placeholder="مثال: 9001">
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور:</label>
+          <div class="password-container">
+            <input type="password" id="superPassInput" autocomplete="new-password" placeholder="••••">
+            <button type="button" class="toggle-pass-btn" onclick="togglePassword('superPassInput', this)">🙈</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-purple" style="width:100%; margin-top:5px;" onclick="doLogin('supervisor')">تأكيد الدخول كمشرف/ة</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة إجبارية لتغيير كلمة المرور أول مرة -->
+  <div id="force-pass-modal">
+    <div class="modal-box">
+      <h2>🔒 غيّر كلمة المرور</h2>
+      <p>هذه أول مرة تسجّل فيها الدخول. لازم تحط كلمة مرور جديدة خاصة فيك قبل ما تكمل.</p>
+      <div class="form-group">
+        <div class="password-container">
+          <input type="password" id="forcePassInput" autocomplete="new-password" placeholder="كلمة المرور الجديدة (4 أحرف فأكثر)">
+          <button type="button" class="toggle-pass-btn" onclick="togglePassword('forcePassInput', this)">🙈</button>
+        </div>
+      </div>
+      <button type="button" class="btn" style="width:100%;" onclick="submitForcePasswordChange()">تأكيد وحفظ كلمة المرور</button>
+    </div>
+  </div>
+
+  <!-- مؤثر الانتقال بعد تسجيل الدخول -->
+  <div id="login-wipe">
+    <svg width="130" height="260" viewBox="0 0 60 120" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M30 2 24 12h12L30 2Z"/><rect x="28" y="12" width="4" height="8"/><path d="M22 20c0-6 4-10 8-10s8 4 8 10c0 4-3 6-8 6s-8-2-8-6Z"/><rect x="24" y="26" width="12" height="8" rx="1"/><rect x="20" y="34" width="20" height="5" rx="1"/><rect x="25" y="39" width="10" height="34"/><rect x="19" y="73" width="22" height="6" rx="1"/><rect x="22" y="79" width="16" height="26"/><rect x="14" y="105" width="32" height="10" rx="1"/><rect x="10" y="115" width="40" height="6" rx="1"/></svg>
+  </div>
+
+  <div class="sidebar">
+    <div class="sidebar-brand"><svg class="minaret-icon" width="18" height="34" viewBox="0 0 60 120" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M30 2 24 12h12L30 2Z"/><rect x="28" y="12" width="4" height="8"/><path d="M22 20c0-6 4-10 8-10s8 4 8 10c0 4-3 6-8 6s-8-2-8-6Z"/><rect x="24" y="26" width="12" height="8" rx="1"/><rect x="20" y="34" width="20" height="5" rx="1"/><rect x="25" y="39" width="10" height="34"/><rect x="19" y="73" width="22" height="6" rx="1"/><rect x="22" y="79" width="16" height="26"/><rect x="14" y="105" width="32" height="10" rx="1"/><rect x="10" y="115" width="40" height="6" rx="1"/></svg><span>طويلبات الحرم النبوي</span></div>
+    <div class="nav-indicator" id="navIndicator" aria-hidden="true"></div>
+    <button class="nav-btn active" onclick="switchTab('attendance', this)"><span class="nav-icon">📋</span> سجل التحضير</button>
+    <button class="nav-btn role-teacher-only" id="nav-addstudents-btn" onclick="switchTab('addstudents', this)"><span class="nav-icon">➕</span> إضافة الطلاب</button>
+    <button class="nav-btn" onclick="switchTab('schedule', this)"><span class="nav-icon">📅</span> الجدول</button>
+    <button class="nav-btn" onclick="switchTab('homework', this)"><span class="nav-icon">📚</span> الواجبات</button>
+    <button class="nav-btn" onclick="switchTab('tasmee', this)"><span class="nav-icon">🕌</span> التسميع</button>
+    <button class="nav-btn" onclick="switchTab('quizzes', this)"><span class="nav-icon">📝</span> الاختبارات الإلكترونية</button>
+    <button class="nav-btn" onclick="switchTab('examtable', this)"><span class="nav-icon">🗓️</span> جدول الاختبارات</button>
+    <button class="nav-btn" onclick="switchTab('curriculum', this)"><span class="nav-icon">📖</span> المنهج</button>
+    <button class="nav-btn role-teacher-only" id="nav-news-btn" onclick="switchTab('news', this)"><span class="nav-icon">📰</span> الأخبار</button>
+    <button class="nav-btn role-supervisor-only" id="nav-teachers-btn" onclick="switchTab('teachers', this)" style="display:none;"><span class="nav-icon">👩‍🏫</span> إدارة المعلمين</button>
+    <button class="nav-btn" onclick="switchTab('settings', this)"><span class="nav-icon">⚙️</span> الإعدادات</button>
+    <button class="nav-btn" onclick="logout()" style="color:#f87171;"><span class="nav-icon">🔄</span> الخروج</button>
+  </div>
+
+  <div class="main-container">
+    <div class="top-header">
+      <div>
+        <h3 id="panel-title" style="font-size:16px; font-weight:800;">لوحة التحكم</h3>
+        <span id="user-role-text" style="font-size:12px; color:var(--text-muted); font-weight:600;"></span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="notif-bell-wrap role-student-only" style="display:none;">
+          <button class="notif-bell-btn" onclick="toggleNotifPanel()">🔔<span id="notif-badge" class="notif-badge" style="display:none;">0</span></button>
+          <div id="notif-panel" class="notif-panel">
+            <div class="notif-panel-header">
+              <span>🔔 الإشعارات</span>
+              <button class="btn-sm btn-view" style="padding:4px 8px; font-size:11px;" onclick="markAllNotifRead()">تحديد الكل كمقروء</button>
+            </div>
+            <div id="notif-list"></div>
+          </div>
+        </div>
+        <span id="user-display-name" style="font-weight:700; font-size:13px; color:var(--primary); background:var(--primary-light); padding:5px 12px; border-radius:20px;"></span>
+      </div>
+    </div>
+
+    <div class="content-area">
+
+      <!-- 1. الحضور -->
+      <div id="tab-attendance" class="tab-content active">
+        <div class="card role-teacher-only">
+          <div class="card-header">📚 إدارة المواد الدراسية الخاصة بك</div>
+          <div class="inline-form">
+            <div><input type="text" id="newSubjectName" placeholder="اسم المادة الجديدة..."></div>
+            <button class="btn" onclick="addSubject()">➕ إضافة المادة</button>
+            <button class="btn-danger" onclick="deleteCurrentSubject()">🗑️ حذف المادة المحددة</button>
+          </div>
+        </div>
+
+        <div class="card role-teacher-supervisor-only">
+          <div class="card-header">🔍 استعلام سجل غياب ودرجات طالب/ة</div>
+          <div class="inline-form">
+            <div><label>الرقم الجامعي للطالب/ة:</label><input type="text" id="queryStudentId" placeholder="مثال: 441001"></div>
+            <button class="btn" onclick="renderStudentReports()">بحث</button>
+          </div>
+          <div id="student-reports-box" style="margin-top:15px;"></div>
+        </div>
+
+        <div class="card role-teacher-only">
+          <div class="card-header"><span>📅 اختيار تاريخ التحضير والتصفية اليومية</span></div>
+          <div class="inline-form">
+            <div><label style="color:var(--primary);">تاريخ التحضير:</label><input type="date" id="attendanceDate" onchange="renderAttendance()"></div>
+            <div><label>المادة الدراسية:</label><select id="attendanceSubject" onchange="renderAttendance()"></select></div>
+            <div><label>بحث سريع في الكشف:</label><input type="text" id="searchStudentInput" onkeyup="renderAttendance()" placeholder="اكتب للبحث..."></div>
+          </div>
+        </div>
+
+        <div class="stats-grid role-teacher-only">
+          <div class="stat-card" style="border-top:4px solid var(--green);"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">الحاضرون</div><div id="stat-present" class="stat-number" style="color:var(--green);">0</div></div>
+          <div class="stat-card" style="border-top:4px solid var(--yellow);"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">المتأخرون</div><div id="stat-late" class="stat-number" style="color:var(--yellow);">0</div></div>
+          <div class="stat-card" style="border-top:4px solid var(--red);"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">الغائبون</div><div id="stat-absent" class="stat-number" style="color:var(--red);">0</div></div>
+        </div>
+
+        <div class="card role-teacher-only">
+          <div class="card-header">📋 كشف الحضور</div>
+          <div id="attendance-table-box"><div class="table-responsive"><table><thead><tr><th>الرقم</th><th>الاسم</th><th>الحالة</th></tr></thead><tbody id="attendance-tbody"></tbody></table></div></div>
+        </div>
+
+        <div class="card role-student-only" style="display:none;">
+          <div class="card-header">📋 سجل حضوري وغيابي</div>
+          <div id="my-attendance-list"></div>
+        </div>
+      </div>
+
+      <!-- 2. إضافة الطلاب -->
+      <div id="tab-addstudents" class="tab-content">
+        <div class="card">
+          <div class="card-header">➕ إضافة طالب/ة جديد (كلمة المرور الابتدائية موحدة، والطالب يُجبر على تغييرها أول دخول)</div>
+          <div class="inline-form">
+            <div><label>اسم الطالب/ة:</label><input type="text" id="newStudentName" placeholder="مثال: سارة أحمد"></div>
+            <div><label>الرقم الجامعي:</label><input type="text" id="newStudentId" placeholder="مثال: 441002"></div>
+            <div><label>كلمة المرور الابتدائية:</label><input type="text" id="newStudentPass" value="1234"></div>
+            <button class="btn" onclick="addStudentManual()">إضافة الطالب/ة</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">📊 إضافة الطلاب دفعة واحدة من ملف إكسل</div>
+          <p style="color:var(--text-muted); font-size:13px; margin:0 0 10px;">حمّل ملف Excel فيه عمودين: <b>العمود الأول</b> الرقم الجامعي، <b>العمود الثاني</b> الاسم. الصف الأول يُعتبر عناوين ويتم تجاهله تلقائياً. كلمة المرور الابتدائية لكل الطلاب ستكون "1234".</p>
+          <input type="file" id="excelStudentsFile" accept=".xlsx,.xls,.csv">
+          <button class="btn" style="margin-top:10px;" onclick="addStudentsFromExcel()">📥 رفع وإضافة الطلاب من الملف</button>
+        </div>
+        <div class="card">
+          <div class="card-header">📋 قائمة الطلاب المسجلين</div>
+          <div class="table-responsive"><table><thead><tr><th>الرقم الجامعي</th><th>الاسم</th><th></th></tr></thead><tbody id="students-list-tbody"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- 3. الجدول -->
+      <div id="tab-schedule" class="tab-content">
+        <div class="card role-teacher-only">
+          <div class="card-header">➕ إضافة حصة</div>
+          <div class="inline-form">
+            <div><label>اليوم:</label>
+              <select id="scheduleDay"><option>الأحد</option><option>الإثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option></select>
+            </div>
+            <div><label>المادة:</label><input type="text" id="scheduleSubject" placeholder="اسم المادة"></div>
+            <div><label>من:</label><input type="time" id="scheduleStart"></div>
+            <div><label>إلى:</label><input type="time" id="scheduleEnd"></div>
+            <button class="btn" onclick="addScheduleEntry()">إضافة</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">📅 الجدول الأسبوعي</div>
+          <div class="schedule-grid-wrap"><div id="schedule-grid" class="schedule-grid"></div></div>
+        </div>
+      </div>
+
+      <!-- 4. الواجبات -->
+      <div id="tab-homework" class="tab-content">
+        <div class="card role-teacher-supervisor-only">
+          <div class="card-header">➕ إنشاء واجب جديد</div>
+          <div class="form-group"><label>عنوان الواجب:</label><input type="text" id="hwTitle" placeholder="مثال: واجب الوحدة الأولى"></div>
+          <div class="form-group"><label>وصف/تعليمات الواجب (اختياري):</label><textarea id="hwDescription" rows="2" placeholder="اكتب تعليمات الواجب هنا..."></textarea></div>
+          <div class="form-group"><label>موعد انتهاء التسليم (اختياري - إذا تركته فاضي يبقى الواجب مفتوح دائماً):</label><input type="datetime-local" id="hwDueDate"></div>
+          <div class="form-group">
+            <label><input type="checkbox" id="hwNoQuestions" onchange="toggleHwQuestionsMode()" style="width:auto;"> واجب بدون أسئلة (تسليم حر - الطالب يكتب ملاحظة أو رابط فقط)</label>
+          </div>
+          <div id="hw-questions-wrap">
+            <div id="hw-builder-questions"></div>
+            <div class="inline-form">
+              <button class="btn-sm btn-view" onclick="addQuestionField('hw','mcq')">➕ سؤال اختيار من متعدد</button>
+              <button class="btn-sm btn-view" style="background:#475569;" onclick="addQuestionField('hw','essay')">➕ سؤال مقالي</button>
+            </div>
+          </div>
+          <button class="btn" style="margin-top:16px; width:100%; background:linear-gradient(135deg, var(--green), #059669);" onclick="publishHomework()">نشر الواجب للطلبة</button>
+        </div>
+        <div class="card">
+          <div class="card-header">📚 قائمة الواجبات</div>
+          <div id="homework-container"></div>
+        </div>
+      </div>
+
+      <!-- 4.5 التسميع -->
+      <div id="tab-tasmee" class="tab-content">
+        <div class="card role-teacher-supervisor-only">
+          <div class="card-header">🕌 تنزيل تسميع جديد</div>
+          <div class="inline-form">
+            <div><label>من (آية/صفحة):</label><input type="text" id="tsmFrom" placeholder="مثال: الآية 1"></div>
+            <div><label>إلى (آية/صفحة):</label><input type="text" id="tsmTo" placeholder="مثال: الآية 20"></div>
+            <button class="btn" onclick="publishTasmee()">➕ تنزيل التسميع للطلبة</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">🕌 قائمة التسميع</div>
+          <div id="tasmee-container"></div>
+        </div>
+      </div>
+
+      <!-- 5. الاختبارات -->
+      <div id="tab-quizzes" class="tab-content">
+        <div class="card role-teacher-supervisor-only">
+          <div class="card-header">➕ إنشاء اختبار جديد</div>
+          <div class="form-group"><label>عنوان الاختبار:</label><input type="text" id="quizTitle" placeholder="مثال: اختبار الوحدة الثانية"></div>
+          <div class="form-group"><label>موعد انتهاء الاختبار (اختياري - إذا تركته فاضي يبقى الاختبار مفتوح دائماً):</label><input type="datetime-local" id="quizDueDate"></div>
+          <div id="quiz-builder-questions"></div>
+          <div class="inline-form">
+            <button class="btn-sm btn-view" onclick="addQuestionField('quiz','mcq')">➕ سؤال اختيار من متعدد</button>
+            <button class="btn-sm btn-view" style="background:#475569;" onclick="addQuestionField('quiz','essay')">➕ سؤال مقالي</button>
+          </div>
+          <button class="btn" style="margin-top:16px; width:100%; background:linear-gradient(135deg, var(--green), #059669);" onclick="publishQuiz()">نشر الاختبار للطلبة</button>
+        </div>
+        <div class="card">
+          <div class="card-header">📝 قائمة الاختبارات</div>
+          <div id="quizzes-container"></div>
+        </div>
+      </div>
+
+      <!-- 6. جدول الاختبارات القادمة -->
+      <div id="tab-examtable" class="tab-content">
+        <div class="card role-teacher-supervisor-only">
+          <div class="card-header">➕ إضافة تنبيه اختبار</div>
+          <div class="inline-form">
+            <div><label>تاريخ الاختبار:</label><input type="date" id="examTableDate"></div>
+            <div><label>اسم المادة واختبارها:</label><input type="text" id="examTableTitle" placeholder="مثال: اختبار الرياضيات النهائي"></div>
+            <div><label>الوقت / ملاحظة:</label><input type="text" id="examTableTime" placeholder="مثال: الساعة 9:00 صباحاً"></div>
+            <div><label>لون التنبيه:</label>
+              <select id="examTableColor">
+                <option value="#f3e8ff">أرجواني</option><option value="#d1fae5">أخضر</option>
+                <option value="#fee2e2">أحمر</option><option value="#fef3c7">أصفر</option><option value="#e0f2fe">أزرق سماوي</option>
+              </select>
+            </div>
+            <button class="btn btn-purple" onclick="addExamTableEntry()">إضافة للتنبيهات</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">🗓️ جدول الاختبارات القادمة</div>
+          <div id="exam-table-list"></div>
+        </div>
+      </div>
+
+      <!-- 7. المنهج -->
+      <div id="tab-curriculum" class="tab-content">
+        <div class="card role-teacher-supervisor-only">
+          <div class="card-header">
+            <span>📖 المنهج والكتب الدراسية</span>
+            <button class="btn" onclick="toggleBookForm()">➕ إضافة كتاب جديد</button>
+          </div>
+          <div id="book-upload-form" style="display:none; margin-top:10px;">
+            <div class="form-group"><label>اسم المادة:</label><input type="text" id="bookSubject" placeholder="مثال: الرياضيات"></div>
+            <div class="form-group"><label>اسم الكتاب/الملف:</label><input type="text" id="bookTitle" placeholder="مثال: كتاب الطالب - الفصل الأول"></div>
+            <div class="form-group"><label>الملف (حتى 50 ميجابايت):</label><input type="file" id="bookFile"></div>
+            <button class="btn" style="width:100%;" onclick="uploadBook()" id="bookUploadBtn">رفع الكتاب</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">📚 الكتب والملفات المتاحة</div>
+          <div id="books-container"></div>
+        </div>
+      </div>
+
+      <!-- 7.5 الأخبار -->
+      <div id="tab-news" class="tab-content">
+        <div class="card role-teacher-only">
+          <div class="card-header">📰 نشر خبر جديد لطلابك</div>
+          <p style="color:var(--text-muted); font-size:13px; margin:0 0 10px;">أي شي جديد صار (محاضرة ملغية، تغيير مكان، تنبيه عاجل...) بيوصل الطلاب فوراً في جرس الإشعارات.</p>
+          <div class="form-group"><label>عنوان الخبر:</label><input type="text" id="newsTitle" placeholder="مثال: محاضرة اليوم ملغية"></div>
+          <div class="form-group"><label>تفاصيل إضافية (اختياري):</label><textarea id="newsBody" rows="3" placeholder="أي تفاصيل زيادة تحب توضحها..."></textarea></div>
+          <button class="btn" style="width:100%;" onclick="sendNews()" id="sendNewsBtn">📤 إرسال الخبر للطلاب</button>
+        </div>
+        <div class="card">
+          <div class="card-header">🗂️ الأخبار المرسلة</div>
+          <div id="news-container"></div>
+        </div>
+      </div>
+
+      <!-- 8. إدارة المعلمين -->
+      <div id="tab-teachers" class="tab-content">
+        <div class="card">
+          <div class="card-header">👨‍🏫 إضافة معلم/ة جديد</div>
+          <div class="inline-form">
+            <div><label>اسم المعلم/ة:</label><input type="text" id="newTeacherNameInput" placeholder="مثال: أستاذ خالد"></div>
+            <div><label>الرقم الأكاديمي:</label><input type="text" id="newTeacherIdInput" placeholder="مثال: 1005"></div>
+            <div><label>المواد (افصل بينها بفاصلة):</label><input type="text" id="newTeacherSubjectsInput" placeholder="اللغة العربية، الرياضيات"></div>
+            <div><label>كلمة المرور الابتدائية:</label><input type="text" id="newTeacherPassInput" value="1234"></div>
+            <button class="btn btn-purple" onclick="addNewTeacherAccount()">إضافة المعلم/ة</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">📋 قائمة المعلمين</div>
+          <div id="super-teachers-list-container"></div>
+        </div>
+      </div>
+
+      <!-- 9. الإعدادات -->
+      <div id="tab-settings" class="tab-content">
+        <div class="card">
+          <div class="card-header">⚙️ إعدادات الحساب</div>
+          <div class="form-group"><label>الاسم:</label><input type="text" id="settingName"></div>
+          <div class="form-group"><label>رقم الدخول (لا يمكن تغييره):</label><input type="text" id="settingId" disabled style="background:#f1f5f9; color:#64748b;"></div>
+          <div class="form-group">
+            <label>كلمة المرور الجديدة (اتركها فارغة لعدم التغيير):</label>
+            <div class="password-container">
+              <input type="password" id="settingPass" autocomplete="new-password">
+              <button type="button" class="toggle-pass-btn" onclick="togglePassword('settingPass', this)">🙈</button>
+            </div>
+          </div>
+          <button class="btn" onclick="saveSettings()">حفظ التغييرات</button>
+        </div>
+
+        <div class="card role-student-only">
+          <div class="card-header">🔔 إشعارات الجوال</div>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">
+            فعّل هذا الخيار عشان توصلك إشعارات على جوالك مباشرة (حتى لو الموقع مقفول) لما ينزل المعلم واجب أو اختبار
+            جديد، أو لما يقترب موعد انتهاء تسليم واجب/اختبار.
+          </p>
+          <button class="btn" id="pushEnableBtn" onclick="enablePushNotifications()">🔔 تفعيل إشعارات الجوال لهذا الجهاز</button>
+          <p id="pushStatusText" style="font-size:12px; margin-top:8px; color:var(--text-muted);"></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+/* ================= إعداد الاتصال بـ Supabase ================= */
+const SUPABASE_URL = 'https://iflxbpakowqirbtggqnu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_U9Mb1jtv-DkkCrYsMIoOMQ_uo9HVBoD';
+const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let session = null; // {profileId, universityId, password, role, name, teacherId, subjects}
+let pendingLoginRole = null;
+let hwQuestions = [];
+let quizQuestions = [];
+
+/* ================= الإشعارات وتنبيهات الجوال ================= */
+const VAPID_PUBLIC_KEY = 'BFvpHFPJagqYoXAE8jT1sRGW9AoLjYW9bI27O-aBCLQa9uUXKs7OFpxbMSek53ngK9CaGLeMVXUhHU3cWJ8_DUQ';
+let notifState = { items: [], unread: 0 };
+let notifTimer = null;
+let deadlineTimer = null;
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+function urlBase64ToUint8Array(base64String){
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; i++) outputArray[i] = rawData.charCodeAt(i);
+  return outputArray;
+}
+
+async function enablePushNotifications(){
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)){
+    toast('error','غير مدعوم','جهازك أو المتصفح لا يدعم إشعارات الدفع. جرّب متصفح Chrome حديث.');
+    return;
+  }
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted'){
+      toast('warning','تنبيه','لازم توافق على إذن الإشعارات من المتصفح عشان تفعّل هذي الخاصية');
+      return;
+    }
+    const reg = await navigator.serviceWorker.register('sw.js');
+    await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub){
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+    }
+    const json = sub.toJSON();
+    await rpc('rpc_save_push_subscription', {
+      p_caller_id: session.universityId, p_caller_password: session.password,
+      p_endpoint: json.endpoint, p_p256dh: json.keys.p256dh, p_auth: json.keys.auth
+    });
+    $('pushStatusText').textContent = '✅ إشعارات الجوال مفعّلة على هذا الجهاز';
+    toast('success','تم التفعيل','راح توصلك إشعارات على هذا الجهاز');
+  } catch(e){
+    toast('error','خطأ', 'تعذر تفعيل الإشعارات: ' + (e.message||e));
+  }
+}
+
+async function checkPushStatus(){
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    const sub = reg ? await reg.pushManager.getSubscription() : null;
+    $('pushStatusText').textContent = sub ? '✅ إشعارات الجوال مفعّلة على هذا الجهاز' : 'إشعارات الجوال غير مفعّلة على هذا الجهاز بعد';
+  } catch(e){}
+}
+
+function maybeAutoPromptPush(){
+  // يسأل المتصفح تلقائياً عن إذن الإشعارات أول ما يدخل الطالب الموقع،
+  // بس لو ما سبق يوافق أو يرفض من قبل (عشان ما نزعجه كل مرة يدخل).
+  if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) return;
+  if (Notification.permission === 'default'){
+    enablePushNotifications();
+  }
+}
+
+/* شارة موعد التسليم: أخضر -> أصفر -> أحمر -> مقفول */
+function getDeadlineStatus(dueDateStr){
+  if (!dueDateStr) return null;
+  const due = new Date(dueDateStr);
+  const now = new Date();
+  const msLeft = due - now;
+  if (msLeft <= 0) return { closed: true, label: '🔒 انتهى وقت التسليم', cls: 'deadline-closed' };
+  const hoursLeft = msLeft / 3600000;
+  if (hoursLeft <= 48) return { closed: false, label: '🔴 قرب ينتهي الوقت', cls: 'deadline-red' };
+  if (hoursLeft <= 120) return { closed: false, label: '🟡 الوقت يقترب', cls: 'deadline-yellow' };
+  return { closed: false, label: '🟢 الوقت متاح', cls: 'deadline-green' };
+}
+function fmtDueDate(dueDateStr){
+  if (!dueDateStr) return '';
+  const d = new Date(dueDateStr);
+  return d.toLocaleString('ar-SA', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+function toLocalDatetimeValue(str){
+  if (!str) return '';
+  const d = new Date(str);
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/* ================= جرس الإشعارات ================= */
+function toggleNotifPanel(){
+  const panel = $('notif-panel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) renderNotifPanel();
+}
+
+async function pollNotifications(){
+  if (!session || session.role !== 'student') return;
+  try {
+    const items = await rpc('rpc_get_notifications', { p_caller_id: session.universityId, p_caller_password: session.password });
+    const prevIds = new Set(notifState.items.map(n => n.id));
+    const fresh = items.filter(n => !n.read && !prevIds.has(n.id));
+    notifState.items = items;
+    notifState.unread = items.filter(n => !n.read).length;
+    updateNotifBadge();
+    if ($('notif-panel').classList.contains('open')) renderNotifPanel();
+    if (fresh.length && Notification && Notification.permission === 'granted'){
+      fresh.forEach(n => { try { new Notification(n.title); } catch(e){} });
+    }
+  } catch(e){}
+}
+
+function updateNotifBadge(){
+  const badge = $('notif-badge');
+  if (notifState.unread > 0){ badge.style.display = 'flex'; badge.textContent = notifState.unread > 99 ? '99+' : notifState.unread; }
+  else { badge.style.display = 'none'; }
+}
+
+function renderNotifPanel(){
+  const list = $('notif-list');
+  if (!notifState.items.length){ list.innerHTML = '<p style="padding:16px; text-align:center; color:var(--text-muted); font-size:12px;">لا يوجد إشعارات بعد</p>'; return; }
+  const icons = { homework: '📚', quiz: '📝', tasmee: '🕌', exam: '🗓️', deadline: '⏰' };
+  list.innerHTML = notifState.items.map(n => `
+    <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markOneNotifRead(${n.id})">
+      ${icons[n.type]||'🔔'} ${esc(n.title)}
+      <span class="notif-time">${fmtDueDate(n.created_at)}</span>
+    </div>
+  `).join('');
+}
+
+async function markOneNotifRead(id){
+  try {
+    await rpc('rpc_mark_notification_read', { p_caller_id: session.universityId, p_caller_password: session.password, p_notification_id: id });
+    const n = notifState.items.find(x => x.id === id);
+    if (n && !n.read){ n.read = true; notifState.unread = Math.max(0, notifState.unread - 1); }
+    updateNotifBadge(); renderNotifPanel();
+  } catch(e){}
+}
+
+async function markAllNotifRead(){
+  try {
+    await rpc('rpc_mark_all_notifications_read', { p_caller_id: session.universityId, p_caller_password: session.password });
+    notifState.items.forEach(n => n.read = true);
+    notifState.unread = 0;
+    updateNotifBadge(); renderNotifPanel();
+  } catch(e){}
+}
+
+document.addEventListener('click', (e) => {
+  const wrap = document.querySelector('.notif-bell-wrap');
+  if (wrap && !wrap.contains(e.target)) $('notif-panel').classList.remove('open');
+});
+
+/* ================= أدوات مساعدة عامة ================= */
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function toast(type, title, message){
+  const box = document.createElement('div');
+  box.className = 'custom-toast ' + type;
+  const icons = {success:'✅', error:'⛔', warning:'⚠️', info:'ℹ️'};
+  box.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><div class="toast-content"><span class="toast-title">${esc(title)}</span><span class="toast-message">${esc(message)}</span></div>`;
+  $('toast-container').appendChild(box);
+  setTimeout(()=>{ box.style.animation = 'toastFadeOut .3s forwards'; setTimeout(()=>box.remove(), 300); }, 4000);
+}
+
+function togglePassword(id, btn){
+  const inp = $(id);
+  if (inp.type === 'password'){ inp.type = 'text'; btn.textContent = '👁️'; } else { inp.type = 'password'; btn.textContent = '🙈'; }
+}
+
+async function rpc(name, params){
+  const { data, error } = await sbClient.rpc(name, params);
+  if (error){ toast('error', 'خطأ', error.message); throw error; }
+  return data;
+}
+
+/* ================= تسجيل الدخول ================= */
+function showForm(role, btnEl){
+  document.querySelectorAll('.login-form-sec').forEach(f => f.style.display = 'none');
+  $(role + '-form').style.display = 'block';
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+  if (btnEl) btnEl.classList.add('selected');
+}
+
+async function doLogin(role){
+  let id, pass;
+  if (role === 'teacher'){ id = $('teacherIdInput').value.trim(); pass = $('teacherPassInput').value; }
+  else if (role === 'student'){ id = $('studentIdInput').value.trim(); pass = $('studentPassInput').value; }
+  else { id = $('superIdInput').value.trim(); pass = $('superPassInput').value; }
+
+  if (!id || !pass){ toast('warning','تنبيه','عبّي الرقم وكلمة المرور'); return; }
+
+  try {
+    const data = await rpc('rpc_login', { p_university_id: id, p_password: pass });
+    if (data.role !== role){
+      toast('error','خطأ', 'هذا الحساب ليس من نوع "' + roleLabel(role) + '"، تحقق من نوع الدخول المختار');
+      return;
+    }
+    session = {
+      profileId: data.id, universityId: data.university_id, password: pass,
+      role: data.role, name: data.name, teacherId: data.teacher_id, subjects: data.subjects || []
+    };
+    localStorage.setItem('academic_session', JSON.stringify({ id: session.universityId, password: pass, role: session.role }));
+
+    if (data.must_change_password){
+      pendingLoginRole = role;
+      $('force-pass-modal').style.display = 'flex';
+      return;
+    }
+    playLoginTransition(enterApp);
+  } catch(e){ /* toast already shown */ }
+}
+
+async function submitForcePasswordChange(){
+  const newPass = $('forcePassInput').value;
+  if (!newPass || newPass.length < 4){ toast('warning','تنبيه','كلمة المرور لازم تكون 4 أحرف على الأقل'); return; }
+  try {
+    await rpc('rpc_change_password', { p_university_id: session.universityId, p_old_password: session.password, p_new_password: newPass });
+    session.password = newPass;
+    localStorage.setItem('academic_session', JSON.stringify({ id: session.universityId, password: newPass, role: session.role }));
+    $('force-pass-modal').style.display = 'none';
+    $('forcePassInput').value = '';
+    toast('success','تم','تم تغيير كلمة المرور بنجاح');
+    playLoginTransition(enterApp);
+  } catch(e){}
+}
+
+function roleLabel(r){ return {teacher:'معلم/ة', student:'طالب/ة', supervisor:'مشرف/ة'}[r] || r; }
+
+function logout(){
+  session = null;
+  localStorage.removeItem('academic_session');
+  location.reload();
+}
+
+async function tryRestoreSession(){
+  const raw = localStorage.getItem('academic_session');
+  if (!raw) return;
+  try {
+    const saved = JSON.parse(raw);
+    const data = await rpc('rpc_login', { p_university_id: saved.id, p_password: saved.password });
+    session = { profileId: data.id, universityId: data.university_id, password: saved.password, role: data.role, name: data.name, teacherId: data.teacher_id, subjects: data.subjects || [] };
+    if (data.must_change_password){
+      pendingLoginRole = data.role;
+      $('force-pass-modal').style.display = 'flex';
+      return;
+    }
+    enterApp();
+  } catch(e){ localStorage.removeItem('academic_session'); }
+}
+
+/* ================= المؤثرات الصوتية (نسخة محسّنة) ================= */
+let audioCtx;
+let reverbImpulseBuffer;
+
+function getAudioCtx(){
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// صدى بسيط (Impulse Response) يُستخدم لإعطاء عمق لمؤثر الانتقال الكبير فقط
+function getReverbImpulse(ctx){
+  if (reverbImpulseBuffer) return reverbImpulseBuffer;
+  const duration = 1.2, decay = 3.4, rate = ctx.sampleRate;
+  const length = Math.floor(rate * duration);
+  const impulse = ctx.createBuffer(2, length, rate);
+  for (let ch = 0; ch < 2; ch++){
+    const data = impulse.getChannelData(ch);
+    for (let i = 0; i < length; i++){
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, decay);
+    }
+  }
+  reverbImpulseBuffer = impulse;
+  return impulse;
+}
+
+// مقطع ضجيج أبيض قصير يُستخدم كمكوّن في أصوات النقر/الانزلاق
+function createNoiseBurst(ctx, duration){
+  const buffer = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * duration)), ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = buffer;
+  return src;
+}
+
+// صوت نقر أنيق وهادئ يشبه لمسة الأزرار في الواجهات الحديثة
+function playClickSound(){
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    const master = ctx.createGain();
+    master.gain.value = 1;
+    master.connect(ctx.destination);
+
+    // طبقة نغمية دافئة قصيرة (pluck)
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(880, now);
+    o.frequency.exponentialRampToValueAtTime(540, now + 0.05);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.linearRampToValueAtTime(0.09, now + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+    o.connect(g); g.connect(master);
+
+    // لمسة ضجيج مفلترة تعطي إحساس "نقرة" حقيقية بدل الصفير الرتيب
+    const noise = createNoiseBurst(ctx, 0.03);
+    const nf = ctx.createBiquadFilter();
+    nf.type = 'bandpass'; nf.frequency.value = 2400; nf.Q.value = 0.9;
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0.05, now);
+    ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+    noise.connect(nf); nf.connect(ng); ng.connect(master);
+
+    o.start(now); o.stop(now + 0.08);
+    noise.start(now); noise.stop(now + 0.03);
+  } catch(e){}
+}
+
+// صوت الانتقال بين تبويبات القائمة: نغمة صاعدة رقيقة + حفيف حركة خفيف
+function playNavSound(){
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    const master = ctx.createGain();
+    master.connect(ctx.destination);
+
+    const o1 = ctx.createOscillator(), g1 = ctx.createGain();
+    o1.type = 'sine';
+    o1.frequency.setValueAtTime(480, now);
+    o1.frequency.exponentialRampToValueAtTime(880, now + 0.16);
+    g1.gain.setValueAtTime(0.0001, now);
+    g1.gain.linearRampToValueAtTime(0.07, now + 0.02);
+    g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+    o1.connect(g1); g1.connect(master);
+
+    // هارمونيك خفيف يعطي لمعانًا للنغمة
+    const o2 = ctx.createOscillator(), g2 = ctx.createGain();
+    o2.type = 'sine';
+    o2.frequency.setValueAtTime(960, now);
+    o2.frequency.exponentialRampToValueAtTime(1320, now + 0.16);
+    g2.gain.setValueAtTime(0.0001, now);
+    g2.gain.linearRampToValueAtTime(0.02, now + 0.02);
+    g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+    o2.connect(g2); g2.connect(master);
+
+    // حفيف حركة خافت (whoosh) يواكب انزلاق المحتوى
+    const noise = createNoiseBurst(ctx, 0.2);
+    const nf = ctx.createBiquadFilter();
+    nf.type = 'bandpass';
+    nf.frequency.setValueAtTime(700, now);
+    nf.frequency.exponentialRampToValueAtTime(2600, now + 0.18);
+    nf.Q.value = 0.7;
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0.0001, now);
+    ng.gain.linearRampToValueAtTime(0.025, now + 0.05);
+    ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+    noise.connect(nf); nf.connect(ng); ng.connect(master);
+
+    o1.start(now); o1.stop(now + 0.24);
+    o2.start(now); o2.stop(now + 0.22);
+    noise.start(now); noise.stop(now + 0.2);
+  } catch(e){}
+}
+
+// مؤثر الانتقال الكبير عند تسجيل الدخول: صعود سينمائي مع صدى ولمسة جرس ختامية
+function playSwooshSound(){
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+
+    const dryGain = ctx.createGain(); dryGain.gain.value = 0.85;
+    const wetGain = ctx.createGain(); wetGain.gain.value = 0.3;
+    const convolver = ctx.createConvolver();
+    convolver.buffer = getReverbImpulse(ctx);
+    const master = ctx.createGain();
+    master.connect(dryGain); dryGain.connect(ctx.destination);
+    master.connect(convolver); convolver.connect(wetGain); wetGain.connect(ctx.destination);
+
+    // نغمة صاعدة رئيسية
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(220, now);
+    o.frequency.exponentialRampToValueAtTime(1100, now + 0.55);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.linearRampToValueAtTime(0.08, now + 0.08);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.65);
+    o.connect(g); g.connect(master);
+
+    // جسم الـswoosh: ضجيج انزلاقي واسع
+    const noise = createNoiseBurst(ctx, 0.7);
+    const nf = ctx.createBiquadFilter();
+    nf.type = 'bandpass';
+    nf.frequency.setValueAtTime(300, now);
+    nf.frequency.exponentialRampToValueAtTime(3500, now + 0.5);
+    nf.Q.value = 0.6;
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0.0001, now);
+    ng.gain.linearRampToValueAtTime(0.06, now + 0.15);
+    ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+    noise.connect(nf); nf.connect(ng); ng.connect(master);
+
+    // جرس ختامي رقيق كلمسة روحانية خفيفة
+    const bell = ctx.createOscillator(), bg = ctx.createGain();
+    bell.type = 'sine'; bell.frequency.value = 1320;
+    bg.gain.setValueAtTime(0.0001, now + 0.35);
+    bg.gain.linearRampToValueAtTime(0.05, now + 0.38);
+    bg.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+    bell.connect(bg); bg.connect(master);
+
+    o.start(now); o.stop(now + 0.65);
+    noise.start(now); noise.stop(now + 0.7);
+    bell.start(now + 0.35); bell.stop(now + 0.9);
+  } catch(e){}
+}
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('button, .role-btn');
+  if (el && !el.classList.contains('nav-btn')) playClickSound();
+}, true);
+
+/* ================= مؤثر تسجيل الدخول (المئذنة تكبر وتمسح الشاشة) ================= */
+function playLoginTransition(afterCoverCallback){
+  const activeModal = document.querySelector('#role-modal[style*="flex"], #force-pass-modal[style*="flex"]') || $('role-modal');
+  const modalIcon = activeModal ? activeModal.querySelector('.modal-box h2 .minaret-icon') : null;
+  const wipe = $('login-wipe');
+  playSwooshSound();
+  if (modalIcon) modalIcon.classList.add('grow');
+  setTimeout(() => {
+    wipe.style.display = 'flex';
+    requestAnimationFrame(() => wipe.classList.add('enter'));
+    setTimeout(() => {
+      afterCoverCallback();
+      wipe.classList.add('exit');
+      setTimeout(() => {
+        wipe.style.display = 'none';
+        wipe.classList.remove('enter','exit');
+        if (modalIcon) modalIcon.classList.remove('grow');
+      }, 480);
+    }, 420);
+  }, 380);
+}
+function enterApp(){
+  $('role-modal').style.display = 'none';
+  document.body.classList.remove('pre-login');
+  document.querySelectorAll('.bg-star, .bg-grid').forEach(el => { el.style.display = ''; });
+  document.body.style.overflow = 'auto';
+  $('user-display-name').textContent = session.name;
+  $('user-role-text').textContent = roleLabel(session.role);
+
+  document.querySelectorAll('.role-teacher-only').forEach(el => el.style.display = (session.role === 'teacher') ? '' : 'none');
+  document.querySelectorAll('.role-supervisor-only').forEach(el => el.style.display = (session.role === 'supervisor') ? '' : 'none');
+  document.querySelectorAll('.role-teacher-supervisor-only').forEach(el => el.style.display = (session.role === 'teacher' || session.role === 'supervisor') ? '' : 'none');
+  document.querySelectorAll('.role-student-only').forEach(el => el.style.display = (session.role === 'student') ? '' : 'none');
+
+  if (session.role === 'teacher'){
+    populateSubjectSelects();
+    $('attendanceDate').value = new Date().toISOString().slice(0,10);
+  }
+
+  switchTab('attendance', document.querySelector('.nav-btn'));
+  refreshCurrentTab();
+
+  if (session.role === 'student'){
+    pollNotifications();
+    if (notifTimer) clearInterval(notifTimer);
+    notifTimer = setInterval(pollNotifications, 30000);
+    setTimeout(maybeAutoPromptPush, 1200);
+  }
+  if (deadlineTimer) clearInterval(deadlineTimer);
+  deadlineTimer = setInterval(() => {
+    if (window.currentTab === 'homework') renderHomeworks();
+    if (window.currentTab === 'quizzes') renderQuizzes();
+  }, 60000);
+}
+
+function switchTab(name, btnEl){
+  playNavSound();
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  $('tab-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) { btnEl.classList.add('active'); moveNavIndicator(btnEl); }
+  $('panel-title').textContent = document.querySelector(`#tab-${name}`) ? (btnEl ? btnEl.textContent.trim() : '') : '';
+  window.currentTab = name;
+  refreshCurrentTab();
+}
+
+function moveNavIndicator(btnEl){
+  const ind = $('navIndicator');
+  if (!ind || !btnEl) return;
+  ind.style.width = btnEl.offsetWidth + 'px';
+  ind.style.height = btnEl.offsetHeight + 'px';
+  ind.style.transform = `translate(${btnEl.offsetLeft}px, ${btnEl.offsetTop}px)`;
+  ind.style.opacity = '1';
+}
+window.addEventListener('resize', () => {
+  const active = document.querySelector('.nav-btn.active');
+  if (active) moveNavIndicator(active);
+});
+
+function refreshCurrentTab(){
+  if (!session) return;
+  const t = window.currentTab || 'attendance';
+  if (t === 'attendance' && session.role === 'teacher') renderAttendance();
+  if (t === 'attendance' && session.role === 'student') renderMyAttendance();
+  if (t === 'addstudents') renderStudentsList();
+  if (t === 'schedule') renderSchedule();
+  if (t === 'homework') renderHomeworks();
+  if (t === 'tasmee') renderTasmee();
+  if (t === 'quizzes') renderQuizzes();
+  if (t === 'examtable') renderExamTable();
+  if (t === 'curriculum') renderBooks();
+  if (t === 'news') renderNews();
+  if (t === 'teachers') renderTeachersList();
+  if (t === 'settings') renderSettings();
+}
+
+/* ================= المواد الدراسية ================= */
+function populateSubjectSelects(){
+  const subs = session.subjects || [];
+  const html = subs.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  if ($('attendanceSubject')) $('attendanceSubject').innerHTML = html;
+}
+
+async function addSubject(){
+  const name = $('newSubjectName').value.trim();
+  if (!name) return;
+  if (session.subjects.includes(name)){ toast('warning','تنبيه','المادة موجودة مسبقاً'); return; }
+  const updated = [...session.subjects, name];
+  await rpc('rpc_update_subjects', { p_caller_id: session.universityId, p_caller_password: session.password, p_subjects: updated });
+  session.subjects = updated;
+  $('newSubjectName').value = '';
+  populateSubjectSelects();
+  toast('success','تمت الإضافة','تمت إضافة المادة');
+}
+
+async function deleteCurrentSubject(){
+  const sel = $('attendanceSubject');
+  const val = sel.value;
+  if (!val) return;
+  const updated = session.subjects.filter(s => s !== val);
+  await rpc('rpc_update_subjects', { p_caller_id: session.universityId, p_caller_password: session.password, p_subjects: updated });
+  session.subjects = updated;
+  populateSubjectSelects();
+  toast('success','تم الحذف','تم حذف المادة');
+}
+
+/* ================= إضافة الطلاب ================= */
+async function addStudentManual(){
+  const name = $('newStudentName').value.trim();
+  const id = $('newStudentId').value.trim();
+  const pass = $('newStudentPass').value.trim() || '1234';
+  if (!name || !id){ toast('warning','تنبيه','عبّي الاسم والرقم الجامعي'); return; }
+  try {
+    await rpc('rpc_add_student', { p_caller_id: session.universityId, p_caller_password: session.password, p_teacher_university_id: session.universityId, p_new_university_id: id, p_name: name, p_password: pass });
+    toast('success','تمت الإضافة', name + ' انضاف بنجاح');
+    $('newStudentName').value=''; $('newStudentId').value=''; $('newStudentPass').value='1234';
+    renderStudentsList();
+  } catch(e){}
+}
+
+async function addStudentsFromExcel(){
+  const fileInput = $('excelStudentsFile');
+  const file = fileInput.files[0];
+  if (!file){ toast('warning','تنبيه','اختر ملف إكسل أولاً'); return; }
+  let rows;
+  try {
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array' });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: '' });
+  } catch(e){ toast('error','خطأ','تعذر قراءة الملف، تأكد إنه بصيغة Excel صحيحة'); return; }
+
+  const dataRows = rows.slice(1); // تجاهل صف العناوين
+  let ok = 0, fail = 0;
+  for (const row of dataRows){
+    if (!row || !row.length) continue;
+    const id = String(row[0] || '').trim();
+    const name = String(row[1] || '').trim();
+    if (!id || !name) continue;
+    try {
+      await rpc('rpc_add_student', { p_caller_id: session.universityId, p_caller_password: session.password, p_teacher_university_id: session.universityId, p_new_university_id: id, p_name: name, p_password: '1234' });
+      ok++;
+    } catch(e){ fail++; }
+  }
+  toast(fail ? 'warning' : 'success', 'النتيجة', `تمت إضافة ${ok} طالب، وفشل ${fail}`);
+  fileInput.value = '';
+  renderStudentsList();
+}
+
+/* ================= إدارة الطلاب ================= */
+function sortByArabicName(arr){ return arr.slice().sort((a,b) => (a.name||'').localeCompare(b.name||'', 'ar')); }
+
+async function renderStudentsList(){
+  if (session.role === 'student') return;
+  const teacherIdForList = session.role === 'teacher' ? session.universityId : null;
+  if (!teacherIdForList) { $('students-list-tbody').innerHTML = '<tr><td colspan="3">اختر معلماً من تبويب إدارة المعلمين لعرض طلابه</td></tr>'; return; }
+  const list = sortByArabicName(await rpc('rpc_list_students', { p_caller_id: session.universityId, p_caller_password: session.password, p_teacher_university_id: teacherIdForList }));
+  $('students-list-tbody').innerHTML = list.map(s => `
+    <tr><td>${esc(s.university_id)}</td><td>${esc(s.name)}</td>
+    <td><button class="btn-danger" onclick="deleteStudent('${esc(s.university_id)}')">🗑️ حذف</button></td></tr>
+  `).join('') || '<tr><td colspan="3">لا يوجد طلاب بعد</td></tr>';
+}
+
+async function deleteStudent(id){
+  if (!confirm('متأكد من حذف الطالب/ة؟ هذا الإجراء لا يمكن التراجع عنه.')) return;
+  try {
+    await rpc('rpc_delete_student', { p_caller_id: session.universityId, p_caller_password: session.password, p_target_university_id: id });
+    toast('success','تم الحذف','تم حذف الطالب/ة');
+    renderStudentsList();
+  } catch(e){}
+}
+
+/* ================= الحضور ================= */
+function attSafeId(studentId){ return String(studentId).replace(/[^a-zA-Z0-9]/g,'_'); }
+
+async function renderAttendance(){
+  if (session.role !== 'teacher') return;
+  const date = $('attendanceDate').value;
+  const subject = $('attendanceSubject').value;
+  if (!date || !subject) { $('attendance-tbody').innerHTML = ''; return; }
+
+  const students = sortByArabicName(await rpc('rpc_list_students', { p_caller_id: session.universityId, p_caller_password: session.password, p_teacher_university_id: session.universityId }));
+  const attendance = await rpc('rpc_get_attendance', { p_caller_id: session.universityId, p_caller_password: session.password });
+  const search = ($('searchStudentInput').value || '').trim();
+
+  let present=0, late=0, absent=0;
+  const rows = students.filter(s => !search || s.name.includes(search) || s.university_id.includes(search)).map(s => {
+    const rec = attendance.find(a => a.student_id === s.university_id && a.subject === subject && a.date === date);
+    const status = rec ? rec.status : null;
+    if (status === 'present') present++; else if (status === 'late') late++; else if (status === 'absent') absent++;
+    const sid = attSafeId(s.university_id);
+
+    let extra = '';
+    if (status === 'late'){
+      extra = `<div class="attendance-extra" id="extra-${sid}">
+        <input type="text" id="late-min-${sid}" placeholder="مدة التأخير (مثال: 10 دقائق)" value="${esc(rec && rec.late_minutes != null ? rec.late_minutes : '')}">
+        <button class="btn-sm btn-view" onclick="saveAttendanceDetails('${esc(s.university_id)}','late')">💾 حفظ</button>
+      </div>`;
+    } else if (status === 'absent'){
+      extra = `<div class="attendance-extra" id="extra-${sid}">
+        <textarea id="abs-reason-${sid}" rows="1" placeholder="سبب / عذر الغياب">${esc(rec && rec.absence_reason ? rec.absence_reason : '')}</textarea>
+        <input type="file" id="abs-file-${sid}" accept="application/pdf">
+        <button class="btn-sm btn-view" onclick="saveAttendanceDetails('${esc(s.university_id)}','absent')">💾 حفظ</button>
+        ${rec && rec.excuse_file_path ? `<a class="btn-sm btn-view" target="_blank" href="${SUPABASE_URL}/storage/v1/object/public/excuses/${rec.excuse_file_path}">📄 عرض الملف المرفوع</a>` : ''}
+      </div>`;
+    }
+
+    return `<tr>
+      <td>${esc(s.university_id)}</td><td>${esc(s.name)}</td>
+      <td>
+        <button class="btn-status ${status==='present'?'active-present':''}" onclick="markAttendance('${esc(s.university_id)}','present')">حاضر</button>
+        <button class="btn-status ${status==='late'?'active-late':''}" onclick="markAttendance('${esc(s.university_id)}','late')">متأخر</button>
+        <button class="btn-status ${status==='absent'?'active-absent':''}" onclick="markAttendance('${esc(s.university_id)}','absent')">غائب</button>
+        ${extra}
+      </td>
+    </tr>`;
+  }).join('');
+
+  $('attendance-tbody').innerHTML = rows || '<tr><td colspan="3">لا يوجد طلاب</td></tr>';
+  $('stat-present').textContent = present; $('stat-late').textContent = late; $('stat-absent').textContent = absent;
+}
+
+async function markAttendance(studentId, status){
+  const date = $('attendanceDate').value;
+  const subject = $('attendanceSubject').value;
+  try {
+    await rpc('rpc_mark_attendance', { p_caller_id: session.universityId, p_caller_password: session.password, p_records: [{student_id: studentId, subject, date, status}] });
+    renderAttendance();
+  } catch(e){}
+}
+
+async function saveAttendanceDetails(studentId, status){
+  const sid = attSafeId(studentId);
+  const date = $('attendanceDate').value;
+  const subject = $('attendanceSubject').value;
+  let lateMinutes = null, absenceReason = null, excusePath = null;
+
+  try {
+    if (status === 'late'){
+      lateMinutes = $('late-min-'+sid).value.trim() || null;
+    } else if (status === 'absent'){
+      absenceReason = $('abs-reason-'+sid).value.trim() || null;
+      const fileInput = $('abs-file-'+sid);
+      const file = fileInput && fileInput.files[0];
+      if (file){
+        if (file.type !== 'application/pdf'){ toast('warning','تنبيه','يجب أن يكون الملف بصيغة PDF'); return; }
+        const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        const path = `${studentId}_${Date.now()}_${safeName}`;
+        const { error: upErr } = await sbClient.storage.from('excuses').upload(path, file);
+        if (upErr) throw upErr;
+        excusePath = path;
+      }
+    }
+    await rpc('rpc_mark_attendance', { p_caller_id: session.universityId, p_caller_password: session.password, p_records: [{
+      student_id: studentId, subject, date, status,
+      late_minutes: lateMinutes, absence_reason: absenceReason, excuse_file_path: excusePath
+    }] });
+    toast('success','تم الحفظ','تم حفظ التفاصيل');
+    renderAttendance();
+  } catch(e){}
+}
+
+/* ================= سجل حضور الطالب (للطالب نفسه فقط) ================= */
+async function renderMyAttendance(){
+  if (session.role !== 'student') return;
+  let data;
+  try {
+    data = await rpc('rpc_get_my_attendance', { p_caller_id: session.universityId, p_caller_password: session.password });
+  } catch(e){ $('my-attendance-list').innerHTML = ''; return; }
+
+  if (!data.length){ $('my-attendance-list').innerHTML = '<p style="color:var(--text-muted);">لا يوجد سجل حضور مسجّل بعد</p>'; return; }
+
+  const badgeClass = { present: 'badge-present', late: 'badge-late', absent: 'badge-absent' };
+  const badgeLabel = { present: 'حاضر', late: 'متأخر', absent: 'غائب' };
+
+  $('my-attendance-list').innerHTML = `<div class="table-responsive"><table><thead><tr><th>المادة</th><th>التاريخ</th><th>الحالة</th><th>التفاصيل</th><th>عذر الغياب</th></tr></thead><tbody>` +
+    data.map(a => {
+      let details = (a.status === 'late' && a.late_minutes) ? esc(a.late_minutes) : '—';
+      let excuseCell = '—';
+      if (a.status === 'absent'){
+        excuseCell = `<div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">`;
+        if (a.absence_reason) excuseCell += `<span>${esc(a.absence_reason)}</span>`;
+        if (a.excuse_file_path){
+          excuseCell += `<a class="btn-sm btn-view" target="_blank" rel="noopener" href="${SUPABASE_URL}/storage/v1/object/public/excuses/${a.excuse_file_path}">📄 عرض الملف المرفوع</a>`;
+        } else {
+          excuseCell += `<input type="file" id="my-excuse-file-${a.id}" accept="application/pdf" style="max-width:200px;">
+            <button class="btn-sm btn-view" onclick="uploadMyExcuse(${a.id})">📎 إرفاق عذر الغياب (PDF)</button>`;
+        }
+        excuseCell += `</div>`;
+      }
+      return `<tr><td>${esc(a.subject)}</td><td>${esc(a.date)}</td><td><span class="badge ${badgeClass[a.status]||''}">${badgeLabel[a.status]||esc(a.status)}</span></td><td>${details}</td><td>${excuseCell}</td></tr>`;
+    }).join('') + `</tbody></table></div>`;
+}
+
+async function uploadMyExcuse(attendanceId){
+  const fileInput = $('my-excuse-file-' + attendanceId);
+  const file = fileInput && fileInput.files[0];
+  if (!file){ toast('warning','تنبيه','اختر ملف PDF أولاً'); return; }
+  if (file.type !== 'application/pdf'){ toast('warning','تنبيه','يجب أن يكون الملف بصيغة PDF'); return; }
+  try {
+    const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    const path = `${session.universityId}_${Date.now()}_${safeName}`;
+    const { error: upErr } = await sbClient.storage.from('excuses').upload(path, file);
+    if (upErr) throw upErr;
+    await rpc('rpc_student_upload_excuse', { p_caller_id: session.universityId, p_caller_password: session.password, p_attendance_id: attendanceId, p_excuse_file_path: path });
+    toast('success','تم الإرفاق','تم إرفاق عذر الغياب بنجاح');
+    renderMyAttendance();
+  } catch(e){ toast('error','خطأ','فشل رفع الملف: ' + (e.message||'')); }
+}
+
+async function renderStudentReports(){
+  const id = $('queryStudentId').value.trim();
+  if (!id) return;
+  try {
+    const r = await rpc('rpc_get_student_report', { p_caller_id: session.universityId, p_caller_password: session.password, p_target_university_id: id });
+    const attRows = r.attendance.map(a => `<tr><td>${esc(a.subject)}</td><td>${esc(a.date)}</td><td><span class="badge badge-${a.status}">${a.status==='present'?'حاضر':a.status==='late'?'متأخر':'غائب'}</span></td></tr>`).join('') || '<tr><td colspan="3">لا يوجد سجل حضور</td></tr>';
+    const qzRows = r.quizzes.map(q => `<tr><td>${esc(q.title)}</td><td>${q.graded ? esc(q.score||'') : 'لم يُصحح بعد'}</td></tr>`).join('') || '<tr><td colspan="2">لا توجد اختبارات</td></tr>';
+    const hwRows = r.homeworks.map(h => `<tr><td>${esc(h.title)}</td><td>${h.graded ? esc(h.score||'') : 'لم يُصحح بعد'}</td></tr>`).join('') || '<tr><td colspan="2">لا توجد واجبات</td></tr>';
+    $('student-reports-box').innerHTML = `
+      <h4 style="margin-bottom:8px;">تقرير: ${esc(r.name)}</h4>
+      <div style="font-weight:700; margin-top:10px;">سجل الحضور</div>
+      <div class="table-responsive"><table><thead><tr><th>المادة</th><th>التاريخ</th><th>الحالة</th></tr></thead><tbody>${attRows}</tbody></table></div>
+      <div style="font-weight:700; margin-top:14px;">الاختبارات</div>
+      <div class="table-responsive"><table><thead><tr><th>العنوان</th><th>الدرجة</th></tr></thead><tbody>${qzRows}</tbody></table></div>
+      <div style="font-weight:700; margin-top:14px;">الواجبات</div>
+      <div class="table-responsive"><table><thead><tr><th>العنوان</th><th>الدرجة</th></tr></thead><tbody>${hwRows}</tbody></table></div>
+    `;
+  } catch(e){ $('student-reports-box').innerHTML = ''; }
+}
+
+/* ================= الجدول الدراسي ================= */
+async function addScheduleEntry(){
+  const day = $('scheduleDay').value, subject = $('scheduleSubject').value.trim();
+  const start = $('scheduleStart').value, end = $('scheduleEnd').value;
+  if (!subject || !start || !end){ toast('warning','تنبيه','عبّي كل الحقول'); return; }
+  await rpc('rpc_add_schedule', { p_caller_id: session.universityId, p_caller_password: session.password, p_day: day, p_subject: subject, p_start: start, p_end: end });
+  $('scheduleSubject').value=''; $('scheduleStart').value=''; $('scheduleEnd').value='';
+  renderSchedule();
+}
+
+const SCHEDULE_DAYS = ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس'];
+
+function parseTimeToMinutes(t){
+  if (!t) return null;
+  const parts = String(t).split(':').map(Number);
+  return parts[0]*60 + (parts[1]||0);
+}
+
+function minutesToLabel(mins){
+  const h = Math.floor(mins/60), m = mins%60;
+  const period = h < 12 ? 'ص' : 'م';
+  let h12 = h % 12; if (h12 === 0) h12 = 12;
+  return `${h12}:${String(m).padStart(2,'0')} ${period}`;
+}
+
+(function setupScheduleDragScroll(){
+  const wrap = document.querySelector('.schedule-grid-wrap');
+  if (!wrap) return;
+  let isDown = false, startX = 0, startScroll = 0, moved = false;
+  const start = (x) => { isDown = true; moved = false; startX = x; startScroll = wrap.scrollLeft; wrap.classList.add('dragging'); };
+  const move = (x) => {
+    if (!isDown) return;
+    const dx = x - startX;
+    if (Math.abs(dx) > 3) moved = true;
+    wrap.scrollLeft = startScroll - dx;
+  };
+  const end = () => { isDown = false; wrap.classList.remove('dragging'); };
+  // السحب بالماوس (لأجهزة الكمبيوتر فقط) — لا نطبّقه على اللمس حتى لا يتعارض مع تمرير المتصفح الطبيعي
+  wrap.addEventListener('mousedown', (e) => start(e.pageX));
+  window.addEventListener('mousemove', (e) => move(e.pageX));
+  window.addEventListener('mouseup', end);
+  // بشاشات اللمس نترك المتصفح يتولى السحب أفقياً بنفسه (overflow-x:auto + touch-action)،
+  // ونكتفي بمراقبة الحركة لمنع فتح/حذف الحصة بالخطأ أثناء السحب
+  let touchStartX = 0, touchMoved = false;
+  wrap.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].pageX; touchMoved = false; }, { passive: true });
+  wrap.addEventListener('touchmove', (e) => { if (Math.abs(e.touches[0].pageX - touchStartX) > 5) touchMoved = true; }, { passive: true });
+  wrap.addEventListener('click', (e) => { if (moved || touchMoved) { e.preventDefault(); e.stopPropagation(); } }, true);
+})();
+
+function subjectColor(name){
+  let hash = 0;
+  for (let i=0;i<name.length;i++){ hash = name.charCodeAt(i) + ((hash<<5)-hash); }
+  const hue = Math.abs(hash) % 360;
+  return { bg: `hsl(${hue},60%,92%)`, border: `hsl(${hue},50%,52%)`, text: `hsl(${hue},70%,26%)` };
+}
+
+async function renderSchedule(){
+  let data;
+  try {
+    data = await rpc('rpc_list_schedule', { p_caller_id: session.universityId, p_caller_password: session.password });
+  } catch(e){ $('schedule-grid').innerHTML = ''; return; }
+
+  if (!data.length){ $('schedule-grid').innerHTML = '<p style="padding:20px; color:var(--text-muted);">لا يوجد حصص بعد</p>'; return; }
+
+  let minStart = Infinity, maxEnd = -Infinity;
+  data.forEach(s => {
+    const st = parseTimeToMinutes(s.start_time), en = parseTimeToMinutes(s.end_time);
+    if (st != null) minStart = Math.min(minStart, st);
+    if (en != null) maxEnd = Math.max(maxEnd, en);
+  });
+  if (!isFinite(minStart)) minStart = 7*60;
+  if (!isFinite(maxEnd)) maxEnd = minStart + 60;
+  minStart = Math.floor(minStart/60)*60;
+  maxEnd = Math.ceil(maxEnd/60)*60;
+  if (maxEnd <= minStart) maxEnd = minStart + 60;
+  const UNIT = 15; // كل خانة = 15 دقيقة (يقبل القسمة على 30/45/60/90 دقيقة تماماً)
+  const slotCount = (maxEnd - minStart) / UNIT;
+
+  const isMobile = window.innerWidth <= 768;
+  const DAY_COL = isMobile ? 108 : 96, HOUR_ROW = 46, DAY_ROW = isMobile ? 78 : 72, MIN_SLOT = isMobile ? 34 : 30;
+  const gridMinWidth = DAY_COL + slotCount * MIN_SLOT;
+  let html = `<div class="schedule-grid" style="grid-template-columns: ${DAY_COL}px repeat(${slotCount}, minmax(${MIN_SLOT}px, 1fr)); grid-template-rows: ${HOUR_ROW}px repeat(${SCHEDULE_DAYS.length}, ${DAY_ROW}px); min-width: ${gridMinWidth}px; width: 100%;">`;
+  html += `<div class="sg-corner" style="grid-row:1; grid-column:1;"></div>`;
+  SCHEDULE_DAYS.forEach((d,i) => html += `<div class="sg-day-header" style="grid-row:${i+2}; grid-column:1;">${d}</div>`);
+  const stepsPerHour = 60 / UNIT;
+  for (let i=0;i<slotCount;i++){
+    const isHour = (minStart + i*UNIT) % 60 === 0;
+    if (isHour){
+      const span = Math.min(stepsPerHour, slotCount - i);
+      html += `<div class="sg-hour-header" style="grid-row:1; grid-column:${i+2} / span ${span};">${minutesToLabel(minStart + i*UNIT)}</div>`;
+    }
+    for (let d=0; d<SCHEDULE_DAYS.length; d++){
+      html += `<div class="sg-slot ${isHour ? 'sg-hour' : ''}" style="grid-row:${d+2}; grid-column:${i+2};"></div>`;
+    }
+  }
+
+  data.forEach(s => {
+    const dayIdx = SCHEDULE_DAYS.indexOf(s.day);
+    const st = parseTimeToMinutes(s.start_time), en = parseTimeToMinutes(s.end_time);
+    if (dayIdx === -1 || st == null || en == null) return;
+    const colStart = Math.round((st - minStart)/UNIT) + 2;
+    const colSpan = Math.max(1, Math.round((en - st)/UNIT));
+    const canDelete = session.role === 'supervisor' || (session.role === 'teacher' && s.teacher_id === session.profileId);
+    const c = subjectColor(s.subject);
+    html += `<div class="sg-class" style="grid-row:${dayIdx+2}; grid-column:${colStart} / span ${colSpan}; background:${c.bg}; border-color:${c.border}; color:${c.text};">
+      ${canDelete ? `<button class="sg-del" onclick="deleteSchedule(${s.id})" title="حذف">×</button>` : ''}
+      <span>${esc(s.subject)}</span>
+      <span class="sg-class-time">${esc(String(s.start_time).slice(0,5))} - ${esc(String(s.end_time).slice(0,5))}</span>
+    </div>`;
+  });
+
+  html += `</div>`;
+  $('schedule-grid').innerHTML = html;
+  // بما إن الحاوية صارت LTR قياسيًا، لازم نحط مكان التمرير الابتدائي على أقصى اليمين
+  // (وهو نفس مكان البداية المنطقي للجدول: عمود الأيام + أول ساعة)
+  const wrapEl = document.querySelector('.schedule-grid-wrap');
+  if (wrapEl) wrapEl.scrollLeft = wrapEl.scrollWidth;
+}
+
+async function deleteSchedule(id){
+  await rpc('rpc_delete_schedule', { p_caller_id: session.universityId, p_caller_password: session.password, p_entry_id: id });
+  renderSchedule();
+}
+
+/* ================= بناء الأسئلة (واجبات/اختبارات) ================= */
+function toggleHwQuestionsMode(){
+  const noQ = $('hwNoQuestions').checked;
+  $('hw-questions-wrap').style.display = noQ ? 'none' : 'block';
+}
+
+function addQuestionField(kind, type){
+  const arr = kind === 'hw' ? hwQuestions : quizQuestions;
+  const q = { type, q: '', options: type==='mcq' ? ['','','',''] : null, answer: '' };
+  arr.push(q);
+  renderQuestionBuilder(kind);
+}
+
+function renderQuestionBuilder(kind){
+  const arr = kind === 'hw' ? hwQuestions : quizQuestions;
+  const wrap = $(kind === 'hw' ? 'hw-builder-questions' : 'quiz-builder-questions');
+  wrap.innerHTML = arr.map((q, i) => {
+    if (q.type === 'mcq'){
+      return `<div class="question-block">
+        <div class="form-group"><label>السؤال ${i+1} (اختيار من متعدد):</label>
+          <input type="text" value="${esc(q.q)}" oninput="updateQ('${kind}',${i},'q',this.value)"></div>
+        ${q.options.map((op,oi) => `<div class="form-group"><label>خيار ${oi+1}:</label><input type="text" value="${esc(op)}" oninput="updateQOption('${kind}',${i},${oi},this.value)"></div>`).join('')}
+        <div class="form-group"><label>الإجابة الصحيحة (اكتب نص الخيار الصحيح بالضبط):</label>
+          <input type="text" value="${esc(q.answer)}" oninput="updateQ('${kind}',${i},'answer',this.value)"></div>
+        <button class="btn-danger" onclick="removeQ('${kind}',${i})">🗑️ حذف السؤال</button>
+      </div>`;
+    }
+    return `<div class="question-block">
+      <div class="form-group"><label>السؤال ${i+1} (مقالي):</label>
+        <input type="text" value="${esc(q.q)}" oninput="updateQ('${kind}',${i},'q',this.value)"></div>
+      <button class="btn-danger" onclick="removeQ('${kind}',${i})">🗑️ حذف السؤال</button>
+    </div>`;
+  }).join('');
+}
+
+function updateQ(kind, i, field, val){ (kind==='hw'?hwQuestions:quizQuestions)[i][field] = val; }
+function updateQOption(kind, i, oi, val){ (kind==='hw'?hwQuestions:quizQuestions)[i].options[oi] = val; }
+function removeQ(kind, i){ const arr = kind==='hw'?hwQuestions:quizQuestions; arr.splice(i,1); renderQuestionBuilder(kind); }
+
+/* ================= الواجبات ================= */
+async function publishHomework(){
+  const title = $('hwTitle').value.trim();
+  const description = $('hwDescription').value.trim();
+  const noQ = $('hwNoQuestions').checked;
+  const dueDateLocal = $('hwDueDate').value;
+  if (!title){ toast('warning','تنبيه','اكتب عنوان الواجب'); return; }
+  const questions = noQ ? [] : hwQuestions;
+  const dueDateIso = dueDateLocal ? new Date(dueDateLocal).toISOString() : null;
+  try {
+    await rpc('rpc_create_homework', { p_caller_id: session.universityId, p_caller_password: session.password, p_title: title, p_questions: questions, p_description: description || null, p_due_date: dueDateIso });
+    toast('success','تم النشر','تم نشر الواجب للطلبة');
+    $('hwTitle').value=''; $('hwDescription').value=''; $('hwNoQuestions').checked=false; $('hwDueDate').value=''; toggleHwQuestionsMode();
+    hwQuestions = []; renderQuestionBuilder('hw');
+    renderHomeworks();
+  } catch(e){}
+}
+
+async function updateHomeworkDueDate(id, inputEl){
+  const iso = inputEl.value ? new Date(inputEl.value).toISOString() : null;
+  try {
+    await rpc('rpc_update_homework_due_date', { p_caller_id: session.universityId, p_caller_password: session.password, p_homework_id: id, p_due_date: iso });
+    toast('success','تم التحديث','تم تحديث موعد التسليم');
+    renderHomeworks();
+  } catch(e){}
+}
+
+async function deleteHomework(id){
+  if (!confirm('حذف هذا الواجب نهائياً مع كل تسليمات الطلبة؟')) return;
+  await rpc('rpc_delete_homework', { p_caller_id: session.universityId, p_caller_password: session.password, p_homework_id: id });
+  toast('success','تم الحذف','تم حذف الواجب');
+  renderHomeworks();
+}
+
+async function renderHomeworks(){
+  let list;
+  try {
+    list = await rpc('rpc_list_homeworks', { p_caller_id: session.universityId, p_caller_password: session.password });
+  } catch(e){ return; }
+
+  let myResults = { homeworks: [] };
+  if (session.role === 'student'){
+    try { myResults = await rpc('rpc_get_my_results', { p_caller_id: session.universityId, p_caller_password: session.password }); } catch(e){}
+  }
+
+  $('homework-container').innerHTML = list.map(hw => {
+    const canManage = session.role === 'supervisor' || (session.role === 'teacher' && hw.teacher_id === session.profileId);
+    const status = getDeadlineStatus(hw.due_date);
+    let studentPart = '';
+    if (session.role === 'student'){
+      const mine = myResults.homeworks.find(m => m.homework_id === hw.id);
+      if (mine){
+        studentPart = `<div class="submission-details">تم التسليم ✅ ${mine.graded ? ('الدرجة: ' + esc(mine.score||'')) : '(بانتظار التصحيح)'}</div>
+          <button class="btn-sm btn-view" style="margin-top:8px;" onclick="toggleMyReview('homework', ${hw.id})">📋 عرض إجاباتي</button>
+          <div id="my-review-homework-${hw.id}"></div>`;
+      } else if (status && status.closed){
+        studentPart = `<div class="locked-msg">🔒 انتهى وقت تسليم هذا الواجب، ما عاد يمكنك التسليم أو التعديل</div>`;
+      } else if (hw.questions.length === 0){
+        studentPart = `<div class="form-group"><label>ملاحظتك / رابط الحل:</label><textarea id="hw-note-${hw.id}" rows="2"></textarea></div>
+          <button class="btn" onclick="submitHomeworkNoQ(${hw.id})">تسليم الواجب</button>`;
+      } else {
+        studentPart = hw.questions.map((q,i) => q.type==='mcq'
+          ? `<div class="question-block"><div class="large-text">${esc(q.q)}</div>${q.options.map(op=>`<label style="display:block; margin:4px 0;"><input type="radio" name="hw${hw.id}q${i}" value="${esc(op)}" style="width:auto;"> ${esc(op)}</label>`).join('')}</div>`
+          : `<div class="question-block"><div class="large-text">${esc(q.q)}</div><textarea id="hw${hw.id}q${i}" rows="2"></textarea></div>`
+        ).join('') + `<button class="btn" onclick="submitHomeworkAnswers(${hw.id}, ${hw.questions.length})">تسليم الواجب</button>`;
+      }
+    }
+    return `<div class="hw-card">
+      <div class="card-header"><span>📚 ${esc(hw.title)}</span>
+        ${canManage ? `<div><button class="btn-sm btn-view" onclick="viewSubmissions('homework', ${hw.id})">عرض التسليمات</button> <button class="btn-danger" onclick="deleteHomework(${hw.id})">🗑️ حذف</button></div>` : ''}
+      </div>
+      ${status ? `<div style="margin-bottom:10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <span class="deadline-badge ${status.cls}">${status.label}</span>
+        <span style="font-size:12px; color:var(--text-muted);">آخر موعد: ${fmtDueDate(hw.due_date)}</span>
+      </div>` : ''}
+      ${canManage ? `<div class="form-group" style="max-width:280px;"><label style="font-size:12px;">تعديل موعد الانتهاء:</label>
+        <input type="datetime-local" value="${toLocalDatetimeValue(hw.due_date)}" onchange="updateHomeworkDueDate(${hw.id}, this)"></div>` : ''}
+      ${hw.description ? `<div class="submission-details" style="margin-bottom:10px;">${esc(hw.description)}</div>` : ''}
+      ${studentPart}
+      <div id="hw-subs-${hw.id}"></div>
+    </div>`;
+  }).join('') || '<p style="color:var(--text-muted);">لا توجد واجبات بعد</p>';
+}
+
+async function submitHomeworkNoQ(hwId){
+  const note = $('hw-note-'+hwId).value.trim();
+  try {
+    await rpc('rpc_submit_homework', { p_caller_id: session.universityId, p_caller_password: session.password, p_homework_id: hwId, p_answers: {note} });
+    toast('success','تم التسليم','تم تسليم الواجب بنجاح');
+    renderHomeworks();
+  } catch(e){}
+}
+
+async function submitHomeworkAnswers(hwId, count){
+  const answers = {};
+  for (let i=0;i<count;i++){
+    const radio = document.querySelector(`input[name="hw${hwId}q${i}"]:checked`);
+    if (radio) answers[i] = radio.value;
+    else { const ta = $(`hw${hwId}q${i}`); if (ta) answers[i] = ta.value; }
+  }
+  try {
+    await rpc('rpc_submit_homework', { p_caller_id: session.universityId, p_caller_password: session.password, p_homework_id: hwId, p_answers: answers });
+    toast('success','تم التسليم','تم تسليم الواجب بنجاح');
+    renderHomeworks();
+  } catch(e){}
+}
+
+/* ================= التسميع ================= */
+async function publishTasmee(){
+  const from = $('tsmFrom').value.trim(), to = $('tsmTo').value.trim();
+  if (!from || !to){ toast('warning','تنبيه','عبّي "من" و"إلى"'); return; }
+  try {
+    await rpc('rpc_add_tasmee', { p_caller_id: session.universityId, p_caller_password: session.password, p_from: from, p_to: to });
+    toast('success','تم النشر','تم تنزيل التسميع للطلبة');
+    $('tsmFrom').value=''; $('tsmTo').value='';
+    renderTasmee();
+  } catch(e){}
+}
+
+async function deleteTasmee(id){
+  if (!confirm('حذف هذا التسميع نهائياً مع كل ردود الطلبة؟')) return;
+  try {
+    await rpc('rpc_delete_tasmee', { p_caller_id: session.universityId, p_caller_password: session.password, p_tasmee_id: id });
+    toast('success','تم الحذف','تم حذف التسميع');
+    renderTasmee();
+  } catch(e){}
+}
+
+async function renderTasmee(){
+  let list;
+  try {
+    list = await rpc('rpc_list_tasmee', { p_caller_id: session.universityId, p_caller_password: session.password });
+  } catch(e){ return; }
+
+  let myStatus = [];
+  if (session.role === 'student'){
+    try { myStatus = await rpc('rpc_get_tasmee_status', { p_caller_id: session.universityId, p_caller_password: session.password }); } catch(e){}
+  }
+
+  $('tasmee-container').innerHTML = list.map(t => {
+    const canManage = session.role === 'supervisor' || (session.role === 'teacher' && t.teacher_id === session.profileId);
+    let studentPart = '';
+    if (session.role === 'student'){
+      const mine = myStatus.find(m => m.tasmee_id === t.id);
+      const st = mine ? mine.status : null;
+      studentPart = `<div class="inline-form" style="margin-top:8px;">
+        <button class="tsm-btn tsm-done ${st==='done'?'active':''}" onclick="setTasmeeStatus(${t.id},'done')">✅ تم التسميع</button>
+        <button class="tsm-btn tsm-notdone ${st==='not_done'?'active':''}" onclick="setTasmeeStatus(${t.id},'not_done')">❌ لم يتم التسميع</button>
+      </div>`;
+    }
+    return `<div class="hw-card">
+      <div class="card-header"><span>🕌 ${esc(t.title)}</span>
+        ${canManage ? `<div><button class="btn-sm btn-view" onclick="viewTasmeeResponses(${t.id})">عرض ردود الطلبة</button> <button class="btn-danger" onclick="deleteTasmee(${t.id})">🗑️ حذف</button></div>` : ''}
+      </div>
+      ${studentPart}
+      <div id="tsm-resp-${t.id}"></div>
+    </div>`;
+  }).join('') || '<p style="color:var(--text-muted);">لا يوجد تسميع بعد</p>';
+}
+
+async function setTasmeeStatus(tasmeeId, status){
+  try {
+    await rpc('rpc_set_tasmee_status', { p_caller_id: session.universityId, p_caller_password: session.password, p_tasmee_id: tasmeeId, p_status: status });
+    renderTasmee();
+  } catch(e){}
+}
+
+async function viewTasmeeResponses(tasmeeId){
+  const box = $('tsm-resp-'+tasmeeId);
+  try {
+    const rows = await rpc('rpc_get_tasmee_responses', { p_caller_id: session.universityId, p_caller_password: session.password, p_tasmee_id: tasmeeId });
+    box.innerHTML = `<div class="hw-submissions">` + (rows.map(r => `
+      <div class="sub-item">
+        <b>${esc(r.name)} (${esc(r.university_id)})</b>
+        <span class="badge ${r.status==='done' ? 'badge-present' : (r.status==='not_done' ? 'badge-absent' : '')}">
+          ${r.status==='done' ? '✅ تم التسميع' : (r.status==='not_done' ? '❌ لم يتم التسميع' : '⏳ لم يستجب بعد')}
+        </span>
+      </div>
+    `).join('') || '<p>لا يوجد طلاب بعد</p>') + `</div>`;
+  } catch(e){}
+}
+async function publishQuiz(){
+  const title = $('quizTitle').value.trim();
+  const dueDateLocal = $('quizDueDate').value;
+  if (!title || quizQuestions.length === 0){ toast('warning','تنبيه','اكتب عنوان الاختبار وأضف سؤالاً واحداً على الأقل'); return; }
+  const dueDateIso = dueDateLocal ? new Date(dueDateLocal).toISOString() : null;
+  try {
+    await rpc('rpc_create_quiz', { p_caller_id: session.universityId, p_caller_password: session.password, p_title: title, p_questions: quizQuestions, p_due_date: dueDateIso });
+    toast('success','تم النشر','تم نشر الاختبار للطلبة');
+    $('quizTitle').value=''; $('quizDueDate').value=''; quizQuestions = []; renderQuestionBuilder('quiz');
+    renderQuizzes();
+  } catch(e){}
+}
+
+async function updateQuizDueDate(id, inputEl){
+  const iso = inputEl.value ? new Date(inputEl.value).toISOString() : null;
+  try {
+    await rpc('rpc_update_quiz_due_date', { p_caller_id: session.universityId, p_caller_password: session.password, p_quiz_id: id, p_due_date: iso });
+    toast('success','تم التحديث','تم تحديث موعد انتهاء الاختبار');
+    renderQuizzes();
+  } catch(e){}
+}
+
+async function deleteQuiz(id){
+  if (!confirm('حذف هذا الاختبار نهائياً مع كل تسليمات الطلبة؟')) return;
+  await rpc('rpc_delete_quiz', { p_caller_id: session.universityId, p_caller_password: session.password, p_quiz_id: id });
+  toast('success','تم الحذف','تم حذف الاختبار');
+  renderQuizzes();
+}
+
+async function renderQuizzes(){
+  let list;
+  try {
+    list = await rpc('rpc_list_quizzes', { p_caller_id: session.universityId, p_caller_password: session.password });
+  } catch(e){ return; }
+
+  let myResults = { quizzes: [] };
+  if (session.role === 'student'){
+    try { myResults = await rpc('rpc_get_my_results', { p_caller_id: session.universityId, p_caller_password: session.password }); } catch(e){}
+  }
+
+  $('quizzes-container').innerHTML = list.map(q => {
+    const canManage = session.role === 'supervisor' || (session.role === 'teacher' && q.teacher_id === session.profileId);
+    const status = getDeadlineStatus(q.due_date);
+    let studentPart = '';
+    if (session.role === 'student'){
+      const mine = myResults.quizzes.find(m => m.quiz_id === q.id);
+      if (mine){
+        studentPart = `<div class="submission-details">تم التسليم ✅ ${mine.graded ? ('الدرجة: ' + esc(mine.score||'')) : '(بانتظار التصحيح)'}</div>
+          <button class="btn-sm btn-view" style="margin-top:8px;" onclick="toggleMyReview('quiz', ${q.id})">📋 عرض إجاباتي</button>
+          <div id="my-review-quiz-${q.id}"></div>`;
+      } else if (status && status.closed){
+        studentPart = `<div class="locked-msg">🔒 انتهى وقت هذا الاختبار، ما عاد يمكنك التسليم أو التعديل</div>`;
+      } else {
+        studentPart = q.questions.map((item,i) => item.type==='mcq'
+          ? `<div class="question-block"><div class="large-text">${esc(item.q)}</div>${item.options.map(op=>`<label style="display:block; margin:4px 0;"><input type="radio" name="qz${q.id}q${i}" value="${esc(op)}" style="width:auto;"> ${esc(op)}</label>`).join('')}</div>`
+          : `<div class="question-block"><div class="large-text">${esc(item.q)}</div><textarea id="qz${q.id}q${i}" rows="2"></textarea></div>`
+        ).join('') + `<button class="btn" onclick="submitQuizAnswers(${q.id}, ${q.questions.length})">تسليم الاختبار</button>`;
+      }
+    }
+    return `<div class="quiz-card">
+      <div class="card-header"><span>📝 ${esc(q.title)}</span>
+        ${canManage ? `<div><button class="btn-sm btn-view" onclick="viewSubmissions('quiz', ${q.id})">عرض التسليمات</button> <button class="btn-danger" onclick="deleteQuiz(${q.id})">🗑️ حذف</button></div>` : ''}
+      </div>
+      ${status ? `<div style="margin-bottom:10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <span class="deadline-badge ${status.cls}">${status.label}</span>
+        <span style="font-size:12px; color:var(--text-muted);">آخر موعد: ${fmtDueDate(q.due_date)}</span>
+      </div>` : ''}
+      ${canManage ? `<div class="form-group" style="max-width:280px;"><label style="font-size:12px;">تعديل موعد الانتهاء:</label>
+        <input type="datetime-local" value="${toLocalDatetimeValue(q.due_date)}" onchange="updateQuizDueDate(${q.id}, this)"></div>` : ''}
+      ${studentPart}
+      <div id="quiz-subs-${q.id}"></div>
+    </div>`;
+  }).join('') || '<p style="color:var(--text-muted);">لا توجد اختبارات بعد</p>';
+}
+
+async function submitQuizAnswers(quizId, count){
+  const answers = {};
+  for (let i=0;i<count;i++){
+    const radio = document.querySelector(`input[name="qz${quizId}q${i}"]:checked`);
+    if (radio) answers[i] = radio.value;
+    else { const ta = $(`qz${quizId}q${i}`); if (ta) answers[i] = ta.value; }
+  }
+  try {
+    await rpc('rpc_submit_quiz', { p_caller_id: session.universityId, p_caller_password: session.password, p_quiz_id: quizId, p_answers: answers });
+    toast('success','تم التسليم','تم تسليم الاختبار بنجاح');
+    renderQuizzes();
+  } catch(e){}
+}
+
+/* ================= عرض وتصحيح التسليمات ================= */
+async function viewSubmissions(type, itemId){
+  const box = $(type === 'quiz' ? `quiz-subs-${itemId}` : `hw-subs-${itemId}`);
+  try {
+    const subs = await rpc('rpc_get_submissions', { p_caller_id: session.universityId, p_caller_password: session.password, p_type: type, p_item_id: itemId });
+    box.innerHTML = `<div class="hw-submissions">` + (subs.map(s => `
+      <div class="sub-item">
+        <b>${esc(s.student_name)} (${esc(s.student_id)})</b>
+        <div class="submission-details">${esc(JSON.stringify(s.answers))}</div>
+        <div class="inline-form">
+          <div><label>الدرجة:</label><input type="text" id="score-${type}-${s.id}" value="${esc(s.score||'')}"></div>
+          <div><label>التقييم:</label>
+            <select id="level-${type}-${s.id}">
+              <option value="green" ${s.level==='green'?'selected':''}>ممتاز</option>
+              <option value="yellow" ${s.level==='yellow'?'selected':''}>متوسط</option>
+              <option value="red" ${s.level==='red'?'selected':''}>ضعيف</option>
+            </select>
+          </div>
+          <button class="btn" onclick="gradeSubmission('${type}', ${s.id})">حفظ الدرجة</button>
+        </div>
+      </div>
+    `).join('') || '<p>لا يوجد تسليمات بعد</p>') + `</div>`;
+  } catch(e){}
+}
+
+async function gradeSubmission(type, subId){
+  const score = $(`score-${type}-${subId}`).value;
+  const level = $(`level-${type}-${subId}`).value;
+  try {
+    await rpc('rpc_grade_submission', { p_caller_id: session.universityId, p_caller_password: session.password, p_type: type, p_submission_id: subId, p_score: score, p_level: level });
+    toast('success','تم الحفظ','تم حفظ الدرجة');
+  } catch(e){}
+}
+
+/* ================= مراجعة إجابات الطالب ================= */
+async function toggleMyReview(type, itemId){
+  const box = $(`my-review-${type}-${itemId}`);
+  if (!box) return;
+  if (box.dataset.loaded === '1'){
+    box.classList.toggle('hidden');
+    return;
+  }
+  box.innerHTML = '<div class="submission-details">جارِ التحميل...</div>';
+  try {
+    const data = await rpc('rpc_get_submission_review', { p_caller_id: session.universityId, p_caller_password: session.password, p_type: type, p_item_id: itemId });
+    box.innerHTML = renderReviewHtml(data);
+    box.dataset.loaded = '1';
+  } catch(e){
+    box.innerHTML = '<div class="submission-details">تعذّر تحميل إجاباتك</div>';
+  }
+}
+
+function renderReviewHtml(data){
+  const levelAr = { green: 'ممتاز', yellow: 'متوسط', red: 'ضعيف' };
+  let questionsHtml = '';
+  if (data.questions && data.questions.length){
+    questionsHtml = data.questions.map(q => {
+      if (q.type === 'mcq'){
+        const verdictCls = q.is_correct ? 'correct' : 'wrong';
+        const verdictLabel = q.is_correct ? '✅ إجابة صحيحة' : '❌ إجابة خاطئة';
+        const optionsHtml = (q.options||[]).map(op => {
+          let cls = 'review-opt';
+          let mark = '';
+          if (op === q.correct_answer){ cls += ' opt-correct'; mark = ' ✅'; }
+          if (op === q.student_answer && op !== q.correct_answer){ cls += ' opt-chosen-wrong'; mark = ' ❌'; }
+          const chosenTag = (op === q.student_answer) ? ' (إجابتك)' : '';
+          return `<div class="${cls}">${esc(op)}${chosenTag}${mark}</div>`;
+        }).join('');
+        return `<div class="review-q ${verdictCls}">
+          <div class="review-q-title"><span>${esc(q.q)}</span><span class="review-verdict ${verdictCls}">${verdictLabel}</span></div>
+          ${optionsHtml}
+        </div>`;
+      }
+      return `<div class="review-q">
+        <div class="review-q-title"><span>${esc(q.q)}</span></div>
+        <div class="review-answer-text">إجابتك: ${esc(q.student_answer || '(لم تجب)')}</div>
+      </div>`;
+    }).join('');
+  } else if (data.raw_answers && data.raw_answers.note !== undefined){
+    questionsHtml = `<div class="review-q"><div class="review-answer-text">إجابتك: ${esc(data.raw_answers.note || '(بدون ملاحظة)')}</div></div>`;
+  } else {
+    questionsHtml = '<div class="submission-details">لا توجد أسئلة لعرضها</div>';
+  }
+
+  const gradeFooter = data.graded
+    ? `<div class="review-grade-footer">📊 تصحيح المعلم — الدرجة: ${esc(data.score || '')}${data.level ? ' · التقييم: ' + esc(levelAr[data.level] || data.level) : ''}</div>`
+    : `<div class="review-grade-footer">⏳ بانتظار تصحيح المعلم</div>`;
+
+  return `<div class="review-box">${questionsHtml}${gradeFooter}</div>`;
+}
+
+/* ================= جدول الاختبارات القادمة ================= */
+async function addExamTableEntry(){
+  const date = $('examTableDate').value, title = $('examTableTitle').value.trim();
+  const time = $('examTableTime').value.trim(), color = $('examTableColor').value;
+  if (!date || !title){ toast('warning','تنبيه','عبّي التاريخ والعنوان'); return; }
+  await rpc('rpc_add_exam_entry', { p_caller_id: session.universityId, p_caller_password: session.password, p_date: date, p_title: title, p_time: time, p_color: color });
+  $('examTableTitle').value=''; $('examTableTime').value='';
+  renderExamTable();
+}
+
+async function deleteExamEntry(id){
+  await rpc('rpc_delete_exam_entry', { p_caller_id: session.universityId, p_caller_password: session.password, p_entry_id: id });
+  renderExamTable();
+}
+
+async function renderExamTable(){
+  let data;
+  try {
+    data = await rpc('rpc_list_exam_calendar', { p_caller_id: session.universityId, p_caller_password: session.password });
+  } catch(e){ return; }
+  $('exam-table-list').innerHTML = `<div class="table-responsive"><table><thead><tr><th>التاريخ</th><th>العنوان</th><th>الوقت</th><th></th></tr></thead><tbody>` +
+    data.map(e => {
+      const canDelete = session.role === 'supervisor' || (session.role === 'teacher' && e.teacher_id === session.profileId);
+      return `<tr style="background:${e.color||''}20;"><td>${esc(e.date)}</td><td>${esc(e.title)}</td><td>${esc(e.time||'')}</td>
+        <td>${canDelete ? `<button class="btn-danger" onclick="deleteExamEntry(${e.id})">🗑️</button>` : ''}</td></tr>`;
+    }).join('') + `</tbody></table></div>` || '<p>لا يوجد اختبارات قادمة</p>';
+}
+
+/* ================= المنهج / الكتب ================= */
+function toggleBookForm(){
+  const f = $('book-upload-form');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+async function uploadBook(){
+  const subject = $('bookSubject').value.trim();
+  const title = $('bookTitle').value.trim();
+  const file = $('bookFile').files[0];
+  if (!subject || !title || !file){ toast('warning','تنبيه','عبّي المادة والاسم واختر ملفاً'); return; }
+  if (file.size > 50 * 1024 * 1024){ toast('error','خطأ','حجم الملف أكبر من 50 ميجابايت'); return; }
+
+  const btn = $('bookUploadBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="loading-spin"></span> جارِ الرفع...';
+  try {
+    const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    const path = `${Date.now()}_${safeName}`;
+    const { error: upErr } = await sbClient.storage.from('books').upload(path, file);
+    if (upErr) throw upErr;
+    await rpc('rpc_add_book', { p_caller_id: session.universityId, p_caller_password: session.password, p_subject: subject, p_title: title, p_file_path: path, p_file_size: file.size });
+    toast('success','تم الرفع', 'تم رفع "' + title + '" بنجاح');
+    $('bookSubject').value=''; $('bookTitle').value=''; $('bookFile').value=''; $('book-upload-form').style.display='none';
+    renderBooks();
+  } catch(e){ toast('error','خطأ','فشل رفع الملف: ' + (e.message||'')); }
+  btn.disabled = false; btn.textContent = 'رفع الكتاب';
+}
+
+async function renderBooks(){
+  let data;
+  try {
+    data = await rpc('rpc_list_books', { p_caller_id: session.universityId, p_caller_password: session.password });
+  } catch(e){ return; }
+  $('books-container').innerHTML = data.map(b => {
+    const canDelete = session.role === 'supervisor' || (session.role === 'teacher' && b.teacher_id === session.profileId);
+    const url = `${SUPABASE_URL}/storage/v1/object/public/books/${b.file_path}`;
+    const sizeMb = b.file_size ? (b.file_size/1024/1024).toFixed(1) + ' MB' : '';
+    return `<div class="book-card">
+      <div class="card-header">
+        <span><span class="subject-badge">${esc(b.subject)}</span> ${esc(b.title)}</span>
+        <div><a class="btn-sm btn-view" href="${url}" target="_blank" download>⬇️ تحميل</a> ${canDelete ? `<button class="btn-danger" onclick="deleteBook(${b.id})">🗑️ حذف</button>` : ''}</div>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted);">${sizeMb}</div>
+    </div>`;
+  }).join('') || '<p style="color:var(--text-muted);">لا توجد كتب مرفوعة بعد</p>';
+}
+
+async function deleteBook(id){
+  if (!confirm('حذف هذا الكتاب نهائياً؟')) return;
+  try {
+    const res = await rpc('rpc_delete_book', { p_caller_id: session.universityId, p_caller_password: session.password, p_book_id: id });
+    if (res.file_path) await sbClient.storage.from('books').remove([res.file_path]);
+    toast('success','تم الحذف','تم حذف الكتاب');
+    renderBooks();
+  } catch(e){}
+}
+
+/* ================= الأخبار (المعلم فقط) ================= */
+async function sendNews(){
+  const title = $('newsTitle').value.trim();
+  const body = $('newsBody').value.trim();
+  if (!title){ toast('warning','تنبيه','اكتب عنوان الخبر'); return; }
+
+  const btn = $('sendNewsBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="loading-spin"></span> جارِ الإرسال...';
+  try {
+    await rpc('rpc_send_news', { p_caller_id: session.universityId, p_caller_password: session.password, p_title: title, p_body: body || null });
+    toast('success','تم الإرسال','وصل الخبر لطلابك في الإشعارات');
+    $('newsTitle').value=''; $('newsBody').value='';
+    renderNews();
+  } catch(e){ toast('error','خطأ','فشل إرسال الخبر: ' + (e.message||'')); }
+  btn.disabled = false; btn.innerHTML = '📤 إرسال الخبر للطلاب';
+}
+
+async function renderNews(){
+  let data;
+  try {
+    data = await rpc('rpc_list_news', { p_caller_id: session.universityId, p_caller_password: session.password });
+  } catch(e){ return; }
+  $('news-container').innerHTML = data.map(n => `
+    <div class="book-card">
+      <div class="card-header">
+        <span>📰 ${esc(n.title)}</span>
+        <div><span class="notif-time" style="display:inline-block; margin-left:8px;">${fmtDueDate(n.created_at)}</span> <button class="btn-danger" onclick="deleteNews(${n.id})">🗑️ حذف</button></div>
+      </div>
+      ${n.body ? `<div style="font-size:13px; color:var(--text-muted); margin-top:6px;">${esc(n.body)}</div>` : ''}
+    </div>`
+  ).join('') || '<p style="color:var(--text-muted);">لا توجد أخبار مرسلة بعد</p>';
+}
+
+async function deleteNews(id){
+  if (!confirm('حذف هذا الخبر نهائياً؟')) return;
+  try {
+    await rpc('rpc_delete_news', { p_caller_id: session.universityId, p_caller_password: session.password, p_news_id: id });
+    toast('success','تم الحذف','تم حذف الخبر');
+    renderNews();
+  } catch(e){}
+}
+
+/* ================= إدارة المعلمين (مشرف) ================= */
+async function addNewTeacherAccount(){
+  const name = $('newTeacherNameInput').value.trim();
+  const id = $('newTeacherIdInput').value.trim();
+  const subjects = $('newTeacherSubjectsInput').value.split(/[,،]/).map(s=>s.trim()).filter(Boolean);
+  const pass = $('newTeacherPassInput').value.trim() || '1234';
+  if (!name || !id){ toast('warning','تنبيه','عبّي الاسم والرقم الأكاديمي'); return; }
+  try {
+    await rpc('rpc_add_teacher', { p_caller_id: session.universityId, p_caller_password: session.password, p_new_university_id: id, p_name: name, p_subjects: subjects, p_password: pass });
+    toast('success','تمت الإضافة', name + ' انضاف بنجاح');
+    $('newTeacherNameInput').value=''; $('newTeacherIdInput').value=''; $('newTeacherSubjectsInput').value=''; $('newTeacherPassInput').value='1234';
+    renderTeachersList();
+  } catch(e){}
+}
+
+async function renderTeachersList(){
+  const list = await rpc('rpc_list_teachers', { p_caller_id: session.universityId, p_caller_password: session.password });
+  $('super-teachers-list-container').innerHTML = `<div class="table-responsive"><table><thead><tr><th>الرقم</th><th>الاسم</th><th>المواد</th><th></th></tr></thead><tbody>` +
+    list.map(t => `<tr><td>${esc(t.university_id)}</td><td>${esc(t.name)}</td><td>${(t.subjects||[]).map(esc).join('، ')}</td>
+      <td><button class="btn-sm btn-view" onclick="resetPersonPassword('${esc(t.university_id)}')">🔑 إعادة ضبط كلمة المرور</button>
+      <button class="btn-danger" onclick="deleteTeacher('${esc(t.university_id)}')">🗑️ حذف</button></td></tr>`).join('') +
+    `</tbody></table></div>`;
+}
+
+async function deleteTeacher(id){
+  if (!confirm('حذف هذا المعلم/ة نهائياً؟ سيتم حذف كل بياناته (طلابه، جدوله، واجباته، اختباراته، كتبه). هذا الإجراء لا يمكن التراجع عنه.')) return;
+  try {
+    await rpc('rpc_delete_teacher', { p_caller_id: session.universityId, p_caller_password: session.password, p_target_university_id: id });
+    toast('success','تم الحذف','تم حذف المعلم/ة وكل بياناته');
+    renderTeachersList();
+  } catch(e){}
+}
+
+async function resetPersonPassword(targetId){
+  if (!confirm('إعادة ضبط كلمة المرور إلى 1234 لهذا الحساب؟')) return;
+  try {
+    await rpc('rpc_reset_password', { p_caller_id: session.universityId, p_caller_password: session.password, p_target_university_id: targetId, p_new_password: '1234' });
+    toast('success','تم', 'تمت إعادة ضبط كلمة المرور إلى 1234، وسيُطلب من الحساب تغييرها عند الدخول القادم');
+  } catch(e){}
+}
+
+/* ================= الإعدادات ================= */
+function renderSettings(){
+  $('settingName').value = session.name;
+  $('settingId').value = session.universityId;
+  $('settingPass').value = '';
+  if (session.role === 'student') checkPushStatus();
+}
+
+async function saveSettings(){
+  const newName = $('settingName').value.trim();
+  const newPass = $('settingPass').value;
+  try {
+    if (newName && newName !== session.name){
+      await rpc('rpc_update_name', { p_caller_id: session.universityId, p_caller_password: session.password, p_new_name: newName });
+      session.name = newName;
+      $('user-display-name').textContent = newName;
+    }
+    if (newPass){
+      if (newPass.length < 4){ toast('warning','تنبيه','كلمة المرور الجديدة قصيرة جداً'); return; }
+      await rpc('rpc_change_password', { p_university_id: session.universityId, p_old_password: session.password, p_new_password: newPass });
+      session.password = newPass;
+      localStorage.setItem('academic_session', JSON.stringify({ id: session.universityId, password: newPass, role: session.role }));
+    }
+    toast('success','تم الحفظ','تم حفظ التغييرات بنجاح');
+    $('settingPass').value = '';
+  } catch(e){}
+}
+
+/* ================= بدء التشغيل ================= */
+document.body.style.overflow = 'hidden';
+tryRestoreSession();
+</script>
+</body>
+</html>
