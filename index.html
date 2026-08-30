@@ -218,10 +218,10 @@
     tbody tr:hover { background: var(--primary-light); }
     tbody tr:last-child td { border-bottom: none; }
 
-    .schedule-grid-wrap { width: 100%; overflow-x: auto; margin-top: 10px; }
+    .schedule-grid-wrap { width: 100%; overflow-x: auto; margin-top: 10px; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; }
     .schedule-grid { display: grid; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #fff; }
     .sg-corner { background: var(--sidebar-bg); }
-    .sg-day-header { background: var(--sidebar-bg); color: #fff; font-weight: 700; font-size: 13.5px; display: flex; align-items: center; justify-content: center; padding: 8px 6px; }
+    .sg-day-header { background: var(--sidebar-bg); color: #fff; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center; padding: 10px 6px; text-align: center; }
     .sg-hour-header { font-size: 11.5px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-right: 1px solid var(--border); white-space: nowrap; }
     .sg-slot { border-right: 1px solid #f1efe6; border-top: 1px solid var(--border); }
     .sg-slot.sg-hour { border-right: 1px solid var(--border); }
@@ -1674,7 +1674,9 @@ async function renderSchedule(){
   const UNIT = 15; // كل خانة = 15 دقيقة (يقبل القسمة على 30/45/60/90 دقيقة تماماً)
   const slotCount = (maxEnd - minStart) / UNIT;
 
-  let html = `<div class="schedule-grid" style="grid-template-columns: 84px repeat(${slotCount}, minmax(26px, 1fr)); grid-template-rows: 42px repeat(${SCHEDULE_DAYS.length}, 64px);">`;
+  const DAY_COL = 96, HOUR_ROW = 46, DAY_ROW = 72, MIN_SLOT = 30;
+  const gridMinWidth = DAY_COL + slotCount * MIN_SLOT;
+  let html = `<div class="schedule-grid" style="grid-template-columns: ${DAY_COL}px repeat(${slotCount}, minmax(${MIN_SLOT}px, 1fr)); grid-template-rows: ${HOUR_ROW}px repeat(${SCHEDULE_DAYS.length}, ${DAY_ROW}px); min-width: ${gridMinWidth}px; width: 100%;">`;
   html += `<div class="sg-corner" style="grid-row:1; grid-column:1;"></div>`;
   SCHEDULE_DAYS.forEach((d,i) => html += `<div class="sg-day-header" style="grid-row:${i+2}; grid-column:1;">${d}</div>`);
   const stepsPerHour = 60 / UNIT;
