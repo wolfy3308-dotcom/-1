@@ -1750,13 +1750,16 @@ function minutesToLabel(mins){
     wrap.scrollLeft = startScroll - dx;
   };
   const end = () => { isDown = false; wrap.classList.remove('dragging'); };
+  // السحب بالماوس (لأجهزة الكمبيوتر فقط) — لا نطبّقه على اللمس حتى لا يتعارض مع تمرير المتصفح الطبيعي
   wrap.addEventListener('mousedown', (e) => start(e.pageX));
   window.addEventListener('mousemove', (e) => move(e.pageX));
   window.addEventListener('mouseup', end);
-  wrap.addEventListener('touchstart', (e) => start(e.touches[0].pageX), { passive: true });
-  wrap.addEventListener('touchmove', (e) => move(e.touches[0].pageX), { passive: true });
-  wrap.addEventListener('touchend', end);
-  wrap.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+  // بشاشات اللمس نترك المتصفح يتولى السحب أفقياً بنفسه (overflow-x:auto + touch-action)،
+  // ونكتفي بمراقبة الحركة لمنع فتح/حذف الحصة بالخطأ أثناء السحب
+  let touchStartX = 0, touchMoved = false;
+  wrap.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].pageX; touchMoved = false; }, { passive: true });
+  wrap.addEventListener('touchmove', (e) => { if (Math.abs(e.touches[0].pageX - touchStartX) > 5) touchMoved = true; }, { passive: true });
+  wrap.addEventListener('click', (e) => { if (moved || touchMoved) { e.preventDefault(); e.stopPropagation(); } }, true);
 })();
 
 function subjectColor(name){
