@@ -255,13 +255,16 @@
       width: 100%; overflow-x: auto; margin-top: 10px; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y;
       position: relative; border-radius: 10px; cursor: grab;
       scrollbar-width: thin; scrollbar-color: var(--secondary) #f1efe6;
+      /* الحاوية نفسها LTR عشان قيمة scrollLeft تكون قياسية وموحّدة بين كل المتصفحات (بعض متصفحات الجوال
+         تكسر التمرير باللمس داخل حاويات RTL بسبب اختلاف تفسيرها لقيمة scrollLeft). المحتوى الداخلي يضل RTL. */
+      direction: ltr;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='rgba(201,162,39,0.5)'%3E%3Cpath stroke-width='1.1' d='M163.64,163.64 L36.36,163.64 L36.36,36.36 L163.64,36.36 Z'/%3E%3Cpath stroke-width='1.1' d='M190,100 L100,190 L10,100 L100,10 Z'/%3E%3Cpath stroke-width='0.8' d='M117.6,142.5 L57.5,117.6 L82.4,57.5 L142.5,82.4 Z'/%3E%3Cpath stroke-width='0.8' d='M142.5,117.6 L82.4,142.5 L57.5,82.4 L117.6,57.5 Z'/%3E%3C/g%3E%3C/svg%3E");
     }
     .schedule-grid-wrap.dragging { cursor: grabbing; scroll-behavior: auto; user-select: none; }
     .schedule-grid-wrap::-webkit-scrollbar { height: 7px; }
     .schedule-grid-wrap::-webkit-scrollbar-track { background: #f1efe6; border-radius: 10px; }
     .schedule-grid-wrap::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
-    .schedule-grid { display: grid; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: rgba(255,255,255,.93); }
+    .schedule-grid { display: grid; direction: rtl; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: rgba(255,255,255,.93); }
     .sg-corner { background: var(--sidebar-bg); position: sticky; right: 0; z-index: 3; }
     .sg-day-header {
       background: var(--sidebar-bg); color: #fff; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center;
@@ -1826,6 +1829,10 @@ async function renderSchedule(){
 
   html += `</div>`;
   $('schedule-grid').innerHTML = html;
+  // بما إن الحاوية صارت LTR قياسيًا، لازم نحط مكان التمرير الابتدائي على أقصى اليمين
+  // (وهو نفس مكان البداية المنطقي للجدول: عمود الأيام + أول ساعة)
+  const wrapEl = document.querySelector('.schedule-grid-wrap');
+  if (wrapEl) wrapEl.scrollLeft = wrapEl.scrollWidth;
 }
 
 async function deleteSchedule(id){
