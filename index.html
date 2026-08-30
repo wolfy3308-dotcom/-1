@@ -74,7 +74,9 @@
     #role-modal, #force-pass-modal {
       position: fixed; inset: 0; z-index: 9999; padding: 15px;
       display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, rgba(6,36,26,.8), rgba(10,51,35,.72) 60%, rgba(20,60,42,.65));
+      background:
+        linear-gradient(135deg, rgba(6,36,26,.6), rgba(10,51,35,.52) 60%, rgba(20,60,42,.44)),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='54' height='54'%3E%3Cpath d='M0 27 L27 0 L54 27 L27 54 Z' fill='none' stroke='rgba(201,162,39,0.28)' stroke-width='1.1'/%3E%3Ccircle cx='27' cy='27' r='2.6' fill='rgba(201,162,39,0.28)'/%3E%3C/svg%3E");
       backdrop-filter: blur(14px);
       animation: overlayIn .35s var(--ease-smooth);
     }
@@ -110,12 +112,20 @@
     }
     .role-btn::after {
       content: ''; position: absolute; inset: 0; border-radius: inherit;
-      background: linear-gradient(135deg, var(--primary), var(--primary-hover)); opacity: 0; transition: opacity .25s;
+      background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M0 13 L13 0 L26 13 L13 26 Z' fill='none' stroke='rgba(201,162,39,0.55)' stroke-width='1'/%3E%3C/svg%3E"),
+        linear-gradient(135deg, var(--primary), var(--primary-hover));
+      opacity: 0; transition: opacity .3s var(--ease-smooth);
       z-index: 0;
     }
+    .role-btn-purple { color: var(--purple); }
     .role-btn:hover { color: #fff; transform: translateY(-2px); box-shadow: var(--shadow); }
     .role-btn:hover::after { opacity: 1; }
     .role-btn:active { transform: translateY(0) scale(.98); }
+    .role-btn.selected { color: #fff; box-shadow: var(--shadow); border-color: var(--secondary); }
+    .role-btn.selected::after { opacity: 1; }
+    .role-btn.selected > * { animation: textPulseGold 2.6s ease-in-out infinite; }
+    @keyframes textPulseGold { 0%, 100% { color: #fff; } 50% { color: var(--secondary); } }
     .role-btn > * { position: relative; z-index: 1; }
     .login-form-sec { display: none; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px; text-align: right; animation: fadeIn .35s var(--ease-smooth); }
     .password-container { position: relative; width: 100%; }
@@ -131,8 +141,11 @@
       overflow-y: auto; overflow-x: hidden;
     }
     .sidebar::before {
-      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .5;
-      background-image: radial-gradient(circle at 15% 8%, rgba(201,162,39,.10), transparent 30%);
+      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .6;
+      background-image:
+        radial-gradient(circle at 15% 8%, rgba(201,162,39,.10), transparent 30%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cpath d='M0 17 L17 0 L34 17 L17 34 Z' fill='none' stroke='rgba(201,162,39,0.25)' stroke-width='1.1'/%3E%3C/svg%3E");
+      background-repeat: no-repeat, repeat;
     }
     .sidebar-brand {
       color: #fff; font-family: var(--deco-font); font-size: 17px; line-height: 1.3; font-weight: 700;
@@ -149,6 +162,23 @@
     .nav-btn.active { color: #fff; transform: translateX(-2px); }
     .nav-icon { font-size: 18px; width: 22px; text-align: center; transition: transform .25s var(--ease-spring); }
     .nav-btn:hover .nav-icon { transform: scale(1.15) rotate(-4deg); }
+
+    /* زخرفة معينة ذهبية (مستوحاة من الأرابيسك) تظهر عند تمرير الماوس على أحد أقسام القائمة */
+    .nav-btn::before {
+      content: ''; position: absolute; left: 12px; top: 50%; width: 15px; height: 15px; margin-top: -7.5px;
+      border: 2px solid var(--secondary); transform: scale(.25) rotate(45deg); border-radius: 2px;
+      opacity: 0; transition: opacity .35s var(--ease-smooth), transform .4s var(--ease-spring);
+      pointer-events: none; filter: drop-shadow(0 0 5px rgba(201,162,39,.65));
+    }
+    .nav-btn::after {
+      content: ''; position: absolute; left: 17px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px;
+      border-radius: 50%; background: var(--secondary); opacity: 0; transform: scale(.2);
+      transition: opacity .35s var(--ease-smooth) .05s, transform .4s var(--ease-spring) .05s;
+      pointer-events: none; filter: drop-shadow(0 0 4px rgba(201,162,39,.7));
+    }
+    .nav-btn:hover::before, .nav-btn.active::before { opacity: .9; transform: scale(1) rotate(45deg); }
+    .nav-btn:hover::after, .nav-btn.active::after { opacity: 1; transform: scale(1); }
+    @media (max-width: 768px) { .nav-btn::before, .nav-btn::after { display: none; } }
 
     /* شريط مؤشر متحرك ينزلق بسلاسة بين عناصر القائمة عند التنقل */
     .nav-indicator {
@@ -168,7 +198,7 @@
     }
     .content-area {
       padding: 22px; max-width: 1200px; margin: 0 auto; width: 100%;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='rgba(13,92,62,0.07)' stroke-width='1.2'%3E%3Crect x='12' y='12' width='40' height='40'/%3E%3Crect x='12' y='12' width='40' height='40' transform='rotate(45 32 32)'/%3E%3C/g%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M0 20 L20 0 L40 20 L20 40 Z' fill='none' stroke='rgba(13,92,62,0.07)' stroke-width='1.1'/%3E%3C/svg%3E");
       background-repeat: repeat;
     }
 
@@ -402,27 +432,27 @@
     }
     .bg-orb-1 {
       width: 460px; height: 460px; top: -140px; inset-inline-end: -120px;
-      background: radial-gradient(circle, rgba(13,92,62,.75), transparent 70%);
+      background: radial-gradient(circle, rgba(201,162,39,.75), transparent 70%);
       animation: orbFloat1 26s ease-in-out infinite;
     }
     .bg-orb-2 {
       width: 380px; height: 380px; bottom: -150px; inset-inline-start: -110px;
-      background: radial-gradient(circle, rgba(201,162,39,.65), transparent 70%);
+      background: radial-gradient(circle, rgba(230,193,90,.65), transparent 70%);
       animation: orbFloat2 32s ease-in-out infinite;
     }
     .bg-orb-3 {
       width: 300px; height: 300px; top: 42%; inset-inline-start: 42%;
-      background: radial-gradient(circle, rgba(13,92,62,.4), transparent 70%);
+      background: radial-gradient(circle, rgba(168,128,24,.45), transparent 70%);
       animation: orbFloat3 22s ease-in-out infinite;
     }
     @keyframes orbFloat1 { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(-40px,55px,0) scale(1.12); } }
     @keyframes orbFloat2 { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(50px,-45px,0) scale(1.16); } }
     @keyframes orbFloat3 { 0%,100% { transform: translate3d(0,0,0) rotate(0deg); } 50% { transform: translate3d(-35px,-30px,0) rotate(25deg); } }
 
-    /* نجمة ثمانية هندسية (مستوحاة من الفن الإسلامي) تدور بمنظور ثلاثي الأبعاد */
+    /* زخرفة معينات متداخلة (مستوحاة من الزخرفة الهندسية الإسلامية) تدور بمنظور ثلاثي الأبعاد */
     .bg-star { position: absolute; transform-style: preserve-3d; }
-    .bg-star .star-sq { position: absolute; inset: 0; border: 3px solid currentColor; border-radius: 6px; }
-    .bg-star .star-sq-2 { transform: rotate(45deg); }
+    .bg-star .star-sq { position: absolute; inset: 0; border: 3px solid currentColor; border-radius: 8px; transform: rotate(45deg); }
+    .bg-star .star-sq-2 { transform: rotate(45deg) scale(.55); border-radius: 6px; }
     .star-a {
       width: 320px; height: 320px; top: 6%; inset-inline-start: -80px; color: var(--secondary); opacity: .22;
       animation: starSpin 110s linear infinite;
@@ -443,6 +473,34 @@
       mask-image: linear-gradient(to top, rgba(0,0,0,.5), transparent 65%);
       -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,.5), transparent 65%);
     }
+
+    /* كرات صغيرة شفافة تسبح في الشاشة وتتغير ألوانها بين الذهبي والأخضر */
+    .bg-particle {
+      position: absolute; border-radius: 50%; opacity: .55; filter: blur(1px);
+      box-shadow: 0 0 10px currentColor;
+    }
+    @keyframes particleColor {
+      0%   { background: rgba(201,162,39,.85); box-shadow: 0 0 10px rgba(201,162,39,.6); }
+      50%  { background: rgba(13,92,62,.85);   box-shadow: 0 0 10px rgba(13,92,62,.55); }
+      100% { background: rgba(201,162,39,.85); box-shadow: 0 0 10px rgba(201,162,39,.6); }
+    }
+    .p1 { width: 10px; height: 10px; top: 18%; left: 12%; animation: swim1 24s ease-in-out infinite, particleColor 7s ease-in-out infinite; }
+    .p2 { width: 14px; height: 14px; top: 62%; left: 8%;  animation: swim2 30s ease-in-out infinite, particleColor 9s ease-in-out infinite .5s; }
+    .p3 { width: 8px;  height: 8px;  top: 30%; left: 78%; animation: swim3 20s ease-in-out infinite, particleColor 6s ease-in-out infinite 1s; }
+    .p4 { width: 12px; height: 12px; top: 75%; left: 70%; animation: swim4 27s ease-in-out infinite, particleColor 8s ease-in-out infinite 1.5s; }
+    .p5 { width: 9px;  height: 9px;  top: 48%; left: 45%; animation: swim5 22s ease-in-out infinite, particleColor 7.5s ease-in-out infinite 2s; }
+    .p6 { width: 13px; height: 13px; top: 10%; left: 55%; animation: swim6 26s ease-in-out infinite, particleColor 6.5s ease-in-out infinite .8s; }
+    .p7 { width: 7px;  height: 7px;  top: 85%; left: 35%; animation: swim1 19s ease-in-out infinite reverse, particleColor 8.5s ease-in-out infinite 1.2s; }
+    .p8 { width: 11px; height: 11px; top: 5%;  left: 30%; animation: swim3 25s ease-in-out infinite reverse, particleColor 7s ease-in-out infinite 2.5s; }
+    @keyframes swim1 { 0%,100% { transform: translate(0,0); } 25% { transform: translate(60px,-40px); } 50% { transform: translate(20px,50px); } 75% { transform: translate(-50px,10px); } }
+    @keyframes swim2 { 0%,100% { transform: translate(0,0); } 30% { transform: translate(-40px,-60px); } 60% { transform: translate(70px,-10px); } 85% { transform: translate(30px,60px); } }
+    @keyframes swim3 { 0%,100% { transform: translate(0,0); } 20% { transform: translate(-60px,30px); } 55% { transform: translate(-20px,-55px); } 80% { transform: translate(45px,20px); } }
+    @keyframes swim4 { 0%,100% { transform: translate(0,0); } 35% { transform: translate(55px,40px); } 65% { transform: translate(-35px,55px); } 90% { transform: translate(-55px,-25px); } }
+    @keyframes swim5 { 0%,100% { transform: translate(0,0); } 40% { transform: translate(-45px,-35px); } 70% { transform: translate(50px,-45px); } 95% { transform: translate(25px,45px); } }
+    @keyframes swim6 { 0%,100% { transform: translate(0,0); } 22% { transform: translate(40px,-50px); } 58% { transform: translate(-55px,-15px); } 82% { transform: translate(-15px,55px); } }
+    @media (max-width: 768px) {
+      .bg-particle { width: 7px !important; height: 7px !important; opacity: .45; }
+    }
     @media (max-width: 768px) {
       .bg-orb { filter: blur(36px); }
       .bg-star { transform: scale(.7); }
@@ -451,11 +509,12 @@
       .bg-grid { opacity: .22; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .bg-orb, .bg-star { animation: none !important; }
+      .bg-orb, .bg-star, .bg-particle { animation: none !important; }
     }
+    body.pre-login .bg-star, body.pre-login .bg-grid { display: none; }
   </style>
 </head>
-<body>
+<body class="pre-login">
 
   <div class="bg-decor" aria-hidden="true">
     <div class="bg-orb bg-orb-1"></div>
@@ -464,6 +523,14 @@
     <div class="bg-star star-a"><span class="star-sq"></span><span class="star-sq star-sq-2"></span></div>
     <div class="bg-star star-b"><span class="star-sq"></span><span class="star-sq star-sq-2"></span></div>
     <div class="bg-grid"></div>
+    <div class="bg-particle p1"></div>
+    <div class="bg-particle p2"></div>
+    <div class="bg-particle p3"></div>
+    <div class="bg-particle p4"></div>
+    <div class="bg-particle p5"></div>
+    <div class="bg-particle p6"></div>
+    <div class="bg-particle p7"></div>
+    <div class="bg-particle p8"></div>
   </div>
 
   <div id="toast-container"></div>
@@ -474,9 +541,9 @@
       <h2><svg class="minaret-icon" width="30" height="56" viewBox="0 0 60 120" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M30 2 24 12h12L30 2Z"/><rect x="28" y="12" width="4" height="8"/><path d="M22 20c0-6 4-10 8-10s8 4 8 10c0 4-3 6-8 6s-8-2-8-6Z"/><rect x="24" y="26" width="12" height="8" rx="1"/><rect x="20" y="34" width="20" height="5" rx="1"/><rect x="25" y="39" width="10" height="34"/><rect x="19" y="73" width="22" height="6" rx="1"/><rect x="22" y="79" width="16" height="26"/><rect x="14" y="105" width="32" height="10" rx="1"/><rect x="10" y="115" width="40" height="6" rx="1"/></svg> طويلبات الحرم النبوي</h2>
       <p>منصة طلاب وطالبات الحرم النبوي الشريف — اختر نوع دخولك واستكمل التوثيق:</p>
 
-      <button type="button" class="role-btn" onclick="showForm('teacher')">👩‍🏫/👨‍🏫 تسجيل دخول المعلم/ة</button>
-      <button type="button" class="role-btn" onclick="showForm('student')">🎓 تسجيل دخول الطالب/ة</button>
-      <button type="button" class="role-btn" style="color: var(--purple);" onclick="showForm('supervisor')">👨‍💼/👩‍💼 تسجيل دخول المشرف/ة</button>
+      <button type="button" class="role-btn" onclick="showForm('teacher', this)"><span>👩‍🏫/👨‍🏫 تسجيل دخول المعلم/ة</span></button>
+      <button type="button" class="role-btn" onclick="showForm('student', this)"><span>🎓 تسجيل دخول الطالب/ة</span></button>
+      <button type="button" class="role-btn role-btn-purple" onclick="showForm('supervisor', this)"><span>👨‍💼/👩‍💼 تسجيل دخول المشرف/ة</span></button>
 
       <div id="teacher-form" class="login-form-sec">
         <div class="form-group">
@@ -1035,9 +1102,11 @@ async function rpc(name, params){
 }
 
 /* ================= تسجيل الدخول ================= */
-function showForm(role){
+function showForm(role, btnEl){
   document.querySelectorAll('.login-form-sec').forEach(f => f.style.display = 'none');
   $(role + '-form').style.display = 'block';
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+  if (btnEl) btnEl.classList.add('selected');
 }
 
 async function doLogin(role){
@@ -1300,6 +1369,7 @@ function playLoginTransition(afterCoverCallback){
 }
 function enterApp(){
   $('role-modal').style.display = 'none';
+  document.body.classList.remove('pre-login');
   document.body.style.overflow = 'auto';
   $('user-display-name').textContent = session.name;
   $('user-role-text').textContent = roleLabel(session.role);
