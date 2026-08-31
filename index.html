@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -283,6 +284,17 @@
     .sg-class-time { font-size: 10.5px; font-weight: 600; opacity: .8; white-space: nowrap; }
     .sg-del { position: absolute; top: 4px; left: 4px; background: rgba(255,255,255,.8); border: none; border-radius: 50%; width: 17px; height: 17px; font-size: 12px; line-height: 1; cursor: pointer; color: inherit; transition: transform .15s; }
     .sg-del:hover { transform: scale(1.2); }
+
+    .schedule-mobile-list { display: flex; flex-direction: column; gap: 14px; }
+    .sml-day { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: #fff; }
+    .sml-day-title { background: var(--sidebar-bg); color: #fff; font-weight: 800; font-size: 14px; padding: 10px 14px; border-top: 1px solid rgba(201,162,39,.55); }
+    .sml-empty { padding: 12px 14px; color: var(--text-muted); font-size: 12.5px; }
+    .sml-class {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      margin: 8px 10px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid; font-size: 13px; font-weight: 700;
+    }
+    .sml-subject { flex: 1; }
+    .sml-time { font-size: 11.5px; font-weight: 600; opacity: .85; white-space: nowrap; }
     .modal-box h2 .minaret-icon { transition: transform .4s var(--ease-spring); transform-origin: bottom center; }
     .modal-box h2 .minaret-icon.grow { transform: scale(3.2) translateY(-6px); }
     #login-wipe {
@@ -757,7 +769,10 @@
           </div>
         </div>
         <div class="card">
-          <div class="card-header">📅 الجدول الأسبوعي</div>
+          <div class="card-header">
+            <span>📅 الجدول الأسبوعي</span>
+            <button class="btn-sm btn-view" id="downloadScheduleBtn" onclick="downloadScheduleImage()">📷 تحميل الجدول كصورة</button>
+          </div>
           <div class="schedule-grid-wrap"><div id="schedule-grid" class="schedule-grid"></div></div>
         </div>
       </div>
@@ -1796,6 +1811,9 @@ async function renderSchedule(){
 
   if (!data.length){ $('schedule-grid').innerHTML = '<p style="padding:20px; color:var(--text-muted);">لا يوجد حصص بعد</p>'; return; }
 
+  const isMobile = window.innerWidth <= 768;
+  if (isMobile){ renderScheduleMobileList(data); return; }
+
   let minStart = Infinity, maxEnd = -Infinity;
   data.forEach(s => {
     const st = parseTimeToMinutes(s.start_time), en = parseTimeToMinutes(s.end_time);
@@ -1810,8 +1828,7 @@ async function renderSchedule(){
   const UNIT = 15; // كل خانة = 15 دقيقة (يقبل القسمة على 30/45/60/90 دقيقة تماماً)
   const slotCount = (maxEnd - minStart) / UNIT;
 
-  const isMobile = window.innerWidth <= 768;
-  const DAY_COL = isMobile ? 108 : 96, HOUR_ROW = 46, DAY_ROW = isMobile ? 78 : 72, MIN_SLOT = isMobile ? 34 : 30;
+  const DAY_COL = 96, HOUR_ROW = 46, DAY_ROW = 72, MIN_SLOT = 30;
   const gridMinWidth = DAY_COL + slotCount * MIN_SLOT;
   let html = `<div class="schedule-grid" style="grid-template-columns: ${DAY_COL}px repeat(${slotCount}, minmax(${MIN_SLOT}px, 1fr)); grid-template-rows: ${HOUR_ROW}px repeat(${SCHEDULE_DAYS.length}, ${DAY_ROW}px); min-width: ${gridMinWidth}px; width: 100%;">`;
   html += `<div class="sg-corner" style="grid-row:1; grid-column:1;"></div>`;
@@ -1849,6 +1866,56 @@ async function renderSchedule(){
   // (وهو نفس مكان البداية المنطقي للجدول: عمود الأيام + أول ساعة)
   const wrapEl = document.querySelector('.schedule-grid-wrap');
   if (wrapEl) wrapEl.scrollLeft = wrapEl.scrollWidth;
+}
+
+/* عرض مبسّط للجدول على الجوال: كل يوم كبطاقة مستقلة وحصصه مرتّبة تحته عمودياً — يبان كامل بدون
+   الحاجة لأي تمرير أفقي، وهو نفسه أوضح وأسهل قراءة على شاشة صغيرة من جدول بأعمدة ضيقة. */
+function renderScheduleMobileList(data){
+  const byDay = {};
+  SCHEDULE_DAYS.forEach(d => byDay[d] = []);
+  data.forEach(s => { if (byDay[s.day]) byDay[s.day].push(s); });
+  Object.keys(byDay).forEach(d => byDay[d].sort((a,b) => (parseTimeToMinutes(a.start_time)||0) - (parseTimeToMinutes(b.start_time)||0)));
+
+  let html = '<div class="schedule-mobile-list">';
+  SCHEDULE_DAYS.forEach(day => {
+    const items = byDay[day];
+    html += `<div class="sml-day"><div class="sml-day-title">${day}</div>`;
+    if (!items.length){
+      html += `<div class="sml-empty">لا يوجد حصص</div>`;
+    } else {
+      items.forEach(s => {
+        const canDelete = session.role === 'supervisor' || (session.role === 'teacher' && s.teacher_id === session.profileId);
+        const c = subjectColor(s.subject);
+        html += `<div class="sml-class" style="background:${c.bg}; border-color:${c.border}; color:${c.text};">
+          <span class="sml-subject">${esc(s.subject)}</span>
+          <span class="sml-time">${esc(String(s.start_time).slice(0,5))} - ${esc(String(s.end_time).slice(0,5))}</span>
+          ${canDelete ? `<button class="sg-del" style="position:static; margin-right:auto;" onclick="deleteSchedule(${s.id})" title="حذف">×</button>` : ''}
+        </div>`;
+      });
+    }
+    html += `</div>`;
+  });
+  html += '</div>';
+  $('schedule-grid').innerHTML = html;
+}
+
+/* تحميل الجدول كصورة PNG — يشتغل مع نسخة الجدول الشبكية (كمبيوتر) ونسخة القائمة (جوال) لأنه يلتقط
+   عنصر #schedule-grid بمحتواه الكامل بغض النظر عن التمرير أو حجم الشاشة المرئي. */
+async function downloadScheduleImage(){
+  const target = $('schedule-grid');
+  if (!target || !target.children.length){ toast('warning','تنبيه','لا يوجد جدول لتحميله'); return; }
+  const btn = $('downloadScheduleBtn');
+  if (btn){ btn.disabled = true; btn.innerHTML = '<span class="loading-spin"></span> جارِ التجهيز...'; }
+  try {
+    const canvas = await html2canvas(target, { backgroundColor: '#ffffff', scale: 2, useCORS: true });
+    const link = document.createElement('a');
+    link.download = 'الجدول-الأسبوعي.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch(e){
+    toast('error','خطأ','تعذّر تحميل صورة الجدول');
+  }
+  if (btn){ btn.disabled = false; btn.innerHTML = '📷 تحميل الجدول كصورة'; }
 }
 
 async function deleteSchedule(id){
