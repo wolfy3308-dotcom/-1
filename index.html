@@ -252,7 +252,7 @@
     tbody tr:last-child td { border-bottom: none; }
 
     .schedule-grid-wrap {
-      width: 100%; overflow-x: auto; margin-top: 10px; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y;
+      width: 100%; overflow-x: auto; margin-top: 10px; -webkit-overflow-scrolling: touch; touch-action: none;
       position: relative; border-radius: 10px; cursor: grab;
       scrollbar-width: thin; scrollbar-color: var(--secondary) #f1efe6;
       /* الحاوية نفسها LTR عشان قيمة scrollLeft تكون قياسية وموحّدة بين كل المتصفحات (بعض متصفحات الجوال
@@ -1758,10 +1758,11 @@ function minutesToLabel(mins){
   window.addEventListener('mousemove', (e) => move(e.pageX));
   window.addEventListener('mouseup', end);
 
-  // سحب يدوي كامل باللمس — ما نعتمد على تمرير المتصفح التلقائي إطلاقاً.
-  // نمسك حركة الإصبع بأنفسنا ونحرك scrollLeft يدوياً، مع قفل الاتجاه (أفقي/عمودي)
-  // أول ما نحدد نية المستخدم، عشان ما نمنع تمرير الصفحة العمودي الطبيعي.
-  let touchActive = false, touchStartX = 0, touchStartY = 0, touchScrollStart = 0;
+  // سحب يدوي كامل باللمس — عطّلنا كل السلوك الافتراضي للمس على هذا العنصر (touch-action: none)
+  // فصرنا نتحكم إحنا بالتمرير بالكامل، أفقياً (الجدول) وعمودياً (نمرر الصفحة يدوياً بنفس الحركة)
+  // عشان ما نفقد إمكانية تمرير الصفحة عمودياً وإحنا فوق الجدول.
+  const pageScroller = document.querySelector('.main-container') || document.scrollingElement || document.documentElement;
+  let touchActive = false, touchStartX = 0, touchStartY = 0, touchScrollStart = 0, pageScrollStart = 0;
   let axisLocked = null; // 'x' أو 'y'
   let touchMoved = false;
 
@@ -1770,6 +1771,7 @@ function minutesToLabel(mins){
     touchActive = true; axisLocked = null; touchMoved = false;
     touchStartX = t.clientX; touchStartY = t.clientY;
     touchScrollStart = wrap.scrollLeft;
+    pageScrollStart = pageScroller.scrollTop;
   }, { passive: true });
 
   wrap.addEventListener('touchmove', (e) => {
@@ -1784,13 +1786,14 @@ function minutesToLabel(mins){
       }
     }
 
+    if (e.cancelable) e.preventDefault(); // ما فيه سلوك افتراضي بعد تعطيل touch-action، فهذا فقط لضمان تام
+
     if (axisLocked === 'x') {
-      // نتحكم إحنا بالتمرير الأفقي يدوياً، ونمنع المتصفح من التدخل
-      if (e.cancelable) e.preventDefault();
       if (Math.abs(dx) > 3) touchMoved = true;
       wrap.scrollLeft = touchScrollStart - dx;
+    } else if (axisLocked === 'y') {
+      pageScroller.scrollTop = pageScrollStart - dy;
     }
-    // إذا axisLocked === 'y' نسيب الحدث يمر عادي عشان الصفحة تتمرر عمودياً
   }, { passive: false });
 
   wrap.addEventListener('touchend', () => { touchActive = false; axisLocked = null; }, { passive: true });
