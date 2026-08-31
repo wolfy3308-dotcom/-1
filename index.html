@@ -1753,15 +1753,49 @@ function minutesToLabel(mins){
     wrap.scrollLeft = startScroll - dx;
   };
   const end = () => { isDown = false; wrap.classList.remove('dragging'); };
-  // السحب بالماوس (لأجهزة الكمبيوتر فقط) — لا نطبّقه على اللمس حتى لا يتعارض مع تمرير المتصفح الطبيعي
+  // السحب بالماوس (لأجهزة الكمبيوتر)
   wrap.addEventListener('mousedown', (e) => start(e.pageX));
   window.addEventListener('mousemove', (e) => move(e.pageX));
   window.addEventListener('mouseup', end);
-  // بشاشات اللمس نترك المتصفح يتولى السحب أفقياً بنفسه (overflow-x:auto + touch-action)،
-  // ونكتفي بمراقبة الحركة لمنع فتح/حذف الحصة بالخطأ أثناء السحب
-  let touchStartX = 0, touchMoved = false;
-  wrap.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].pageX; touchMoved = false; }, { passive: true });
-  wrap.addEventListener('touchmove', (e) => { if (Math.abs(e.touches[0].pageX - touchStartX) > 5) touchMoved = true; }, { passive: true });
+
+  // سحب يدوي كامل باللمس — ما نعتمد على تمرير المتصفح التلقائي إطلاقاً.
+  // نمسك حركة الإصبع بأنفسنا ونحرك scrollLeft يدوياً، مع قفل الاتجاه (أفقي/عمودي)
+  // أول ما نحدد نية المستخدم، عشان ما نمنع تمرير الصفحة العمودي الطبيعي.
+  let touchActive = false, touchStartX = 0, touchStartY = 0, touchScrollStart = 0;
+  let axisLocked = null; // 'x' أو 'y'
+  let touchMoved = false;
+
+  wrap.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    touchActive = true; axisLocked = null; touchMoved = false;
+    touchStartX = t.clientX; touchStartY = t.clientY;
+    touchScrollStart = wrap.scrollLeft;
+  }, { passive: true });
+
+  wrap.addEventListener('touchmove', (e) => {
+    if (!touchActive) return;
+    const t = e.touches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+
+    if (!axisLocked) {
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+        axisLocked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      }
+    }
+
+    if (axisLocked === 'x') {
+      // نتحكم إحنا بالتمرير الأفقي يدوياً، ونمنع المتصفح من التدخل
+      if (e.cancelable) e.preventDefault();
+      if (Math.abs(dx) > 3) touchMoved = true;
+      wrap.scrollLeft = touchScrollStart - dx;
+    }
+    // إذا axisLocked === 'y' نسيب الحدث يمر عادي عشان الصفحة تتمرر عمودياً
+  }, { passive: false });
+
+  wrap.addEventListener('touchend', () => { touchActive = false; axisLocked = null; }, { passive: true });
+  wrap.addEventListener('touchcancel', () => { touchActive = false; axisLocked = null; }, { passive: true });
+
   wrap.addEventListener('click', (e) => { if (moved || touchMoved) { e.preventDefault(); e.stopPropagation(); } }, true);
 })();
 
