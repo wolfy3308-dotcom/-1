@@ -252,7 +252,7 @@
     tbody tr:last-child td { border-bottom: none; }
 
     .schedule-grid-wrap {
-      width: 100%; overflow-x: auto; margin-top: 10px; -webkit-overflow-scrolling: touch; touch-action: none;
+      width: 100%; overflow-x: auto; margin-top: 10px; -webkit-overflow-scrolling: touch;
       position: relative; border-radius: 10px; cursor: grab;
       scrollbar-width: thin; scrollbar-color: var(--secondary) #f1efe6;
       /* الحاوية نفسها LTR عشان قيمة scrollLeft تكون قياسية وموحّدة بين كل المتصفحات (بعض متصفحات الجوال
@@ -348,6 +348,7 @@
       background: #fff; transition: box-shadow .25s var(--ease-smooth), border-color .25s;
     }
     .hw-card:hover, .quiz-card:hover, .book-card:hover { box-shadow: var(--shadow); border-color: rgba(13,92,62,.16); }
+    .news-item-student { cursor: pointer; }
     .hw-submissions, .quiz-submissions { margin-top: 14px; background: #f8faf6; padding: 14px; border-radius: var(--radius); border: 2px dashed #cfd9c8; }
     .sub-item { display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid #e2e8df; background: #fff; border-radius: 12px; margin-bottom: 12px; transition: box-shadow .2s; }
     .sub-item:hover { box-shadow: var(--shadow-sm); }
@@ -635,17 +636,17 @@
   <div class="sidebar">
     <div class="sidebar-brand"><svg class="minaret-icon" width="18" height="34" viewBox="0 0 60 120" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M30 2 24 12h12L30 2Z"/><rect x="28" y="12" width="4" height="8"/><path d="M22 20c0-6 4-10 8-10s8 4 8 10c0 4-3 6-8 6s-8-2-8-6Z"/><rect x="24" y="26" width="12" height="8" rx="1"/><rect x="20" y="34" width="20" height="5" rx="1"/><rect x="25" y="39" width="10" height="34"/><rect x="19" y="73" width="22" height="6" rx="1"/><rect x="22" y="79" width="16" height="26"/><rect x="14" y="105" width="32" height="10" rx="1"/><rect x="10" y="115" width="40" height="6" rx="1"/></svg><span>طويلبات الحرم النبوي</span></div>
     <div class="nav-indicator" id="navIndicator" aria-hidden="true"></div>
-    <button class="nav-btn active" onclick="switchTab('attendance', this)"><span class="nav-icon">📋</span> سجل التحضير</button>
-    <button class="nav-btn role-teacher-only" id="nav-addstudents-btn" onclick="switchTab('addstudents', this)"><span class="nav-icon">➕</span> إضافة الطلاب</button>
-    <button class="nav-btn" onclick="switchTab('schedule', this)"><span class="nav-icon">📅</span> الجدول</button>
-    <button class="nav-btn" onclick="switchTab('homework', this)"><span class="nav-icon">📚</span> الواجبات</button>
-    <button class="nav-btn" onclick="switchTab('tasmee', this)"><span class="nav-icon">🕌</span> التسميع</button>
-    <button class="nav-btn" onclick="switchTab('quizzes', this)"><span class="nav-icon">📝</span> الاختبارات الإلكترونية</button>
-    <button class="nav-btn" onclick="switchTab('examtable', this)"><span class="nav-icon">🗓️</span> جدول الاختبارات</button>
-    <button class="nav-btn" onclick="switchTab('curriculum', this)"><span class="nav-icon">📖</span> المنهج</button>
-    <button class="nav-btn role-teacher-only" id="nav-news-btn" onclick="switchTab('news', this)"><span class="nav-icon">📰</span> الأخبار</button>
-    <button class="nav-btn role-supervisor-only" id="nav-teachers-btn" onclick="switchTab('teachers', this)" style="display:none;"><span class="nav-icon">👩‍🏫</span> إدارة المعلمين</button>
-    <button class="nav-btn" onclick="switchTab('settings', this)"><span class="nav-icon">⚙️</span> الإعدادات</button>
+    <button class="nav-btn active" data-tab="attendance" onclick="switchTab('attendance', this)"><span class="nav-icon">📋</span> سجل التحضير</button>
+    <button class="nav-btn role-teacher-only" id="nav-addstudents-btn" data-tab="addstudents" onclick="switchTab('addstudents', this)"><span class="nav-icon">➕</span> إضافة الطلاب</button>
+    <button class="nav-btn" data-tab="schedule" onclick="switchTab('schedule', this)"><span class="nav-icon">📅</span> الجدول</button>
+    <button class="nav-btn" data-tab="homework" onclick="switchTab('homework', this)"><span class="nav-icon">📚</span> الواجبات</button>
+    <button class="nav-btn" data-tab="tasmee" onclick="switchTab('tasmee', this)"><span class="nav-icon">🕌</span> التسميع</button>
+    <button class="nav-btn" data-tab="quizzes" onclick="switchTab('quizzes', this)"><span class="nav-icon">📝</span> الاختبارات الإلكترونية</button>
+    <button class="nav-btn" data-tab="examtable" onclick="switchTab('examtable', this)"><span class="nav-icon">🗓️</span> جدول الاختبارات</button>
+    <button class="nav-btn" data-tab="curriculum" onclick="switchTab('curriculum', this)"><span class="nav-icon">📖</span> المنهج</button>
+    <button class="nav-btn role-teacher-student-only" id="nav-news-btn" data-tab="news" onclick="switchTab('news', this)"><span class="nav-icon">📰</span> الأخبار</button>
+    <button class="nav-btn role-supervisor-only" id="nav-teachers-btn" data-tab="teachers" onclick="switchTab('teachers', this)" style="display:none;"><span class="nav-icon">👩‍🏫</span> إدارة المعلمين</button>
+    <button class="nav-btn" data-tab="settings" onclick="switchTab('settings', this)"><span class="nav-icon">⚙️</span> الإعدادات</button>
     <button class="nav-btn" onclick="logout()" style="color:#f87171;"><span class="nav-icon">🔄</span> الخروج</button>
   </div>
 
@@ -769,7 +770,7 @@
           <div class="form-group"><label>وصف/تعليمات الواجب (اختياري):</label><textarea id="hwDescription" rows="2" placeholder="اكتب تعليمات الواجب هنا..."></textarea></div>
           <div class="form-group"><label>موعد انتهاء التسليم (اختياري - إذا تركته فاضي يبقى الواجب مفتوح دائماً):</label><input type="datetime-local" id="hwDueDate"></div>
           <div class="form-group">
-            <label><input type="checkbox" id="hwNoQuestions" onchange="toggleHwQuestionsMode()" style="width:auto;"> واجب بدون أسئلة (تسليم حر - الطالب يكتب ملاحظة أو رابط فقط)</label>
+            <label><input type="checkbox" id="hwNoQuestions" onchange="toggleHwQuestionsMode()" style="width:auto;"> واجب بدون أسئلة (تسليم حر - الطالب يرفع ملف PDF و/أو يكتب ملاحظة أو رابط)</label>
           </div>
           <div id="hw-questions-wrap">
             <div id="hw-builder-questions"></div>
@@ -873,9 +874,14 @@
           <div class="form-group"><label>تفاصيل إضافية (اختياري):</label><textarea id="newsBody" rows="3" placeholder="أي تفاصيل زيادة تحب توضحها..."></textarea></div>
           <button class="btn" style="width:100%;" onclick="sendNews()" id="sendNewsBtn">📤 إرسال الخبر للطلاب</button>
         </div>
-        <div class="card">
+        <div class="card role-teacher-only">
           <div class="card-header">🗂️ الأخبار المرسلة</div>
           <div id="news-container"></div>
+        </div>
+        <div class="card role-student-only" style="display:none;">
+          <div class="card-header">📰 أخبار وتنبيهات المعلم</div>
+          <p style="color:var(--text-muted); font-size:13px; margin:0 0 10px;">اضغط على أي خبر لعرض تفاصيله.</p>
+          <div id="student-news-container"></div>
         </div>
       </div>
 
@@ -1065,13 +1071,24 @@ function updateNotifBadge(){
 function renderNotifPanel(){
   const list = $('notif-list');
   if (!notifState.items.length){ list.innerHTML = '<p style="padding:16px; text-align:center; color:var(--text-muted); font-size:12px;">لا يوجد إشعارات بعد</p>'; return; }
-  const icons = { homework: '📚', quiz: '📝', tasmee: '🕌', exam: '🗓️', deadline: '⏰' };
+  const icons = { homework: '📚', quiz: '📝', tasmee: '🕌', exam: '🗓️', news: '📰', deadline: '⏰' };
   list.innerHTML = notifState.items.map(n => `
-    <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markOneNotifRead(${n.id})">
+    <div class="notif-item ${n.read ? '' : 'unread'}" onclick="goToNotifTarget(${n.id}, '${n.type}')">
       ${icons[n.type]||'🔔'} ${esc(n.title)}
       <span class="notif-time">${fmtDueDate(n.created_at)}</span>
     </div>
   `).join('');
+}
+
+/* التنقّل لمصدر الإشعار عند الضغط عليه: كل واجب يوديك لتبويب الواجبات، كل خبر يوديك لتبويب الأخبار...إلخ */
+const NOTIF_TAB_MAP = { homework: 'homework', quiz: 'quizzes', tasmee: 'tasmee', exam: 'examtable', news: 'news' };
+function goToNotifTarget(id, type){
+  markOneNotifRead(id);
+  const tabName = NOTIF_TAB_MAP[type];
+  if (!tabName) return;
+  $('notif-panel').classList.remove('open');
+  const btn = document.querySelector(`.nav-btn[data-tab="${tabName}"]`);
+  if (btn) switchTab(tabName, btn);
 }
 
 async function markOneNotifRead(id){
@@ -1398,6 +1415,7 @@ function enterApp(){
   document.querySelectorAll('.role-teacher-only').forEach(el => el.style.display = (session.role === 'teacher') ? '' : 'none');
   document.querySelectorAll('.role-supervisor-only').forEach(el => el.style.display = (session.role === 'supervisor') ? '' : 'none');
   document.querySelectorAll('.role-teacher-supervisor-only').forEach(el => el.style.display = (session.role === 'teacher' || session.role === 'supervisor') ? '' : 'none');
+  document.querySelectorAll('.role-teacher-student-only').forEach(el => el.style.display = (session.role === 'teacher' || session.role === 'student') ? '' : 'none');
   document.querySelectorAll('.role-student-only').forEach(el => el.style.display = (session.role === 'student') ? '' : 'none');
 
   if (session.role === 'teacher'){
@@ -1744,62 +1762,23 @@ function minutesToLabel(mins){
 (function setupScheduleDragScroll(){
   const wrap = document.querySelector('.schedule-grid-wrap');
   if (!wrap) return;
+  // على الجوال نترك المتصفح يتولى التمرير باللمس بشكل طبيعي (أفقياً داخل الجدول وعمودياً للصفحة) —
+  // أي تدخّل يدوي بجافاسكربت لتمرير اللمس (preventDefault + محاكاة scrollLeft/scrollTop) هو اللي كان يعلّق
+  // الصفحة ويمنعها من التمرير كامل وإحنا فوق الجدول. سحب الماوس نخليه فقط لأجهزة الكمبيوتر.
   let isDown = false, startX = 0, startScroll = 0, moved = false;
-  const start = (x) => { isDown = true; moved = false; startX = x; startScroll = wrap.scrollLeft; wrap.classList.add('dragging'); };
-  const move = (x) => {
+  wrap.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'touch') return; // اللمس يمشي طبيعي بدون تدخّل
+    isDown = true; moved = false; startX = e.clientX; startScroll = wrap.scrollLeft;
+    wrap.classList.add('dragging');
+  });
+  window.addEventListener('pointermove', (e) => {
     if (!isDown) return;
-    const dx = x - startX;
+    const dx = e.clientX - startX;
     if (Math.abs(dx) > 3) moved = true;
     wrap.scrollLeft = startScroll - dx;
-  };
-  const end = () => { isDown = false; wrap.classList.remove('dragging'); };
-  // السحب بالماوس (لأجهزة الكمبيوتر)
-  wrap.addEventListener('mousedown', (e) => start(e.pageX));
-  window.addEventListener('mousemove', (e) => move(e.pageX));
-  window.addEventListener('mouseup', end);
-
-  // سحب يدوي كامل باللمس — عطّلنا كل السلوك الافتراضي للمس على هذا العنصر (touch-action: none)
-  // فصرنا نتحكم إحنا بالتمرير بالكامل، أفقياً (الجدول) وعمودياً (نمرر الصفحة يدوياً بنفس الحركة)
-  // عشان ما نفقد إمكانية تمرير الصفحة عمودياً وإحنا فوق الجدول.
-  const pageScroller = document.querySelector('.main-container') || document.scrollingElement || document.documentElement;
-  let touchActive = false, touchStartX = 0, touchStartY = 0, touchScrollStart = 0, pageScrollStart = 0;
-  let axisLocked = null; // 'x' أو 'y'
-  let touchMoved = false;
-
-  wrap.addEventListener('touchstart', (e) => {
-    const t = e.touches[0];
-    touchActive = true; axisLocked = null; touchMoved = false;
-    touchStartX = t.clientX; touchStartY = t.clientY;
-    touchScrollStart = wrap.scrollLeft;
-    pageScrollStart = pageScroller.scrollTop;
-  }, { passive: true });
-
-  wrap.addEventListener('touchmove', (e) => {
-    if (!touchActive) return;
-    const t = e.touches[0];
-    const dx = t.clientX - touchStartX;
-    const dy = t.clientY - touchStartY;
-
-    if (!axisLocked) {
-      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
-        axisLocked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-      }
-    }
-
-    if (e.cancelable) e.preventDefault(); // ما فيه سلوك افتراضي بعد تعطيل touch-action، فهذا فقط لضمان تام
-
-    if (axisLocked === 'x') {
-      if (Math.abs(dx) > 3) touchMoved = true;
-      wrap.scrollLeft = touchScrollStart - dx;
-    } else if (axisLocked === 'y') {
-      pageScroller.scrollTop = pageScrollStart - dy;
-    }
-  }, { passive: false });
-
-  wrap.addEventListener('touchend', () => { touchActive = false; axisLocked = null; }, { passive: true });
-  wrap.addEventListener('touchcancel', () => { touchActive = false; axisLocked = null; }, { passive: true });
-
-  wrap.addEventListener('click', (e) => { if (moved || touchMoved) { e.preventDefault(); e.stopPropagation(); } }, true);
+  });
+  window.addEventListener('pointerup', () => { isDown = false; wrap.classList.remove('dragging'); });
+  wrap.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
 })();
 
 function subjectColor(name){
@@ -1974,8 +1953,9 @@ async function renderHomeworks(){
       } else if (status && status.closed){
         studentPart = `<div class="locked-msg">🔒 انتهى وقت تسليم هذا الواجب، ما عاد يمكنك التسليم أو التعديل</div>`;
       } else if (hw.questions.length === 0){
-        studentPart = `<div class="form-group"><label>ملاحظتك / رابط الحل:</label><textarea id="hw-note-${hw.id}" rows="2"></textarea></div>
-          <button class="btn" onclick="submitHomeworkNoQ(${hw.id})">تسليم الواجب</button>`;
+        studentPart = `<div class="form-group"><label>ارفع ملف الحل (PDF):</label><input type="file" id="hw-file-${hw.id}" accept="application/pdf"></div>
+          <div class="form-group"><label>ملاحظتك / رابط الحل (اختياري):</label><textarea id="hw-note-${hw.id}" rows="2"></textarea></div>
+          <button class="btn" id="hw-submit-btn-${hw.id}" onclick="submitHomeworkNoQ(${hw.id})">تسليم الواجب</button>`;
       } else {
         studentPart = hw.questions.map((q,i) => q.type==='mcq'
           ? `<div class="question-block"><div class="large-text">${esc(q.q)}</div>${q.options.map(op=>`<label style="display:block; margin:4px 0;"><input type="radio" name="hw${hw.id}q${i}" value="${esc(op)}" style="width:auto;"> ${esc(op)}</label>`).join('')}</div>`
@@ -2002,11 +1982,39 @@ async function renderHomeworks(){
 
 async function submitHomeworkNoQ(hwId){
   const note = $('hw-note-'+hwId).value.trim();
+  const fileInput = $('hw-file-'+hwId);
+  const file = fileInput && fileInput.files[0];
+
+  if (file && file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')){
+    toast('warning','تنبيه','لازم يكون الملف بصيغة PDF'); return;
+  }
+  if (file && file.size > 20 * 1024 * 1024){
+    toast('warning','تنبيه','حجم الملف أكبر من 20 ميجابايت'); return;
+  }
+  if (!file && !note){
+    toast('warning','تنبيه','ارفع ملف PDF أو اكتب ملاحظة قبل التسليم'); return;
+  }
+
+  const btn = $('hw-submit-btn-'+hwId);
+  if (btn){ btn.disabled = true; btn.innerHTML = '<span class="loading-spin"></span> جارِ التسليم...'; }
   try {
-    await rpc('rpc_submit_homework', { p_caller_id: session.universityId, p_caller_password: session.password, p_homework_id: hwId, p_answers: {note} });
+    const answers = { note };
+    if (file){
+      const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+      const path = `${hwId}_${session.universityId}_${Date.now()}_${safeName}`;
+      const { error: upErr } = await sbClient.storage.from('homework_files').upload(path, file);
+      if (upErr) throw upErr;
+      answers.file_path = path;
+      answers.file_name = file.name;
+      answers.file_url = `${SUPABASE_URL}/storage/v1/object/public/homework_files/${path}`;
+    }
+    await rpc('rpc_submit_homework', { p_caller_id: session.universityId, p_caller_password: session.password, p_homework_id: hwId, p_answers: answers });
     toast('success','تم التسليم','تم تسليم الواجب بنجاح');
     renderHomeworks();
-  } catch(e){}
+  } catch(e){
+    toast('error','خطأ','فشل تسليم الواجب: ' + (e.message||''));
+    if (btn){ btn.disabled = false; btn.textContent = 'تسليم الواجب'; }
+  }
 }
 
 async function submitHomeworkAnswers(hwId, count){
@@ -2187,6 +2195,16 @@ async function submitQuizAnswers(quizId, count){
 }
 
 /* ================= عرض وتصحيح التسليمات ================= */
+function renderAnswersSummary(answers){
+  if (answers && typeof answers === 'object' && (answers.file_url || answers.note !== undefined)){
+    const parts = [];
+    if (answers.file_url) parts.push(`<a class="btn-sm btn-view" href="${answers.file_url}" target="_blank" download>📄 تحميل ملف الحل (${esc(answers.file_name||'PDF')})</a>`);
+    if (answers.note) parts.push(`<div style="margin-top:6px;">${esc(answers.note)}</div>`);
+    return parts.join('') || 'بدون ملاحظة';
+  }
+  return esc(JSON.stringify(answers));
+}
+
 async function viewSubmissions(type, itemId){
   const box = $(type === 'quiz' ? `quiz-subs-${itemId}` : `hw-subs-${itemId}`);
   try {
@@ -2194,7 +2212,7 @@ async function viewSubmissions(type, itemId){
     box.innerHTML = `<div class="hw-submissions">` + (subs.map(s => `
       <div class="sub-item">
         <b>${esc(s.student_name)} (${esc(s.student_id)})</b>
-        <div class="submission-details">${esc(JSON.stringify(s.answers))}</div>
+        <div class="submission-details">${renderAnswersSummary(s.answers)}</div>
         <div class="inline-form">
           <div><label>الدرجة:</label><input type="text" id="score-${type}-${s.id}" value="${esc(s.score||'')}"></div>
           <div><label>التقييم:</label>
@@ -2264,8 +2282,12 @@ function renderReviewHtml(data){
         <div class="review-answer-text">إجابتك: ${esc(q.student_answer || '(لم تجب)')}</div>
       </div>`;
     }).join('');
-  } else if (data.raw_answers && data.raw_answers.note !== undefined){
-    questionsHtml = `<div class="review-q"><div class="review-answer-text">إجابتك: ${esc(data.raw_answers.note || '(بدون ملاحظة)')}</div></div>`;
+  } else if (data.raw_answers && (data.raw_answers.note !== undefined || data.raw_answers.file_url)){
+    const ra = data.raw_answers;
+    questionsHtml = `<div class="review-q">
+      ${ra.file_url ? `<div style="margin-bottom:8px;"><a class="btn-sm btn-view" href="${ra.file_url}" target="_blank" download>📄 الملف المُسلّم (${esc(ra.file_name||'PDF')})</a></div>` : ''}
+      <div class="review-answer-text">إجابتك: ${esc(ra.note || '(بدون ملاحظة)')}</div>
+    </div>`;
   } else {
     questionsHtml = '<div class="submission-details">لا توجد أسئلة لعرضها</div>';
   }
@@ -2380,6 +2402,7 @@ async function sendNews(){
 }
 
 async function renderNews(){
+  if (session.role === 'student') return renderStudentNews();
   let data;
   try {
     data = await rpc('rpc_list_news', { p_caller_id: session.universityId, p_caller_password: session.password });
@@ -2393,6 +2416,32 @@ async function renderNews(){
       ${n.body ? `<div style="font-size:13px; color:var(--text-muted); margin-top:6px;">${esc(n.body)}</div>` : ''}
     </div>`
   ).join('') || '<p style="color:var(--text-muted);">لا توجد أخبار مرسلة بعد</p>';
+}
+
+/* ================= الأخبار (عرض الطالب - للقراءة فقط) ================= */
+async function renderStudentNews(){
+  const box = $('student-news-container');
+  if (!box) return;
+  let data;
+  try {
+    data = await rpc('rpc_list_news_student', { p_caller_id: session.universityId, p_caller_password: session.password });
+  } catch(e){ return; }
+  box.innerHTML = data.map(n => `
+    <div class="book-card news-item-student" onclick="toggleNewsDetails(${n.id})">
+      <div class="card-header" style="margin-bottom:0;">
+        <span>📰 ${esc(n.title)}</span>
+        <span class="notif-time">${fmtDueDate(n.created_at)}</span>
+      </div>
+      <div id="news-body-${n.id}" class="hidden" style="margin-top:10px;">
+        <div class="submission-details">${n.body ? esc(n.body) : 'لا توجد تفاصيل إضافية'}</div>
+      </div>
+    </div>`
+  ).join('') || '<p style="color:var(--text-muted);">لا توجد أخبار حالياً</p>';
+}
+
+function toggleNewsDetails(id){
+  const box = $('news-body-' + id);
+  if (box) box.classList.toggle('hidden');
 }
 
 async function deleteNews(id){
