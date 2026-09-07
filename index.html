@@ -809,7 +809,7 @@
           <div class="form-group"><label>وصف/تعليمات الواجب (اختياري):</label><textarea id="hwDescription" rows="2" placeholder="اكتب تعليمات الواجب هنا..."></textarea></div>
           <div class="form-group"><label>موعد انتهاء التسليم (اختياري - إذا تركته فاضي يبقى الواجب مفتوح دائماً):</label><input type="datetime-local" id="hwDueDate"></div>
           <div class="form-group">
-            <label><input type="checkbox" id="hwNoQuestions" onchange="toggleHwQuestionsMode()" style="width:auto;"> واجب بدون أسئلة (تسليم حر - الطالب يرفع ملف PDF و/أو يكتب ملاحظة أو رابط)</label>
+            <label><input type="checkbox" id="hwNoQuestions" onchange="toggleHwQuestionsMode()" style="width:auto;"> واجب رفع مستند (بدون أسئلة - الطالب يرفع صورة أو PDF أو أي ملف، و/أو يكتب ملاحظة أو رابط)</label>
           </div>
           <div id="hw-questions-wrap">
             <div id="hw-builder-questions"></div>
@@ -2060,7 +2060,7 @@ async function renderHomeworks(){
       } else if (status && status.closed){
         studentPart = `<div class="locked-msg">🔒 انتهى وقت تسليم هذا الواجب، ما عاد يمكنك التسليم أو التعديل</div>`;
       } else if (hw.questions.length === 0){
-        studentPart = `<div class="form-group"><label>ارفع ملف الحل (PDF):</label><input type="file" id="hw-file-${hw.id}" accept="application/pdf"></div>
+        studentPart = `<div class="form-group"><label>ارفع المستند (صورة، PDF، أو أي ملف آخر):</label><input type="file" id="hw-file-${hw.id}" accept="image/*,application/pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.rar,.txt"></div>
           <div class="form-group"><label>ملاحظتك / رابط الحل (اختياري):</label><textarea id="hw-note-${hw.id}" rows="2"></textarea></div>
           <button class="btn" id="hw-submit-btn-${hw.id}" onclick="submitHomeworkNoQ(${hw.id})">تسليم الواجب</button>`;
       } else {
@@ -2092,14 +2092,18 @@ async function submitHomeworkNoQ(hwId){
   const fileInput = $('hw-file-'+hwId);
   const file = fileInput && fileInput.files[0];
 
-  if (file && file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')){
-    toast('warning','تنبيه','لازم يكون الملف بصيغة PDF'); return;
-  }
-  if (file && file.size > 20 * 1024 * 1024){
-    toast('warning','تنبيه','حجم الملف أكبر من 20 ميجابايت'); return;
+  const blockedExt = ['exe','msi','bat','cmd','sh','com','scr','js','jar','apk'];
+  if (file){
+    const ext = file.name.toLowerCase().split('.').pop();
+    if (blockedExt.includes(ext)){
+      toast('warning','تنبيه','نوع هذا الملف غير مسموح به'); return;
+    }
+    if (file.size > 20 * 1024 * 1024){
+      toast('warning','تنبيه','حجم الملف أكبر من 20 ميجابايت'); return;
+    }
   }
   if (!file && !note){
-    toast('warning','تنبيه','ارفع ملف PDF أو اكتب ملاحظة قبل التسليم'); return;
+    toast('warning','تنبيه','ارفع المستند (صورة/PDF/ملف) أو اكتب ملاحظة قبل التسليم'); return;
   }
 
   const btn = $('hw-submit-btn-'+hwId);
@@ -2302,10 +2306,17 @@ async function submitQuizAnswers(quizId, count){
 }
 
 /* ================= عرض وتصحيح التسليمات ================= */
+function isImageFile(name){
+  return /\.(png|jpe?g|gif|webp|bmp|heic)$/i.test(name || '');
+}
+
 function renderAnswersSummary(answers){
   if (answers && typeof answers === 'object' && (answers.file_url || answers.note !== undefined)){
     const parts = [];
-    if (answers.file_url) parts.push(`<a class="btn-sm btn-view" href="${answers.file_url}" target="_blank" download>📄 تحميل ملف الحل (${esc(answers.file_name||'PDF')})</a>`);
+    if (answers.file_url){
+      parts.push(`<a class="btn-sm btn-view" href="${answers.file_url}" target="_blank" download>📎 تحميل المستند (${esc(answers.file_name||'الملف')})</a>`);
+      if (isImageFile(answers.file_name)) parts.push(`<div style="margin-top:6px;"><a href="${answers.file_url}" target="_blank"><img src="${answers.file_url}" style="max-width:180px; max-height:180px; border-radius:8px; border:1px solid var(--border);"></a></div>`);
+    }
     if (answers.note) parts.push(`<div style="margin-top:6px;">${esc(answers.note)}</div>`);
     return parts.join('') || 'بدون ملاحظة';
   }
@@ -2392,7 +2403,8 @@ function renderReviewHtml(data){
   } else if (data.raw_answers && (data.raw_answers.note !== undefined || data.raw_answers.file_url)){
     const ra = data.raw_answers;
     questionsHtml = `<div class="review-q">
-      ${ra.file_url ? `<div style="margin-bottom:8px;"><a class="btn-sm btn-view" href="${ra.file_url}" target="_blank" download>📄 الملف المُسلّم (${esc(ra.file_name||'PDF')})</a></div>` : ''}
+      ${ra.file_url ? `<div style="margin-bottom:8px;"><a class="btn-sm btn-view" href="${ra.file_url}" target="_blank" download>📎 المستند المُسلّم (${esc(ra.file_name||'الملف')})</a>
+      ${isImageFile(ra.file_name) ? `<div style="margin-top:6px;"><a href="${ra.file_url}" target="_blank"><img src="${ra.file_url}" style="max-width:180px; max-height:180px; border-radius:8px; border:1px solid var(--border);"></a></div>` : ''}</div>` : ''}
       <div class="review-answer-text">إجابتك: ${esc(ra.note || '(بدون ملاحظة)')}</div>
     </div>`;
   } else {
