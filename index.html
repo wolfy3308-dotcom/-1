@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -24,12 +23,10 @@
       --yellow: #f59e0b; --yellow-light: #fef3c7;
       --purple: #c9a227; --purple-light: #faf1d8;
       --deco-font: 'Aref Ruqaa', 'Cairo', serif;
-      --gold-rule: linear-gradient(90deg, var(--secondary), rgba(201,162,39,.15) 65%, transparent);
       --shadow-sm: 0 1px 3px 0 rgb(20 40 30 / 0.06), 0 1px 2px -1px rgb(20 40 30 / 0.06);
       --shadow: 0 6px 16px -4px rgb(20 40 30 / 0.12), 0 3px 6px -3px rgb(20 40 30 / 0.08);
       --shadow-lg: 0 20px 40px -8px rgb(10 40 25 / 0.18), 0 8px 16px -8px rgb(10 40 25 / 0.10);
       --shadow-glow: 0 0 0 4px rgba(13,92,62,.10);
-      --radius-sm: 9px;
       --radius: 14px;
       --radius-lg: 20px;
       --ease-spring: cubic-bezier(.34,1.56,.64,1);
@@ -86,8 +83,8 @@
     @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
     #force-pass-modal { display: none; z-index: 10001; }
     .modal-box {
-      position: relative; background: rgba(255,255,255,.98); padding: 42px 26px 34px; border-radius: var(--radius-lg);
-      text-align: center; box-shadow: var(--shadow-lg); width: 100%; max-width: 440px;
+      position: relative; background: rgba(255,255,255,.98); padding: 40px 22px 32px; border-radius: var(--radius-lg);
+      text-align: center; box-shadow: var(--shadow-lg); width: 100%; max-width: 420px;
       border: 1px solid rgba(255,255,255,.4); border-top: 4px solid var(--secondary);
       animation: modalFadeIn .45s var(--ease-spring);
       background-image: linear-gradient(180deg, rgba(201,162,39,.06), transparent 120px);
@@ -102,14 +99,14 @@
     .modal-box h2 {
       font-family: var(--deco-font); background: linear-gradient(90deg, var(--primary), var(--secondary-dark), var(--secondary));
       background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      margin-bottom: 10px; font-size: 31px; font-weight: 700; letter-spacing: .3px; display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-bottom: 6px; font-size: 28px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;
       animation: shimmerText 4s linear infinite;
     }
     @keyframes shimmerText { to { background-position: -200% center; } }
     .modal-box p { color: var(--text-muted); margin-bottom: 22px; font-size: 13px; }
     .role-btn {
-      width: 100%; padding: 14px 20px; margin-bottom: 10px; border: 2px solid transparent; background: #f1f5f0;
-      color: var(--text-main); font-size: 14px; font-weight: 700; border-radius: 999px; cursor: pointer;
+      width: 100%; padding: 13px; margin-bottom: 10px; border: 2px solid transparent; background: #f1f5f0;
+      color: var(--text-main); font-size: 14px; font-weight: 700; border-radius: var(--radius); cursor: pointer;
       transition: all .25s var(--ease-smooth); display: flex; align-items: center; justify-content: center; gap: 8px;
       position: relative; overflow: hidden;
     }
@@ -137,34 +134,32 @@
     .toggle-pass-btn:hover { transform: translateY(-50%) scale(1.15); }
 
     .sidebar {
-      width: 244px; height: 100vh;
-      background-color: var(--sidebar-bg);
-      background-image:
-        radial-gradient(circle at 15% 8%, rgba(201,162,39,.10), transparent 30%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='rgba(201,162,39,0.3)'%3E%3Cpath stroke-width='1.3' d='M163.64,163.64 L36.36,163.64 L36.36,36.36 L163.64,36.36 Z'/%3E%3Cpath stroke-width='1.3' d='M190,100 L100,190 L10,100 L100,10 Z'/%3E%3Cpath stroke-width='1' d='M117.6,142.5 L57.5,117.6 L82.4,57.5 L142.5,82.4 Z'/%3E%3Cpath stroke-width='1' d='M142.5,117.6 L82.4,142.5 L57.5,82.4 L117.6,57.5 Z'/%3E%3C/g%3E%3C/svg%3E"),
-        linear-gradient(180deg, var(--sidebar-bg), var(--sidebar-bg-2) 60%, var(--sidebar-bg));
-      background-repeat: no-repeat, repeat, no-repeat;
-      background-attachment: local, local, local;
+      width: 244px; height: 100vh; background: linear-gradient(180deg, var(--sidebar-bg), var(--sidebar-bg-2) 60%, var(--sidebar-bg));
       display: flex; flex-direction: column; padding: 22px 14px; gap: 6px; flex-shrink: 0;
       transition: all .3s var(--ease-smooth); z-index: 100; position: relative;
       box-shadow: 4px 0 24px -8px rgba(0,0,0,.25);
       overflow-y: auto; overflow-x: hidden;
     }
+    .sidebar::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .6;
+      background-image:
+        radial-gradient(circle at 15% 8%, rgba(201,162,39,.10), transparent 30%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='rgba(201,162,39,0.5)'%3E%3Cpath stroke-width='1.3' d='M163.64,163.64 L36.36,163.64 L36.36,36.36 L163.64,36.36 Z'/%3E%3Cpath stroke-width='1.3' d='M190,100 L100,190 L10,100 L100,10 Z'/%3E%3Cpath stroke-width='1' d='M117.6,142.5 L57.5,117.6 L82.4,57.5 L142.5,82.4 Z'/%3E%3Cpath stroke-width='1' d='M142.5,117.6 L82.4,142.5 L57.5,82.4 L117.6,57.5 Z'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: no-repeat, repeat;
+    }
     .sidebar-brand {
-      color: #fff; font-family: var(--deco-font); font-size: 18px; line-height: 1.35; font-weight: 700;
-      letter-spacing: .2px; text-shadow: 0 0 8px rgba(201,162,39,.85), 0 0 20px rgba(201,162,39,.55);
-      text-align: center; padding: 4px 4px 20px; border-bottom: 1px solid rgba(201,162,39,.35); margin-bottom: 14px;
-      display: flex; align-items: center; justify-content: center; gap: 9px; white-space: normal;
-      position: relative; z-index: 1;
+      color: #fff; font-family: var(--deco-font); font-size: 17px; line-height: 1.3; font-weight: 700;
+      text-align: center; padding-bottom: 18px; border-bottom: 1px solid rgba(201,162,39,.35); margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 8px; white-space: normal;
     }
     .nav-btn {
       background: none; border: none; color: #a9b8ac; font-size: 14px; font-weight: 600; cursor: pointer;
-      display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 15px; margin-bottom: 2px; border-radius: var(--radius);
+      display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border-radius: var(--radius);
       transition: color .25s var(--ease-smooth), transform .25s var(--ease-smooth); text-align: right; white-space: nowrap;
       position: relative; z-index: 1;
     }
     .nav-btn:hover { color: #fff; background: var(--sidebar-hover); transform: translateX(-3px); }
-    .nav-btn.active { color: #fff; transform: translateX(-2px); box-shadow: inset 3px 0 0 var(--secondary); }
+    .nav-btn.active { color: #fff; transform: translateX(-2px); }
     .nav-icon { font-size: 18px; width: 22px; text-align: center; transition: transform .25s var(--ease-spring); }
     .nav-btn:hover .nav-icon { transform: scale(1.15) rotate(-4deg); }
 
@@ -198,24 +193,9 @@
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; background: transparent; position: relative; z-index: 1; }
     .top-header {
-      background:
-        linear-gradient(120deg, var(--sidebar-bg), var(--sidebar-bg-2) 55%, var(--sidebar-bg)),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='rgba(201,162,39,0.16)'%3E%3Cpath stroke-width='1.3' d='M163.64,163.64 L36.36,163.64 L36.36,36.36 L163.64,36.36 Z'/%3E%3Cpath stroke-width='1.3' d='M190,100 L100,190 L10,100 L100,10 Z'/%3E%3C/g%3E%3C/svg%3E");
-      background-repeat: no-repeat, repeat;
-      padding: 18px 24px; border-bottom: 2px solid var(--secondary);
-      display: flex; justify-content: space-between; align-items: center; box-shadow: 0 6px 20px -6px rgba(10,40,25,.35);
+      background: rgba(255,255,255,.85); backdrop-filter: blur(10px); padding: 14px 20px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm);
       position: sticky; top: 0; z-index: 10; flex-wrap: wrap; gap: 10px;
-    }
-    #panel-title {
-      font-family: var(--deco-font) !important; font-size: 21px !important; font-weight: 700 !important; letter-spacing: .2px;
-      background: linear-gradient(90deg, #fff, var(--secondary-light), #fff) !important; background-size: 200% auto;
-      -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; background-clip: text; color: transparent !important;
-      animation: shimmerText 6s linear infinite;
-    }
-    #user-role-text { color: rgba(255,255,255,.68) !important; }
-    #user-display-name {
-      color: var(--sidebar-bg) !important; background: linear-gradient(135deg, var(--secondary-light), #fff) !important;
-      border: 1px solid rgba(201,162,39,.55); box-shadow: var(--shadow-sm);
     }
     .content-area {
       padding: 22px; max-width: 1200px; margin: 0 auto; width: 100%;
@@ -225,20 +205,15 @@
 
     .card {
       background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 22px 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm);
+      padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-sm);
       transition: box-shadow .3s var(--ease-smooth), transform .3s var(--ease-smooth), border-color .3s;
     }
     @media (hover: hover) and (pointer: fine) {
       .card:hover { box-shadow: var(--shadow); border-color: rgba(13,92,62,.18); transform: translateY(-2px); }
     }
     .card-header {
-      font-size: 16.5px; font-weight: 800; letter-spacing: .1px; margin-bottom: 18px; display: flex; justify-content: space-between;
-      align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 12px;
-      position: relative;
-    }
-    .card-header::after {
-      content: ''; position: absolute; right: 0; bottom: -1px; width: 44px; height: 2px; border-radius: 2px;
-      background: linear-gradient(90deg, var(--secondary), transparent);
+      font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid var(--bg); padding-bottom: 10px;
     }
 
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
@@ -254,7 +229,7 @@
     }
     .stat-card:hover { transform: perspective(700px) translateY(-6px) rotateX(3deg) rotateY(-2deg); box-shadow: var(--shadow); }
     .stat-card:hover::before { transform: scaleX(1); }
-    .stat-number { font-size: 27px; font-weight: 800; margin-top: 6px; letter-spacing: -.3px; }
+    .stat-number { font-size: 23px; font-weight: 800; margin-top: 4px; }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; animation: pageEnter .6s var(--ease-smooth); }
@@ -271,13 +246,13 @@
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; border-radius: 10px; border: 1px solid var(--border); }
     table { width: 100%; border-collapse: collapse; min-width: 600px; }
     th, td { padding: 12px; text-align: right; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
-    th { background: linear-gradient(180deg,#f9faf6,#f1f4ec); color: var(--text-main); font-weight: 800; font-size: 12.5px; letter-spacing: .2px; white-space: nowrap; position: sticky; top: 0; box-shadow: inset 0 -2px 0 var(--border); }
+    th { background: #f8faf7; color: var(--text-muted); font-weight: 700; white-space: nowrap; position: sticky; top: 0; }
     tbody tr { transition: background .18s var(--ease-smooth); }
     tbody tr:hover { background: var(--primary-light); }
     tbody tr:last-child td { border-bottom: none; }
 
     .schedule-grid-wrap {
-      width: 100%; overflow-x: auto; margin-top: 10px; -webkit-overflow-scrolling: touch;
+      width: 100%; overflow-x: auto; margin-top: 10px; -webkit-overflow-scrolling: touch; touch-action: none;
       position: relative; border-radius: 10px; cursor: grab;
       scrollbar-width: thin; scrollbar-color: var(--secondary) #f1efe6;
       /* الحاوية نفسها LTR عشان قيمة scrollLeft تكون قياسية وموحّدة بين كل المتصفحات (بعض متصفحات الجوال
@@ -308,17 +283,6 @@
     .sg-class-time { font-size: 10.5px; font-weight: 600; opacity: .8; white-space: nowrap; }
     .sg-del { position: absolute; top: 4px; left: 4px; background: rgba(255,255,255,.8); border: none; border-radius: 50%; width: 17px; height: 17px; font-size: 12px; line-height: 1; cursor: pointer; color: inherit; transition: transform .15s; }
     .sg-del:hover { transform: scale(1.2); }
-
-    .schedule-mobile-list { display: flex; flex-direction: column; gap: 14px; }
-    .sml-day { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: #fff; }
-    .sml-day-title { background: var(--sidebar-bg); color: #fff; font-weight: 800; font-size: 14px; padding: 10px 14px; border-top: 1px solid rgba(201,162,39,.55); }
-    .sml-empty { padding: 12px 14px; color: var(--text-muted); font-size: 12.5px; }
-    .sml-class {
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
-      margin: 8px 10px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid; font-size: 13px; font-weight: 700;
-    }
-    .sml-subject { flex: 1; }
-    .sml-time { font-size: 11.5px; font-weight: 600; opacity: .85; white-space: nowrap; }
     .modal-box h2 .minaret-icon { transition: transform .4s var(--ease-spring); transform-origin: bottom center; }
     .modal-box h2 .minaret-icon.grow { transform: scale(3.2) translateY(-6px); }
     #login-wipe {
@@ -341,18 +305,18 @@
 
     .btn {
       background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; border: none;
-      padding: 11px 20px; border-radius: 999px; cursor: pointer; font-weight: 700; font-size: 13px; letter-spacing: .1px;
+      padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px;
       transition: all .22s var(--ease-smooth); display: inline-flex; align-items: center; justify-content: center;
       gap: 6px; white-space: nowrap; position: relative; overflow: hidden;
     }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 18px -6px rgba(13,92,62,.55); }
     .btn:active { transform: translateY(0) scale(.97); }
     .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
-    .btn-sm { padding: 8px 14px; font-size: 12px; border-radius: 999px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; border: none; font-weight: 700; transition: all .2s var(--ease-smooth); }
+    .btn-sm { padding: 8px 12px; font-size: 12px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; border: none; font-weight: 700; transition: all .2s var(--ease-smooth); }
     .btn-sm:hover { transform: translateY(-1px); }
     .btn-view { background: linear-gradient(135deg, #0e7c66, #0b5c4c); color: #fff; }
     .btn-purple { background: linear-gradient(135deg, var(--purple), #a3821e); color: #fff; }
-    .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: none; padding: 7px 14px; border-radius: 999px; cursor: pointer; font-size: 12px; font-weight: 700; transition: all .2s var(--ease-smooth); }
+    .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; border: none; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 700; transition: all .2s var(--ease-smooth); }
     .btn-danger:hover { transform: translateY(-1px); box-shadow: 0 6px 14px -6px rgba(239,68,68,.6); }
     .btn-status { border: 1px solid var(--border); background: #fff; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 11px; margin-left: 2px; font-weight: 600; white-space: nowrap; color: var(--text-muted); transition: all .18s var(--ease-smooth); }
     .btn-status:hover { transform: translateY(-1px); }
@@ -380,11 +344,10 @@
     .inline-form > div { flex: 1; min-width: 140px; }
 
     .hw-card, .quiz-card, .book-card {
-      border: 1px solid var(--border); padding: 18px 20px; border-radius: var(--radius); margin-bottom: 16px;
+      border: 1px solid var(--border); padding: 16px; border-radius: var(--radius); margin-bottom: 16px;
       background: #fff; transition: box-shadow .25s var(--ease-smooth), border-color .25s;
     }
     .hw-card:hover, .quiz-card:hover, .book-card:hover { box-shadow: var(--shadow); border-color: rgba(13,92,62,.16); }
-    .news-item-student { cursor: pointer; }
     .hw-submissions, .quiz-submissions { margin-top: 14px; background: #f8faf6; padding: 14px; border-radius: var(--radius); border: 2px dashed #cfd9c8; }
     .sub-item { display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid #e2e8df; background: #fff; border-radius: 12px; margin-bottom: 12px; transition: box-shadow .2s; }
     .sub-item:hover { box-shadow: var(--shadow-sm); }
@@ -392,6 +355,29 @@
     .submission-details { font-size: 15px !important; background: #f1f5f1; padding: 14px; border-radius: 10px; border-right: 5px solid var(--primary); }
     .question-block { background: #f8faf6; padding: 14px; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border); border-right: 4px solid var(--primary); }
     .subject-badge { background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+
+    .boards-highlight-card { position:relative; border-radius: var(--radius-lg); overflow:hidden; cursor:pointer; margin-bottom:16px; box-shadow: var(--shadow-lg); border: 2px solid var(--secondary); height:180px; background: var(--sidebar-bg); }
+    .boards-highlight-card img { width:100%; height:100%; object-fit:cover; display:block; transition: transform .3s var(--ease-smooth); }
+    .boards-highlight-card:hover img { transform: scale(1.04); }
+    .boards-highlight-overlay { position:absolute; inset:0; background: linear-gradient(0deg, rgba(10,51,35,.88) 0%, rgba(10,51,35,.2) 55%, transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:14px 16px; color:#fff; }
+    .boards-highlight-badge { align-self:flex-start; background: var(--secondary); color:#1c2a1a; font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; margin-bottom:8px; }
+    .boards-highlight-subject { font-weight:800; font-size:16px; }
+    .boards-highlight-date { font-size:12px; opacity:.85; margin-top:2px; }
+
+    .boards-subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .boards-subject-tile { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 16px; text-align:center; cursor:pointer; box-shadow: var(--shadow-sm); transition: all .25s var(--ease-smooth); }
+    .boards-subject-tile:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--secondary); }
+    .boards-subject-tile .subj-icon { font-size:28px; margin-bottom:8px; }
+    .boards-subject-tile .subj-name { font-weight:800; font-size:15px; color: var(--text-main); }
+    .boards-subject-tile .subj-count { font-size:12px; color: var(--text-muted); margin-top:4px; }
+
+    .boards-items-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(170px,1fr)); gap: 14px; }
+    .board-item-card { background:#fff; border:1px solid var(--border); border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow-sm); display:flex; flex-direction:column; }
+    .board-item-thumb { width:100%; height:120px; object-fit:cover; background: var(--primary-light); display:flex; align-items:center; justify-content:center; font-size:38px; }
+    .board-item-body { padding:10px; display:flex; flex-direction:column; gap:4px; }
+    .board-item-title { font-size:13px; font-weight:700; }
+    .board-item-date { font-size:11px; color: var(--text-muted); }
+    .board-item-actions { display:flex; gap:6px; margin-top:6px; }
     .hidden { display: none !important; }
     .loading-spin { display: inline-block; width: 16px; height: 16px; border: 3px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -449,11 +435,11 @@
     /* ===== جرس الإشعارات ===== */
     .notif-bell-wrap { position: relative; display: inline-block; }
     .notif-bell-btn {
-      background: rgba(255,255,255,.14); color: #fff; border: none; width: 38px; height: 38px; border-radius: 50%;
+      background: var(--primary-light); border: none; width: 38px; height: 38px; border-radius: 50%;
       font-size: 17px; cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center;
       transition: transform .2s var(--ease-spring), background .2s;
     }
-    .notif-bell-btn:hover { transform: scale(1.1) rotate(-8deg); background: rgba(255,255,255,.24); }
+    .notif-bell-btn:hover { transform: scale(1.1) rotate(-8deg); background: var(--secondary-light); }
     .notif-badge {
       position: absolute; top: -3px; left: -3px; background: var(--red); color: #fff; font-size: 10px; font-weight: 800;
       min-width: 17px; height: 17px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -672,17 +658,18 @@
   <div class="sidebar">
     <div class="sidebar-brand"><svg class="minaret-icon" width="18" height="34" viewBox="0 0 60 120" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M30 2 24 12h12L30 2Z"/><rect x="28" y="12" width="4" height="8"/><path d="M22 20c0-6 4-10 8-10s8 4 8 10c0 4-3 6-8 6s-8-2-8-6Z"/><rect x="24" y="26" width="12" height="8" rx="1"/><rect x="20" y="34" width="20" height="5" rx="1"/><rect x="25" y="39" width="10" height="34"/><rect x="19" y="73" width="22" height="6" rx="1"/><rect x="22" y="79" width="16" height="26"/><rect x="14" y="105" width="32" height="10" rx="1"/><rect x="10" y="115" width="40" height="6" rx="1"/></svg><span>طويلبات الحرم النبوي</span></div>
     <div class="nav-indicator" id="navIndicator" aria-hidden="true"></div>
-    <button class="nav-btn active" data-tab="attendance" onclick="switchTab('attendance', this)"><span class="nav-icon">📋</span> سجل التحضير</button>
-    <button class="nav-btn role-teacher-only" id="nav-addstudents-btn" data-tab="addstudents" onclick="switchTab('addstudents', this)"><span class="nav-icon">➕</span> إضافة الطلاب</button>
-    <button class="nav-btn" data-tab="schedule" onclick="switchTab('schedule', this)"><span class="nav-icon">📅</span> الجدول</button>
-    <button class="nav-btn" data-tab="homework" onclick="switchTab('homework', this)"><span class="nav-icon">📚</span> الواجبات</button>
-    <button class="nav-btn" data-tab="tasmee" onclick="switchTab('tasmee', this)"><span class="nav-icon">🕌</span> التسميع</button>
-    <button class="nav-btn" data-tab="quizzes" onclick="switchTab('quizzes', this)"><span class="nav-icon">📝</span> الاختبارات الإلكترونية</button>
-    <button class="nav-btn" data-tab="examtable" onclick="switchTab('examtable', this)"><span class="nav-icon">🗓️</span> جدول الاختبارات</button>
-    <button class="nav-btn" data-tab="curriculum" onclick="switchTab('curriculum', this)"><span class="nav-icon">📖</span> المنهج</button>
-    <button class="nav-btn role-teacher-student-only" id="nav-news-btn" data-tab="news" onclick="switchTab('news', this)"><span class="nav-icon">📰</span> الأخبار</button>
-    <button class="nav-btn role-supervisor-only" id="nav-teachers-btn" data-tab="teachers" onclick="switchTab('teachers', this)" style="display:none;"><span class="nav-icon">👩‍🏫</span> إدارة المعلمين</button>
-    <button class="nav-btn" data-tab="settings" onclick="switchTab('settings', this)"><span class="nav-icon">⚙️</span> الإعدادات</button>
+    <button class="nav-btn active" onclick="switchTab('attendance', this)"><span class="nav-icon">📋</span> سجل التحضير</button>
+    <button class="nav-btn role-teacher-only" id="nav-addstudents-btn" onclick="switchTab('addstudents', this)"><span class="nav-icon">➕</span> إضافة الطلاب</button>
+    <button class="nav-btn" onclick="switchTab('schedule', this)"><span class="nav-icon">📅</span> الجدول</button>
+    <button class="nav-btn" onclick="switchTab('homework', this)"><span class="nav-icon">📚</span> الواجبات</button>
+    <button class="nav-btn" onclick="switchTab('tasmee', this)"><span class="nav-icon">🕌</span> التسميع</button>
+    <button class="nav-btn" onclick="switchTab('quizzes', this)"><span class="nav-icon">📝</span> الاختبارات الإلكترونية</button>
+    <button class="nav-btn" onclick="switchTab('examtable', this)"><span class="nav-icon">🗓️</span> جدول الاختبارات</button>
+    <button class="nav-btn" onclick="switchTab('curriculum', this)"><span class="nav-icon">📖</span> المنهج</button>
+    <button class="nav-btn" onclick="backToBoardsGrid(); switchTab('boards', this)"><span class="nav-icon">🖼️</span> سبورات</button>
+    <button class="nav-btn role-teacher-only" id="nav-news-btn" onclick="switchTab('news', this)"><span class="nav-icon">📰</span> الأخبار</button>
+    <button class="nav-btn role-supervisor-only" id="nav-teachers-btn" onclick="switchTab('teachers', this)" style="display:none;"><span class="nav-icon">👩‍🏫</span> إدارة المعلمين</button>
+    <button class="nav-btn" onclick="switchTab('settings', this)"><span class="nav-icon">⚙️</span> الإعدادات</button>
     <button class="nav-btn" onclick="logout()" style="color:#f87171;"><span class="nav-icon">🔄</span> الخروج</button>
   </div>
 
@@ -793,10 +780,7 @@
           </div>
         </div>
         <div class="card">
-          <div class="card-header">
-            <span>📅 الجدول الأسبوعي</span>
-            <button class="btn-sm btn-view" id="downloadScheduleBtn" onclick="downloadScheduleImage()">📷 تحميل الجدول كصورة</button>
-          </div>
+          <div class="card-header">📅 الجدول الأسبوعي</div>
           <div class="schedule-grid-wrap"><div id="schedule-grid" class="schedule-grid"></div></div>
         </div>
       </div>
@@ -809,7 +793,7 @@
           <div class="form-group"><label>وصف/تعليمات الواجب (اختياري):</label><textarea id="hwDescription" rows="2" placeholder="اكتب تعليمات الواجب هنا..."></textarea></div>
           <div class="form-group"><label>موعد انتهاء التسليم (اختياري - إذا تركته فاضي يبقى الواجب مفتوح دائماً):</label><input type="datetime-local" id="hwDueDate"></div>
           <div class="form-group">
-            <label><input type="checkbox" id="hwNoQuestions" onchange="toggleHwQuestionsMode()" style="width:auto;"> واجب رفع مستند (بدون أسئلة - الطالب يرفع صورة أو PDF أو أي ملف، و/أو يكتب ملاحظة أو رابط)</label>
+            <label><input type="checkbox" id="hwNoQuestions" onchange="toggleHwQuestionsMode()" style="width:auto;"> واجب بدون أسئلة (تسليم حر - الطالب يكتب ملاحظة أو رابط فقط)</label>
           </div>
           <div id="hw-questions-wrap">
             <div id="hw-builder-questions"></div>
@@ -904,6 +888,46 @@
         </div>
       </div>
 
+      <!-- 7.4 سبورات -->
+      <div id="tab-boards" class="tab-content">
+        <div id="boards-grid-view">
+          <div id="boards-highlight-card" class="boards-highlight-card" style="display:none;" onclick="openBoardSubject(boardsHighlightSubject)">
+            <img id="boards-highlight-img" src="" alt="">
+            <div class="boards-highlight-overlay">
+              <span class="boards-highlight-badge">✨ آخر إضافة</span>
+              <div id="boards-highlight-subject" class="boards-highlight-subject"></div>
+              <div id="boards-highlight-date" class="boards-highlight-date"></div>
+            </div>
+          </div>
+          <div class="card role-teacher-supervisor-only">
+            <div class="card-header">
+              <span>🖼️ سبورات المواد</span>
+              <button class="btn" onclick="toggleBoardUploadForm()">➕ رفع صورة/ملف جديد</button>
+            </div>
+            <div id="board-upload-form" style="display:none; margin-top:10px;">
+              <div class="form-group"><label>اسم المادة:</label><input type="text" id="boardSubject" placeholder="مثال: الرياضيات"></div>
+              <div class="form-group"><label>عنوان/وصف (اختياري):</label><input type="text" id="boardTitle" placeholder="مثال: سبورة الدرس الأول"></div>
+              <div class="form-group"><label>الصورة أو الملف (حتى 50 ميجابايت):</label><input type="file" id="boardFile"></div>
+              <button class="btn" style="width:100%;" onclick="uploadBoardPost()" id="boardUploadBtn">رفع</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">📚 المواد</div>
+            <div id="boards-subjects-container" class="boards-subject-grid"></div>
+          </div>
+        </div>
+
+        <div id="boards-detail-view" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <span id="boards-detail-title">📖 المادة</span>
+              <button class="btn-sm btn-view" onclick="backToBoardsGrid()">⬅️ رجوع للمواد</button>
+            </div>
+            <div id="boards-detail-container" class="boards-items-grid"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- 7.5 الأخبار -->
       <div id="tab-news" class="tab-content">
         <div class="card role-teacher-only">
@@ -913,14 +937,9 @@
           <div class="form-group"><label>تفاصيل إضافية (اختياري):</label><textarea id="newsBody" rows="3" placeholder="أي تفاصيل زيادة تحب توضحها..."></textarea></div>
           <button class="btn" style="width:100%;" onclick="sendNews()" id="sendNewsBtn">📤 إرسال الخبر للطلاب</button>
         </div>
-        <div class="card role-teacher-only">
+        <div class="card">
           <div class="card-header">🗂️ الأخبار المرسلة</div>
           <div id="news-container"></div>
-        </div>
-        <div class="card role-student-only" style="display:none;">
-          <div class="card-header">📰 أخبار وتنبيهات المعلم</div>
-          <p style="color:var(--text-muted); font-size:13px; margin:0 0 10px;">اضغط على أي خبر لعرض تفاصيله.</p>
-          <div id="student-news-container"></div>
         </div>
       </div>
 
@@ -1110,24 +1129,13 @@ function updateNotifBadge(){
 function renderNotifPanel(){
   const list = $('notif-list');
   if (!notifState.items.length){ list.innerHTML = '<p style="padding:16px; text-align:center; color:var(--text-muted); font-size:12px;">لا يوجد إشعارات بعد</p>'; return; }
-  const icons = { homework: '📚', quiz: '📝', tasmee: '🕌', exam: '🗓️', news: '📰', deadline: '⏰' };
+  const icons = { homework: '📚', quiz: '📝', tasmee: '🕌', exam: '🗓️', deadline: '⏰' };
   list.innerHTML = notifState.items.map(n => `
-    <div class="notif-item ${n.read ? '' : 'unread'}" onclick="goToNotifTarget(${n.id}, '${n.type}')">
+    <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markOneNotifRead(${n.id})">
       ${icons[n.type]||'🔔'} ${esc(n.title)}
       <span class="notif-time">${fmtDueDate(n.created_at)}</span>
     </div>
   `).join('');
-}
-
-/* التنقّل لمصدر الإشعار عند الضغط عليه: كل واجب يوديك لتبويب الواجبات، كل خبر يوديك لتبويب الأخبار...إلخ */
-const NOTIF_TAB_MAP = { homework: 'homework', quiz: 'quizzes', tasmee: 'tasmee', exam: 'examtable', news: 'news' };
-function goToNotifTarget(id, type){
-  markOneNotifRead(id);
-  const tabName = NOTIF_TAB_MAP[type];
-  if (!tabName) return;
-  $('notif-panel').classList.remove('open');
-  const btn = document.querySelector(`.nav-btn[data-tab="${tabName}"]`);
-  if (btn) switchTab(tabName, btn);
 }
 
 async function markOneNotifRead(id){
@@ -1454,7 +1462,6 @@ function enterApp(){
   document.querySelectorAll('.role-teacher-only').forEach(el => el.style.display = (session.role === 'teacher') ? '' : 'none');
   document.querySelectorAll('.role-supervisor-only').forEach(el => el.style.display = (session.role === 'supervisor') ? '' : 'none');
   document.querySelectorAll('.role-teacher-supervisor-only').forEach(el => el.style.display = (session.role === 'teacher' || session.role === 'supervisor') ? '' : 'none');
-  document.querySelectorAll('.role-teacher-student-only').forEach(el => el.style.display = (session.role === 'teacher' || session.role === 'student') ? '' : 'none');
   document.querySelectorAll('.role-student-only').forEach(el => el.style.display = (session.role === 'student') ? '' : 'none');
 
   if (session.role === 'teacher'){
@@ -1514,6 +1521,7 @@ function refreshCurrentTab(){
   if (t === 'quizzes') renderQuizzes();
   if (t === 'examtable') renderExamTable();
   if (t === 'curriculum') renderBooks();
+  if (t === 'boards') renderBoards();
   if (t === 'news') renderNews();
   if (t === 'teachers') renderTeachersList();
   if (t === 'settings') renderSettings();
@@ -1602,7 +1610,8 @@ async function renderStudentsList(){
   const list = sortByArabicName(await rpc('rpc_list_students', { p_caller_id: session.universityId, p_caller_password: session.password, p_teacher_university_id: teacherIdForList }));
   $('students-list-tbody').innerHTML = list.map(s => `
     <tr><td>${esc(s.university_id)}</td><td>${esc(s.name)}</td>
-    <td><button class="btn-danger" onclick="deleteStudent('${esc(s.university_id)}')">🗑️ حذف</button></td></tr>
+    <td><button class="btn-sm btn-view" onclick="resetPersonPassword('${esc(s.university_id)}')">🔑 إعادة ضبط كلمة المرور</button>
+    <button class="btn-danger" onclick="deleteStudent('${esc(s.university_id)}')">🗑️ حذف</button></td></tr>
   `).join('') || '<tr><td colspan="3">لا يوجد طلاب بعد</td></tr>';
 }
 
@@ -1801,23 +1810,62 @@ function minutesToLabel(mins){
 (function setupScheduleDragScroll(){
   const wrap = document.querySelector('.schedule-grid-wrap');
   if (!wrap) return;
-  // على الجوال نترك المتصفح يتولى التمرير باللمس بشكل طبيعي (أفقياً داخل الجدول وعمودياً للصفحة) —
-  // أي تدخّل يدوي بجافاسكربت لتمرير اللمس (preventDefault + محاكاة scrollLeft/scrollTop) هو اللي كان يعلّق
-  // الصفحة ويمنعها من التمرير كامل وإحنا فوق الجدول. سحب الماوس نخليه فقط لأجهزة الكمبيوتر.
   let isDown = false, startX = 0, startScroll = 0, moved = false;
-  wrap.addEventListener('pointerdown', (e) => {
-    if (e.pointerType === 'touch') return; // اللمس يمشي طبيعي بدون تدخّل
-    isDown = true; moved = false; startX = e.clientX; startScroll = wrap.scrollLeft;
-    wrap.classList.add('dragging');
-  });
-  window.addEventListener('pointermove', (e) => {
+  const start = (x) => { isDown = true; moved = false; startX = x; startScroll = wrap.scrollLeft; wrap.classList.add('dragging'); };
+  const move = (x) => {
     if (!isDown) return;
-    const dx = e.clientX - startX;
+    const dx = x - startX;
     if (Math.abs(dx) > 3) moved = true;
     wrap.scrollLeft = startScroll - dx;
-  });
-  window.addEventListener('pointerup', () => { isDown = false; wrap.classList.remove('dragging'); });
-  wrap.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+  };
+  const end = () => { isDown = false; wrap.classList.remove('dragging'); };
+  // السحب بالماوس (لأجهزة الكمبيوتر)
+  wrap.addEventListener('mousedown', (e) => start(e.pageX));
+  window.addEventListener('mousemove', (e) => move(e.pageX));
+  window.addEventListener('mouseup', end);
+
+  // سحب يدوي كامل باللمس — عطّلنا كل السلوك الافتراضي للمس على هذا العنصر (touch-action: none)
+  // فصرنا نتحكم إحنا بالتمرير بالكامل، أفقياً (الجدول) وعمودياً (نمرر الصفحة يدوياً بنفس الحركة)
+  // عشان ما نفقد إمكانية تمرير الصفحة عمودياً وإحنا فوق الجدول.
+  const pageScroller = document.querySelector('.main-container') || document.scrollingElement || document.documentElement;
+  let touchActive = false, touchStartX = 0, touchStartY = 0, touchScrollStart = 0, pageScrollStart = 0;
+  let axisLocked = null; // 'x' أو 'y'
+  let touchMoved = false;
+
+  wrap.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    touchActive = true; axisLocked = null; touchMoved = false;
+    touchStartX = t.clientX; touchStartY = t.clientY;
+    touchScrollStart = wrap.scrollLeft;
+    pageScrollStart = pageScroller.scrollTop;
+  }, { passive: true });
+
+  wrap.addEventListener('touchmove', (e) => {
+    if (!touchActive) return;
+    const t = e.touches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+
+    if (!axisLocked) {
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+        axisLocked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      }
+    }
+
+    if (e.cancelable) e.preventDefault(); // ما فيه سلوك افتراضي بعد تعطيل touch-action، فهذا فقط لضمان تام
+
+    if (axisLocked === 'x') {
+      if (Math.abs(dx) > 3) touchMoved = true;
+      wrap.scrollLeft = touchScrollStart - dx;
+    } else if (axisLocked === 'y') {
+      pageScroller.scrollTop = pageScrollStart - dy;
+    }
+  }, { passive: false });
+
+  wrap.addEventListener('touchend', () => { touchActive = false; axisLocked = null; }, { passive: true });
+  wrap.addEventListener('touchcancel', () => { touchActive = false; axisLocked = null; }, { passive: true });
+
+  wrap.addEventListener('click', (e) => { if (moved || touchMoved) { e.preventDefault(); e.stopPropagation(); } }, true);
 })();
 
 function subjectColor(name){
@@ -1827,30 +1875,14 @@ function subjectColor(name){
   return { bg: `hsl(${hue},60%,92%)`, border: `hsl(${hue},50%,52%)`, text: `hsl(${hue},70%,26%)` };
 }
 
-let scheduleDataCache = [];
-
 async function renderSchedule(){
   let data;
   try {
     data = await rpc('rpc_list_schedule', { p_caller_id: session.universityId, p_caller_password: session.password });
   } catch(e){ $('schedule-grid').innerHTML = ''; return; }
 
-  scheduleDataCache = data;
   if (!data.length){ $('schedule-grid').innerHTML = '<p style="padding:20px; color:var(--text-muted);">لا يوجد حصص بعد</p>'; return; }
 
-  const isMobile = window.innerWidth <= 768;
-  if (isMobile){ renderScheduleMobileList(data); return; }
-
-  $('schedule-grid').innerHTML = buildScheduleGridHtml(data, true);
-  // بما إن الحاوية صارت LTR قياسيًا، لازم نحط مكان التمرير الابتدائي على أقصى اليمين
-  // (وهو نفس مكان البداية المنطقي للجدول: عمود الأيام + أول ساعة)
-  const wrapEl = document.querySelector('.schedule-grid-wrap');
-  if (wrapEl) wrapEl.scrollLeft = wrapEl.scrollWidth;
-}
-
-/* يبني نسخة الجدول الشبكية (نفس شكل الكمبيوتر) كسلسلة HTML — تُستخدم لعرضها فعلياً على الكمبيوتر،
-   وأيضاً لالتقاطها كصورة عند الضغط على "تحميل الجدول كصورة" حتى لو المستخدم فاتح النسخة المبسطة بالجوال. */
-function buildScheduleGridHtml(data, showDelete){
   let minStart = Infinity, maxEnd = -Infinity;
   data.forEach(s => {
     const st = parseTimeToMinutes(s.start_time), en = parseTimeToMinutes(s.end_time);
@@ -1865,9 +1897,10 @@ function buildScheduleGridHtml(data, showDelete){
   const UNIT = 15; // كل خانة = 15 دقيقة (يقبل القسمة على 30/45/60/90 دقيقة تماماً)
   const slotCount = (maxEnd - minStart) / UNIT;
 
-  const DAY_COL = 96, HOUR_ROW = 46, DAY_ROW = 72, MIN_SLOT = 30;
+  const isMobile = window.innerWidth <= 768;
+  const DAY_COL = isMobile ? 108 : 96, HOUR_ROW = 46, DAY_ROW = isMobile ? 78 : 72, MIN_SLOT = isMobile ? 34 : 30;
   const gridMinWidth = DAY_COL + slotCount * MIN_SLOT;
-  let html = `<div class="schedule-grid" style="grid-template-columns: ${DAY_COL}px repeat(${slotCount}, minmax(${MIN_SLOT}px, 1fr)); grid-template-rows: ${HOUR_ROW}px repeat(${SCHEDULE_DAYS.length}, ${DAY_ROW}px); min-width: ${gridMinWidth}px; width: ${gridMinWidth}px;">`;
+  let html = `<div class="schedule-grid" style="grid-template-columns: ${DAY_COL}px repeat(${slotCount}, minmax(${MIN_SLOT}px, 1fr)); grid-template-rows: ${HOUR_ROW}px repeat(${SCHEDULE_DAYS.length}, ${DAY_ROW}px); min-width: ${gridMinWidth}px; width: 100%;">`;
   html += `<div class="sg-corner" style="grid-row:1; grid-column:1;"></div>`;
   SCHEDULE_DAYS.forEach((d,i) => html += `<div class="sg-day-header" style="grid-row:${i+2}; grid-column:1;">${d}</div>`);
   const stepsPerHour = 60 / UNIT;
@@ -1888,7 +1921,7 @@ function buildScheduleGridHtml(data, showDelete){
     if (dayIdx === -1 || st == null || en == null) return;
     const colStart = Math.round((st - minStart)/UNIT) + 2;
     const colSpan = Math.max(1, Math.round((en - st)/UNIT));
-    const canDelete = showDelete && (session.role === 'supervisor' || (session.role === 'teacher' && s.teacher_id === session.profileId));
+    const canDelete = session.role === 'supervisor' || (session.role === 'teacher' && s.teacher_id === session.profileId);
     const c = subjectColor(s.subject);
     html += `<div class="sg-class" style="grid-row:${dayIdx+2}; grid-column:${colStart} / span ${colSpan}; background:${c.bg}; border-color:${c.border}; color:${c.text};">
       ${canDelete ? `<button class="sg-del" onclick="deleteSchedule(${s.id})" title="حذف">×</button>` : ''}
@@ -1898,64 +1931,11 @@ function buildScheduleGridHtml(data, showDelete){
   });
 
   html += `</div>`;
-  return html;
-}
-
-/* عرض مبسّط للجدول على الجوال: كل يوم كبطاقة مستقلة وحصصه مرتّبة تحته عمودياً — يبان كامل بدون
-   الحاجة لأي تمرير أفقي، وهو نفسه أوضح وأسهل قراءة على شاشة صغيرة من جدول بأعمدة ضيقة. */
-function renderScheduleMobileList(data){
-  const byDay = {};
-  SCHEDULE_DAYS.forEach(d => byDay[d] = []);
-  data.forEach(s => { if (byDay[s.day]) byDay[s.day].push(s); });
-  Object.keys(byDay).forEach(d => byDay[d].sort((a,b) => (parseTimeToMinutes(a.start_time)||0) - (parseTimeToMinutes(b.start_time)||0)));
-
-  let html = '<div class="schedule-mobile-list">';
-  SCHEDULE_DAYS.forEach(day => {
-    const items = byDay[day];
-    html += `<div class="sml-day"><div class="sml-day-title">${day}</div>`;
-    if (!items.length){
-      html += `<div class="sml-empty">لا يوجد حصص</div>`;
-    } else {
-      items.forEach(s => {
-        const canDelete = session.role === 'supervisor' || (session.role === 'teacher' && s.teacher_id === session.profileId);
-        const c = subjectColor(s.subject);
-        html += `<div class="sml-class" style="background:${c.bg}; border-color:${c.border}; color:${c.text};">
-          <span class="sml-subject">${esc(s.subject)}</span>
-          <span class="sml-time">${esc(String(s.start_time).slice(0,5))} - ${esc(String(s.end_time).slice(0,5))}</span>
-          ${canDelete ? `<button class="sg-del" style="position:static; margin-right:auto;" onclick="deleteSchedule(${s.id})" title="حذف">×</button>` : ''}
-        </div>`;
-      });
-    }
-    html += `</div>`;
-  });
-  html += '</div>';
   $('schedule-grid').innerHTML = html;
-}
-
-/* تحميل الجدول كصورة PNG — دايماً يبني وينزّل نسخة الجدول الشبكية (شكل الكمبيوتر) حتى لو المستخدم
-   فاتح النسخة المبسطة بالجوال، عن طريق تجهيزها خارج الشاشة مؤقتاً ثم التقاطها وحذفها. */
-async function downloadScheduleImage(){
-  const data = scheduleDataCache;
-  if (!data || !data.length){ toast('warning','تنبيه','لا يوجد جدول لتحميله'); return; }
-  const btn = $('downloadScheduleBtn');
-  if (btn){ btn.disabled = true; btn.innerHTML = '<span class="loading-spin"></span> جارِ التجهيز...'; }
-
-  const offscreen = document.createElement('div');
-  offscreen.style.cssText = 'position:fixed; top:0; left:-99999px; z-index:-1; background:#fff; padding:16px; direction:rtl;';
-  offscreen.innerHTML = buildScheduleGridHtml(data, false);
-  document.body.appendChild(offscreen);
-
-  try {
-    const canvas = await html2canvas(offscreen, { backgroundColor: '#ffffff', scale: 2, useCORS: true });
-    const link = document.createElement('a');
-    link.download = 'الجدول-الأسبوعي.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-  } catch(e){
-    toast('error','خطأ','تعذّر تحميل صورة الجدول');
-  }
-  offscreen.remove();
-  if (btn){ btn.disabled = false; btn.innerHTML = '📷 تحميل الجدول كصورة'; }
+  // بما إن الحاوية صارت LTR قياسيًا، لازم نحط مكان التمرير الابتدائي على أقصى اليمين
+  // (وهو نفس مكان البداية المنطقي للجدول: عمود الأيام + أول ساعة)
+  const wrapEl = document.querySelector('.schedule-grid-wrap');
+  if (wrapEl) wrapEl.scrollLeft = wrapEl.scrollWidth;
 }
 
 async function deleteSchedule(id){
@@ -2060,9 +2040,8 @@ async function renderHomeworks(){
       } else if (status && status.closed){
         studentPart = `<div class="locked-msg">🔒 انتهى وقت تسليم هذا الواجب، ما عاد يمكنك التسليم أو التعديل</div>`;
       } else if (hw.questions.length === 0){
-        studentPart = `<div class="form-group"><label>ارفع المستند (صورة، PDF، أو أي ملف آخر):</label><input type="file" id="hw-file-${hw.id}" accept="image/*,application/pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.rar,.txt"></div>
-          <div class="form-group"><label>ملاحظتك / رابط الحل (اختياري):</label><textarea id="hw-note-${hw.id}" rows="2"></textarea></div>
-          <button class="btn" id="hw-submit-btn-${hw.id}" onclick="submitHomeworkNoQ(${hw.id})">تسليم الواجب</button>`;
+        studentPart = `<div class="form-group"><label>ملاحظتك / رابط الحل:</label><textarea id="hw-note-${hw.id}" rows="2"></textarea></div>
+          <button class="btn" onclick="submitHomeworkNoQ(${hw.id})">تسليم الواجب</button>`;
       } else {
         studentPart = hw.questions.map((q,i) => q.type==='mcq'
           ? `<div class="question-block"><div class="large-text">${esc(q.q)}</div>${q.options.map(op=>`<label style="display:block; margin:4px 0;"><input type="radio" name="hw${hw.id}q${i}" value="${esc(op)}" style="width:auto;"> ${esc(op)}</label>`).join('')}</div>`
@@ -2089,43 +2068,11 @@ async function renderHomeworks(){
 
 async function submitHomeworkNoQ(hwId){
   const note = $('hw-note-'+hwId).value.trim();
-  const fileInput = $('hw-file-'+hwId);
-  const file = fileInput && fileInput.files[0];
-
-  const blockedExt = ['exe','msi','bat','cmd','sh','com','scr','js','jar','apk'];
-  if (file){
-    const ext = file.name.toLowerCase().split('.').pop();
-    if (blockedExt.includes(ext)){
-      toast('warning','تنبيه','نوع هذا الملف غير مسموح به'); return;
-    }
-    if (file.size > 20 * 1024 * 1024){
-      toast('warning','تنبيه','حجم الملف أكبر من 20 ميجابايت'); return;
-    }
-  }
-  if (!file && !note){
-    toast('warning','تنبيه','ارفع المستند (صورة/PDF/ملف) أو اكتب ملاحظة قبل التسليم'); return;
-  }
-
-  const btn = $('hw-submit-btn-'+hwId);
-  if (btn){ btn.disabled = true; btn.innerHTML = '<span class="loading-spin"></span> جارِ التسليم...'; }
   try {
-    const answers = { note };
-    if (file){
-      const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-      const path = `${hwId}_${session.universityId}_${Date.now()}_${safeName}`;
-      const { error: upErr } = await sbClient.storage.from('homework_files').upload(path, file);
-      if (upErr) throw upErr;
-      answers.file_path = path;
-      answers.file_name = file.name;
-      answers.file_url = `${SUPABASE_URL}/storage/v1/object/public/homework_files/${path}`;
-    }
-    await rpc('rpc_submit_homework', { p_caller_id: session.universityId, p_caller_password: session.password, p_homework_id: hwId, p_answers: answers });
+    await rpc('rpc_submit_homework', { p_caller_id: session.universityId, p_caller_password: session.password, p_homework_id: hwId, p_answers: {note} });
     toast('success','تم التسليم','تم تسليم الواجب بنجاح');
     renderHomeworks();
-  } catch(e){
-    toast('error','خطأ','فشل تسليم الواجب: ' + (e.message||''));
-    if (btn){ btn.disabled = false; btn.textContent = 'تسليم الواجب'; }
-  }
+  } catch(e){}
 }
 
 async function submitHomeworkAnswers(hwId, count){
@@ -2306,23 +2253,6 @@ async function submitQuizAnswers(quizId, count){
 }
 
 /* ================= عرض وتصحيح التسليمات ================= */
-function isImageFile(name){
-  return /\.(png|jpe?g|gif|webp|bmp|heic)$/i.test(name || '');
-}
-
-function renderAnswersSummary(answers){
-  if (answers && typeof answers === 'object' && (answers.file_url || answers.note !== undefined)){
-    const parts = [];
-    if (answers.file_url){
-      parts.push(`<a class="btn-sm btn-view" href="${answers.file_url}" target="_blank" download>📎 تحميل المستند (${esc(answers.file_name||'الملف')})</a>`);
-      if (isImageFile(answers.file_name)) parts.push(`<div style="margin-top:6px;"><a href="${answers.file_url}" target="_blank"><img src="${answers.file_url}" style="max-width:180px; max-height:180px; border-radius:8px; border:1px solid var(--border);"></a></div>`);
-    }
-    if (answers.note) parts.push(`<div style="margin-top:6px;">${esc(answers.note)}</div>`);
-    return parts.join('') || 'بدون ملاحظة';
-  }
-  return esc(JSON.stringify(answers));
-}
-
 async function viewSubmissions(type, itemId){
   const box = $(type === 'quiz' ? `quiz-subs-${itemId}` : `hw-subs-${itemId}`);
   try {
@@ -2330,7 +2260,7 @@ async function viewSubmissions(type, itemId){
     box.innerHTML = `<div class="hw-submissions">` + (subs.map(s => `
       <div class="sub-item">
         <b>${esc(s.student_name)} (${esc(s.student_id)})</b>
-        <div class="submission-details">${renderAnswersSummary(s.answers)}</div>
+        <div class="submission-details">${esc(JSON.stringify(s.answers))}</div>
         <div class="inline-form">
           <div><label>الدرجة:</label><input type="text" id="score-${type}-${s.id}" value="${esc(s.score||'')}"></div>
           <div><label>التقييم:</label>
@@ -2400,13 +2330,8 @@ function renderReviewHtml(data){
         <div class="review-answer-text">إجابتك: ${esc(q.student_answer || '(لم تجب)')}</div>
       </div>`;
     }).join('');
-  } else if (data.raw_answers && (data.raw_answers.note !== undefined || data.raw_answers.file_url)){
-    const ra = data.raw_answers;
-    questionsHtml = `<div class="review-q">
-      ${ra.file_url ? `<div style="margin-bottom:8px;"><a class="btn-sm btn-view" href="${ra.file_url}" target="_blank" download>📎 المستند المُسلّم (${esc(ra.file_name||'الملف')})</a>
-      ${isImageFile(ra.file_name) ? `<div style="margin-top:6px;"><a href="${ra.file_url}" target="_blank"><img src="${ra.file_url}" style="max-width:180px; max-height:180px; border-radius:8px; border:1px solid var(--border);"></a></div>` : ''}</div>` : ''}
-      <div class="review-answer-text">إجابتك: ${esc(ra.note || '(بدون ملاحظة)')}</div>
-    </div>`;
+  } else if (data.raw_answers && data.raw_answers.note !== undefined){
+    questionsHtml = `<div class="review-q"><div class="review-answer-text">إجابتك: ${esc(data.raw_answers.note || '(بدون ملاحظة)')}</div></div>`;
   } else {
     questionsHtml = '<div class="submission-details">لا توجد أسئلة لعرضها</div>';
   }
@@ -2503,6 +2428,130 @@ async function deleteBook(id){
   } catch(e){}
 }
 
+/* ================= السبورات (صور وملفات المواد) ================= */
+let boardsCurrentSubject = null;
+let boardsAllPosts = [];
+let boardsHighlightSubject = null;
+
+function toggleBoardUploadForm(){
+  const f = $('board-upload-form');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+async function uploadBoardPost(){
+  const subject = $('boardSubject').value.trim();
+  const title = $('boardTitle').value.trim();
+  const file = $('boardFile').files[0];
+  if (!subject || !file){ toast('warning','تنبيه','عبّي المادة واختر ملفاً'); return; }
+  if (file.size > 50 * 1024 * 1024){ toast('error','خطأ','حجم الملف أكبر من 50 ميجابايت'); return; }
+
+  const btn = $('boardUploadBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="loading-spin"></span> جارِ الرفع...';
+  try {
+    const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    const path = `${Date.now()}_${safeName}`;
+    const { error: upErr } = await sbClient.storage.from('boards').upload(path, file);
+    if (upErr) throw upErr;
+    await rpc('rpc_add_board_post', { p_caller_id: session.universityId, p_caller_password: session.password, p_subject: subject, p_title: title || null, p_file_path: path, p_file_size: file.size, p_file_type: file.type || '' });
+    toast('success','تم الرفع', 'تم رفع الملف بنجاح');
+    $('boardSubject').value=''; $('boardTitle').value=''; $('boardFile').value=''; $('board-upload-form').style.display='none';
+    renderBoards();
+  } catch(e){ toast('error','خطأ','فشل رفع الملف: ' + (e.message||'')); }
+  btn.disabled = false; btn.textContent = 'رفع';
+}
+
+async function renderBoards(){
+  let data;
+  try {
+    data = await rpc('rpc_list_boards', { p_caller_id: session.universityId, p_caller_password: session.password });
+  } catch(e){ return; }
+  boardsAllPosts = data || [];
+  renderBoardsHighlight();
+  renderBoardsSubjectsGrid();
+  if (boardsCurrentSubject){
+    if (boardsAllPosts.some(p => p.subject === boardsCurrentSubject)) renderBoardsDetail(boardsCurrentSubject);
+    else backToBoardsGrid();
+  }
+}
+
+function renderBoardsHighlight(){
+  const lastImage = boardsAllPosts.find(p => (p.file_type||'').startsWith('image/'));
+  const card = $('boards-highlight-card');
+  if (!lastImage){ card.style.display = 'none'; return; }
+  boardsHighlightSubject = lastImage.subject;
+  $('boards-highlight-img').src = `${SUPABASE_URL}/storage/v1/object/public/boards/${lastImage.file_path}`;
+  $('boards-highlight-subject').textContent = lastImage.subject;
+  $('boards-highlight-date').textContent = (lastImage.title ? lastImage.title + ' · ' : '') + fmtDueDate(lastImage.uploaded_at);
+  card.style.display = 'block';
+}
+
+function renderBoardsSubjectsGrid(){
+  const bySubject = {};
+  boardsAllPosts.forEach(p => { (bySubject[p.subject] = bySubject[p.subject] || []).push(p); });
+  const subjects = Object.keys(bySubject).sort((a,b)=>a.localeCompare('ar'));
+  $('boards-subjects-container').innerHTML = subjects.map(s => `
+    <div class="boards-subject-tile" onclick="openBoardSubject('${esc(s).replace(/'/g, "\\'")}')">
+      <div class="subj-icon">📁</div>
+      <div class="subj-name">${esc(s)}</div>
+      <div class="subj-count">${bySubject[s].length} ملف</div>
+    </div>`
+  ).join('') || '<p style="color:var(--text-muted); grid-column:1/-1;">لا توجد مواد مرفوعة بعد</p>';
+}
+
+function openBoardSubject(subject){
+  if (!subject) return;
+  boardsCurrentSubject = subject;
+  $('boards-grid-view').style.display = 'none';
+  $('boards-detail-view').style.display = 'block';
+  renderBoardsDetail(subject);
+}
+
+function backToBoardsGrid(){
+  boardsCurrentSubject = null;
+  if ($('boards-detail-view')) $('boards-detail-view').style.display = 'none';
+  if ($('boards-grid-view')) $('boards-grid-view').style.display = 'block';
+}
+
+function renderBoardsDetail(subject){
+  $('boards-detail-title').textContent = '📖 ' + subject;
+  const items = boardsAllPosts.filter(p => p.subject === subject).sort((a,b) => new Date(b.uploaded_at) - new Date(a.uploaded_at));
+  $('boards-detail-container').innerHTML = items.map(p => {
+    const canDelete = session.role === 'supervisor' || (session.role === 'teacher' && p.teacher_id === session.profileId);
+    const url = `${SUPABASE_URL}/storage/v1/object/public/boards/${p.file_path}`;
+    const isImage = (p.file_type||'').startsWith('image/');
+    const thumb = isImage ? `<img class="board-item-thumb" src="${url}" alt="">` : `<div class="board-item-thumb">${fileIconFor(p.file_type)}</div>`;
+    return `<div class="board-item-card">
+      ${thumb}
+      <div class="board-item-body">
+        <div class="board-item-title">${esc(p.title || 'بدون عنوان')}</div>
+        <div class="board-item-date">${fmtDueDate(p.uploaded_at)}</div>
+        <div class="board-item-actions">
+          <a class="btn-sm btn-view" href="${url}" target="_blank" download>⬇️ تحميل</a>
+          ${canDelete ? `<button class="btn-danger" onclick="deleteBoardPost(${p.id})">🗑️</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('') || '<p style="color:var(--text-muted);">لا توجد ملفات في هذه المادة بعد</p>';
+}
+
+function fileIconFor(type){
+  type = type || '';
+  if (type.includes('pdf')) return '📕';
+  if (type.includes('word')) return '📘';
+  if (type.includes('sheet') || type.includes('excel')) return '📗';
+  return '📄';
+}
+
+async function deleteBoardPost(id){
+  if (!confirm('حذف هذا الملف نهائياً؟')) return;
+  try {
+    const res = await rpc('rpc_delete_board_post', { p_caller_id: session.universityId, p_caller_password: session.password, p_post_id: id });
+    if (res.file_path) await sbClient.storage.from('boards').remove([res.file_path]);
+    toast('success','تم الحذف','تم حذف الملف');
+    renderBoards();
+  } catch(e){}
+}
+
 /* ================= الأخبار (المعلم فقط) ================= */
 async function sendNews(){
   const title = $('newsTitle').value.trim();
@@ -2521,7 +2570,6 @@ async function sendNews(){
 }
 
 async function renderNews(){
-  if (session.role === 'student') return renderStudentNews();
   let data;
   try {
     data = await rpc('rpc_list_news', { p_caller_id: session.universityId, p_caller_password: session.password });
@@ -2535,32 +2583,6 @@ async function renderNews(){
       ${n.body ? `<div style="font-size:13px; color:var(--text-muted); margin-top:6px;">${esc(n.body)}</div>` : ''}
     </div>`
   ).join('') || '<p style="color:var(--text-muted);">لا توجد أخبار مرسلة بعد</p>';
-}
-
-/* ================= الأخبار (عرض الطالب - للقراءة فقط) ================= */
-async function renderStudentNews(){
-  const box = $('student-news-container');
-  if (!box) return;
-  let data;
-  try {
-    data = await rpc('rpc_list_news_student', { p_caller_id: session.universityId, p_caller_password: session.password });
-  } catch(e){ return; }
-  box.innerHTML = data.map(n => `
-    <div class="book-card news-item-student" onclick="toggleNewsDetails(${n.id})">
-      <div class="card-header" style="margin-bottom:0;">
-        <span>📰 ${esc(n.title)}</span>
-        <span class="notif-time">${fmtDueDate(n.created_at)}</span>
-      </div>
-      <div id="news-body-${n.id}" class="hidden" style="margin-top:10px;">
-        <div class="submission-details">${n.body ? esc(n.body) : 'لا توجد تفاصيل إضافية'}</div>
-      </div>
-    </div>`
-  ).join('') || '<p style="color:var(--text-muted);">لا توجد أخبار حالياً</p>';
-}
-
-function toggleNewsDetails(id){
-  const box = $('news-body-' + id);
-  if (box) box.classList.toggle('hidden');
 }
 
 async function deleteNews(id){
